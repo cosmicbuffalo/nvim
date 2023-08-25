@@ -10,7 +10,7 @@ km.set("v", "y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
 -- undotree
 km.set("n", "<leader>U", ":UndotreeToggle<cr>", { desc = "Undo Tree" })
 
-km.set("n", "<leader>um", function()
+km.set("n", "<leader>uh", function()
   require("telescope").extensions.notify.notify()
 end, { desc = "Notification History" })
 
