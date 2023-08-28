@@ -49,35 +49,38 @@ km.set(
 -- )
 km.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
 
--- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/keymaps.lua
--- for some reason can't get these to work
--- local ui = require("harpoon.ui")
--- km.set("n", "<M-n>", function()
---   ui.nav_file(1)
--- end, { silent = true, noremap = true, desc = "which_key_ignore" })
---
--- km.set("n", "<M-e>", function()
---   ui.nav_file(2)
--- end, { silent = true, noremap = true, desc = "which_key_ignore" })
---
--- km.set("n", "<M-i>", function()
---   ui.nav_file(3)
--- end, { silent = true, noremap = true, desc = "which_key_ignore" })
---
--- km.set("n", "<M-o>", function()
---   ui.nav_file(4)
--- end, { silent = true, noremap = true, desc = "which_key_ignore" })
+km.set("n", "<leader>fy", function()
+  CopyRelativePath()
+end, { desc = "Copy relative path" })
 
-vim.api.nvim_set_keymap(
-  "n",
-  "<leader>bc",
-  [[:let @+=system("git rev-parse --show-toplevel")[:-2] . "/" . fnamemodify(expand("%"), ":~:.")<CR>]],
-  { noremap = true, silent = true, desc = "Copy relative path" }
-)
+function CopyRelativePath()
+  local current_dir = vim.fn.expand("%:p:h")
+  vim.fn.chdir(current_dir)
+
+  local root_dir = vim.fn.system("git rev-parse --show-toplevel"):gsub("\n", "")
+  local file_path = vim.fn.expand("%:p")
+  local relative_path = file_path:sub(#root_dir + 2)
+
+  os.execute("echo '" .. relative_path .. "\\c' | pbcopy")
+end
 
 km.set("n", "<leader>fF", function()
   require("telescope.builtin").find_files({
-    find_command = { "rg", "--files", "--hidden", "-g", "!{.git,node_modules,redux_devtools,tmp,vendor}" },
-    no_ignore = true,
+    find_command = {
+      "rg",
+      "--files",
+      "--hidden",
+      "--no-ignore",
+      "-g",
+      "!{.git,node_modules,redux_devtools,tmp,vendor}",
+    },
   })
 end, { desc = "Find Files (cwd)" })
+
+km.set("n", "<C-n>", function()
+  require("illuminate").goto_next_reference()
+end, { desc = "Go to next reference" })
+
+km.set("n", "<C-p>", function()
+  require("illuminate").goto_prev_reference()
+end, { desc = "Go to previous reference" })
