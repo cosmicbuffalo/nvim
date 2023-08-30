@@ -15,8 +15,11 @@ opt.hlsearch = false
 opt.scrolloff = 8
 opt.sidescrolloff = 8
 opt.updatetime = 50
-opt.foldmethod = "indent"
-opt.foldlevel = 99 -- unfold everything by default
+-- opt.foldmethod = "indent"
+-- vim.cmd("set foldmethod=indent")
+-- opt.foldlevel = 99 -- unfold everything by default
+-- vim.cmd("set foldlevel=99")
+
 opt.guicursor =
   "n-v-c-sm:block-nCursor-blinkwait50-blinkon50-blinkoff50,i-ci-ve:ver25-Cursor-blinkon100-blinkoff100,r-cr-o:hor20"
 
