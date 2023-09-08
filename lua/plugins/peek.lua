@@ -1,8 +1,7 @@
-return {}
-
 return {
   {
     "cloudsftp/peek.nvim",
+    enabled = false,
     branch = "bundle",
     config = function()
       require("peek").setup()
