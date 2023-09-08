@@ -6,7 +6,7 @@ local opt = vim.opt
 
 opt.softtabstop = 2
 opt.autoindent = true
-opt.swapfile = false
+-- opt.swapfile = false
 opt.backup = false
 opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 opt.undofile = true
