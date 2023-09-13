@@ -41,12 +41,32 @@ km.set(
   [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
   { desc = "Search + replace under cursor" }
 )
--- km.set(
---   "v",
---   "<leader>S",
---   [[:s/\<<C-r>"\>/<C-r>"//gI<Left><Left><Left>]],
---   { noremap = true, silent = false, expr = false, desc = "Search + replace selection" }
--- )
+
+function StartFindAndReplaceSelection()
+  -- Yank the current selection
+  vim.cmd([[normal! gvy]])
+
+  -- Get the yanked text from the unnamed register
+  local selected_text = vim.fn.getreg('"')
+
+  -- Escape any special characters in the text
+  local escaped_text = vim.fn.escape(selected_text, "/\\")
+
+  -- Populate the command line with the substitute command
+  local cmd = ":%s/" .. escaped_text .. "/" .. escaped_text .. "/gI"
+  vim.fn.feedkeys(":" .. cmd, "t")
+
+  -- Move the cursor three spaces to the left to get to the end of the replacement text
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left><Left>", true, true, true), "n", true)
+end
+
+vim.api.nvim_set_keymap(
+  "v",
+  "<leader>S",
+  [[:lua StartFindAndReplaceSelection()<CR>]],
+  { noremap = true, silent = true, desc = "Search + replace selection" }
+)
+
 km.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
 
 km.set("n", "<leader>fy", function()
@@ -84,3 +104,36 @@ end, { desc = "Go to next reference" })
 km.set("n", "<C-p>", function()
   require("illuminate").goto_prev_reference()
 end, { desc = "Go to previous reference" })
+
+-- always insert at the correct indentation when inserting on a blank line
+function SmartInsert()
+  local line = vim.fn.getline(".")
+  if string.match(line, "^%s*$") then
+    vim.api.nvim_feedkeys("_ddko", "t", false)
+  else
+    -- Regular behavior for 'i'
+    vim.api.nvim_feedkeys("i", "n", false)
+  end
+end
+
+vim.api.nvim_set_keymap("n", "i", [[<Cmd>lua SmartInsert()<CR>]], { noremap = true, silent = true })
+
+function SmartTab()
+  local line = vim.fn.getline(".")
+  if string.match(line, "^%s*$") then -- TODO: make this allow tabs after first tab on an otherwise all whitespace line
+    local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
+    vim.api.nvim_feedkeys(esc, "n", false)
+    vim.api.nvim_feedkeys("_ddko", "t", false)
+  else
+    local tab = vim.api.nvim_replace_termcodes("<Tab>", true, false, true)
+    vim.api.nvim_feedkeys(tab, "n", false)
+  end
+end
+
+vim.api.nvim_set_keymap("i", "<Tab>", [[<Cmd>lua SmartTab()<CR>]], { noremap = true, silent = true })
+
+-- more granular undo break points
+km.set("i", "=", "=<c-g>u")
+km.set("i", "<Space>", "<Space><c-g>u")
+km.set("i", "<CR>", "<c-g>u<CR>")
+km.set("i", ",", ",<c-g>u")

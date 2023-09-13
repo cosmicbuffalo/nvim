@@ -29,22 +29,30 @@ return {
           end,
         },
         mapping = cmp.mapping({
-          ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-          ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-          ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-          ["<C-f>"] = cmp.mapping.scroll_docs(4),
-          -- ["<C-Space>"] = cmp.mapping.complete(),
-          ["<C-e>"] = cmp.mapping.abort(),
-          ["<Right>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-          ["<C-i>"] = cmp.mapping.confirm({
-            behavior = cmp.ConfirmBehavior.Replace,
+          ["<M-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+          ["<M-e>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+          ["<M-p>"] = cmp.mapping.scroll_docs(-4),
+          ["<M-f>"] = cmp.mapping.scroll_docs(4),
+          -- ["<M-Space>"] = cmp.mapping.complete(),
+          ["<M-o>"] = cmp.mapping.abort(),
+          ["<M-i>"] = cmp.mapping.confirm({
+            -- behavior = cmp.ConfirmBehavior.Replace,
             select = true,
           }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+          -- disable mappings
+          ["<Right>"] = cmp.mapping(function(fallback)
+            cmp.close()
+            fallback()
+          end, { "i" }),
           ["<Down>"] = cmp.mapping(function(fallback)
             cmp.close()
             fallback()
           end, { "i" }),
           ["<Up>"] = cmp.mapping(function(fallback)
+            cmp.close()
+            fallback()
+          end, { "i" }),
+          ["<Tab>"] = cmp.mapping(function(fallback)
             cmp.close()
             fallback()
           end, { "i" }),

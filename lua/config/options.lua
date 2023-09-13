@@ -15,10 +15,11 @@ opt.hlsearch = false
 opt.scrolloff = 8
 opt.sidescrolloff = 8
 opt.updatetime = 50
--- opt.foldmethod = "indent"
--- vim.cmd("set foldmethod=indent")
--- opt.foldlevel = 99 -- unfold everything by default
--- vim.cmd("set foldlevel=99")
+vim.o.foldcolumn = "1"
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+vim.o.fillchars = [[eob: ,fold: ,foldopen:󰅀,foldsep: ,foldclose:]]
 
 opt.guicursor =
   "n-v-c-sm:block-nCursor-blinkwait50-blinkon50-blinkoff50,i-ci-ve:ver25-Cursor-blinkon100-blinkoff100,r-cr-o:hor20"
@@ -70,3 +71,9 @@ vim.api.nvim_set_hl(0, "CmpItemKindMethod", { link = "CmpItemKindFunction" })
 vim.api.nvim_set_hl(0, "CmpItemKindKeyword", { bg = "NONE", fg = "#D4D4D4" })
 vim.api.nvim_set_hl(0, "CmpItemKindProperty", { link = "CmpItemKindKeyword" })
 vim.api.nvim_set_hl(0, "CmpItemKindUnit", { link = "CmpItemKindKeyword" })
+
+-- Disable tmux navigator when zooming the Vim pane
+vim.g.tmux_navigator_disable_when_zoomed = 1
+
+-- Write all buffers before navigating from vim to tmux pane
+vim.g.tmux_navigator_save_on_switch = 2

@@ -1,7 +1,34 @@
 return {
   "kevinhwang91/nvim-ufo",
-  dependencies = "kevinhwang91/promise-async",
-  event = "VeryLazy",
+  dependencies = {
+    "kevinhwang91/promise-async",
+    {
+      "luukvbaal/statuscol.nvim",
+      event = "BufReadPost",
+      config = function()
+        local builtin = require("statuscol.builtin")
+        -- require("statuscol").setup()
+        require("statuscol").setup({
+          relculright = true,
+          segments = {
+            {
+              sign = { name = { "Diagnostic" }, maxwidth = 2, auto = true },
+              click = "v:lua.ScSa",
+            },
+            { text = { builtin.lnumfunc }, click = "v:lua.ScLa" },
+            { text = { " " } },
+            {
+              sign = { name = { ".*" }, maxwidth = 2, colwidth = 1, auto = true, wrap = true },
+              click = "v:lua.ScSa",
+            },
+            { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
+            { text = { " " } },
+          },
+        })
+      end,
+    },
+  },
+  event = "BufReadPost",
   opts = {
     -- Uncomment to use treeitter as fold provider, otherwise nvim lsp is used
     -- provider_selector = function(bufnr, filetype, buftype)
@@ -23,16 +50,10 @@ return {
       },
     },
   },
-  init = function()
-    -- vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
-    -- vim.o.foldcolumn = "3" -- '0' is not bad
-    vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-    vim.o.foldlevelstart = 99
-    vim.o.foldenable = true
-  end,
   config = function(_, opts)
     local handler = function(virtText, lnum, endLnum, width, truncate)
       local newVirtText = {}
+
       local totalLines = vim.api.nvim_buf_line_count(0)
       local foldedLines = endLnum - lnum
       local suffix = (" 󰁂 %d %d%%"):format(foldedLines, foldedLines / totalLines * 100)
