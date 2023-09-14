@@ -8,7 +8,9 @@ km.set("n", "<Leader>a", "ggVG<c-$>", { desc = "Select All" })
 km.set("v", "y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
 
 -- undotree
-km.set("n", "<leader>U", ":UndotreeToggle<cr>", { desc = "Undo Tree" })
+-- km.set("n", "<leader>U", ":UndotreeToggle<cr>", { desc = "Undo Tree" })
+vim.api.nvim_set_keymap("n", "<leader>U", ":Telescope undo<cr>", { desc = "Undo Tree" })
+km.set("n", "U", "<C-r>", { desc = "Redo" })
 
 km.set("n", "<leader>uh", function()
   require("telescope").extensions.notify.notify()
@@ -137,3 +139,88 @@ km.set("i", "=", "=<c-g>u")
 km.set("i", "<Space>", "<Space><c-g>u")
 km.set("i", "<CR>", "<c-g>u<CR>")
 km.set("i", ",", ",<c-g>u")
+
+-- Test file navigation
+function GoToUnitTestFile()
+  local current_file = vim.fn.expand("%:p")
+
+  if string.match(current_file, "lib/.*%.rb") then
+    local unit_test_file = string.gsub(current_file, "lib/(.*)%.rb", "spec/unit/%1_spec.rb")
+    vim.cmd("e" .. unit_test_file)
+  elseif string.match(current_file, "spec/integration/.*_spec%.rb") then
+    local unit_test_file = string.gsub(current_file, "spec/integration/(.*)_spec%.rb", "spec/unit/%1_spec.rb")
+    vim.cmd("e" .. unit_test_file)
+  end
+end
+
+function GoToIntegrationTestFile()
+  local current_file = vim.fn.expand("%:p")
+
+  if string.match(current_file, "lib/.*%.rb") then
+    local unit_test_file = string.gsub(current_file, "lib/(.*)%.rb", "spec/integration/%1_spec.rb")
+    vim.cmd("e" .. unit_test_file)
+  elseif string.match(current_file, "spec/unit/.*_spec%.rb") then
+    local integration_test_file = string.gsub(current_file, "spec/unit/(.*)_spec%.rb", "spec/integration/%1_spec.rb")
+    vim.cmd("e" .. integration_test_file)
+  end
+end
+
+function GoToSourceFile()
+  local current_file = vim.fn.expand("%:p")
+
+  if string.match(current_file, "spec/unit/.*_spec%.rb") then
+    local lib_file = string.gsub(current_file, "spec/unit/(.*)_spec%.rb", "lib/%1.rb")
+    vim.cmd("e" .. lib_file)
+  elseif string.match(current_file, "spec/integration/.*_spec%.rb") then
+    local lib_file = string.gsub(current_file, "spec/integration/(.*)_spec%.rb", "lib/%1.rb")
+    vim.cmd("e" .. lib_file)
+  end
+end
+
+function SetSourceFileKeymaps()
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>tu",
+    [[<Cmd> lua GoToUnitTestFile()<CR>]],
+    { desc = "Go to Unit Test File" }
+  )
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>ti",
+    [[<Cmd> lua GoToIntegrationTestFile()<CR>]],
+    { desc = "Go to Integration Test File" }
+  )
+end
+
+function SetUnitTestFileKeymaps()
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tb", [[<Cmd> lua GoToSourceFile()<CR>]], { desc = "Go to Source File" })
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>ti",
+    [[<Cmd> lua GoToIntegrationTestFile()<CR>]],
+    { desc = "Go to Integration Test File" }
+  )
+end
+
+function SetIntegrationTestFileKeymaps()
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tb", [[<Cmd> lua GoToSourceFile()<CR>]], { desc = "Go to Source File" })
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>tu",
+    [[<Cmd> lua GoToUnitTestFile()<CR>]],
+    { desc = "Go to Unit Test File" }
+  )
+end
+
+vim.cmd([[
+  augroup TestNavigationKeymaps
+    autocmd!
+    autocmd BufRead,BufNewFile */lib/**/*.rb :lua SetSourceFileKeymaps()
+    autocmd BufRead,BufNewFile */spec/unit/**/*.rb :lua SetUnitTestFileKeymaps()
+    autocmd BufRead,BufNewFile */spec/integration/**/*.rb :lua SetIntegrationTestFileKeymaps()
+  augroup END
+]])
