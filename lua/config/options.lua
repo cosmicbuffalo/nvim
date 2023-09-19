@@ -3,6 +3,9 @@
 -- Add any additional options here
 
 local opt = vim.opt
+local vg = vim.g
+
+vg.maplocalleader = "_"
 
 opt.softtabstop = 2
 opt.autoindent = true
@@ -31,7 +34,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "FocusGained", "InsertLeave" }, {
   pattern = "*",
   group = relativeNo,
   callback = function()
-    if not vim.g.zen_mode_active then
+    if not vg.zen_mode_active then
       vim.cmd([[set relativenumber]])
     end
   end,
@@ -41,7 +44,7 @@ vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost", "InsertEnter" }, {
   pattern = "*",
   group = relativeNo,
   callback = function()
-    if not vim.g.zen_mode_active then
+    if not vg.zen_mode_active then
       vim.cmd([[set norelativenumber]])
     end
   end,
@@ -73,7 +76,7 @@ vim.api.nvim_set_hl(0, "CmpItemKindProperty", { link = "CmpItemKindKeyword" })
 vim.api.nvim_set_hl(0, "CmpItemKindUnit", { link = "CmpItemKindKeyword" })
 
 -- Disable tmux navigator when zooming the Vim pane
-vim.g.tmux_navigator_disable_when_zoomed = 1
+vg.tmux_navigator_disable_when_zoomed = 1
 
 -- Write all buffers before navigating from vim to tmux pane
-vim.g.tmux_navigator_save_on_switch = 2
+vg.tmux_navigator_save_on_switch = 2

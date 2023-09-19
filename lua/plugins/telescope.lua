@@ -15,7 +15,7 @@ return {
           require("telescope").load_extension("frecency")
         end,
         dependencies = {
-          "kkharji/sqlite.nvim",
+          "kkharji/sqlite.lua",
         },
       },
     },

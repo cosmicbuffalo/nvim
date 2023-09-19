@@ -134,6 +134,18 @@ end
 
 vim.api.nvim_set_keymap("i", "<Tab>", [[<Cmd>lua SmartTab()<CR>]], { noremap = true, silent = true })
 
+-- text wrapping hacks
+km.set("n", "<localleader>[", [[ciw[<c-r>"]<esc>]], { desc = "Wrap word in []" })
+km.set("v", "<localleader>[", [[c[<c-r>"]<esc>]], { desc = "Wrap selection in []" })
+km.set("n", "<localleader>(", [[ciw(<c-r>")<esc>]], { desc = "Wrap word in ()" })
+km.set("v", "<localleader>(", [[c(<c-r>")<esc>]], { desc = "Wrap selection in ()" })
+km.set("n", "<localleader>{", [[ciw{<c-r>"}<esc>]], { desc = "Wrap word in {}" })
+km.set("v", "<localleader>{", [[c{<c-r>"}<esc>]], { desc = "Wrap selection in {}" })
+km.set("n", "<localleader>'", [[ciw'<c-r>"'<esc>]], { desc = "Wrap word in ''" })
+km.set("v", "<localleader>'", [[c'<c-r>"'<esc>]], { desc = "Wrap selection in ''" })
+km.set("n", '<localleader>"', [[ciw"<c-r>""<esc>]], { desc = 'Wrap word in ""' })
+km.set("v", '<localleader>"', [[c"<c-r>"<esc>]], { desc = 'Wrap selection in ""' })
+
 -- more granular undo break points
 km.set("i", "=", "=<c-g>u")
 km.set("i", "<Space>", "<Space><c-g>u")
@@ -224,3 +236,65 @@ vim.cmd([[
     autocmd BufRead,BufNewFile */spec/integration/**/*.rb :lua SetIntegrationTestFileKeymaps()
   augroup END
 ]])
+
+-- "Multiple Cursors"
+-- http://www.kevinli.co/posts/2017-01-19-multiple-cursors-in-500-bytes-of-vimscript/
+-- https://github.com/akinsho/dotfiles/blob/45c4c17084d0aa572e52cc177ac5b9d6db1585ae/.config/nvim/plugin/mappings.lua#L298
+--
+-- -- Functions for multiple cursors
+vim.g.mc = vim.api.nvim_replace_termcodes([[y/\V<C-r>=escape(@", '/')<CR><CR>]], true, true, true)
+
+function SetupMultipleCursors()
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<Enter>",
+    [[:nnoremap <lt>Enter> n@z<CR>q:<C-u>let @z=strpart(@z,0,strlen(@z)-1)<CR>n@z]],
+    { silent = true }
+  )
+end
+
+-- 1. Position the cursor anywhere in the word you wish to change;
+-- 2. Or, visually make a selection;
+-- 3. Hit cn, type the new word, then go back to Normal mode;
+-- 4. Hit `.` n-1 times, where n is the number of replacements.
+
+km.set("n", "cn", "*``cgn", { desc = "Initiate multiple cursors" })
+km.set(
+  "v",
+  "cn",
+  [[g:mc . "``cgn"]],
+  { desc = "Initiate multiple cursors", expr = true, noremap = true, silent = true }
+)
+km.set("n", "cN", "*``cgN", { desc = "Initiate multiple cursors (in backwards direction)" })
+km.set(
+  "v",
+  "cN",
+  [[g:mc . "``cgN"]],
+  { desc = "Initiate multiple cursors (in backwards direction)", expr = true, noremap = true, silent = true }
+)
+
+-- 1. Position the cursor over a word; alternatively, make a selection.
+-- 2. Hit cq to start recording the macro.
+-- 3. Once you are done with the macro, go back to normal mode.
+-- 4. Hit Enter to repeat the macro over search matches.
+
+km.set("n", "cq", [[:\<C-u>call v:lua.SetupMultipleCursors()<CR>*``qz]], { desc = "Initiate multiple cursor macro" })
+km.set(
+  "v",
+  "cq",
+  [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . g:mc . "``qz"]],
+  { desc = "Initiate multiple cursor macro", expr = true, noremap = true, silent = true }
+)
+km.set(
+  "n",
+  "cQ",
+  [[:\<C-u>call v:lua.SetupMultipleCursors()<CR>#``qz]],
+  { desc = "Initiate multiple cursor macro (backwards)" }
+)
+km.set(
+  "v",
+  "cQ",
+  [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . substitute(g:mc, '/', '?', 'g') . "``qz"]],
+  { desc = "Initiate multiple cursor macro (backwards)", expr = true, noremap = true, silent = true }
+)
