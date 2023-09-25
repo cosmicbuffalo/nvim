@@ -1,5 +1,5 @@
 return {
-  { "martinsione/darkplus.nvim" },
+  { "cosmicbuffalo/darkplus.nvim" },
   {
     "LazyVim/LazyVim",
     opts = {

@@ -298,3 +298,6 @@ km.set(
   [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . substitute(g:mc, '/', '?', 'g') . "``qz"]],
   { desc = "Initiate multiple cursor macro (backwards)", expr = true, noremap = true, silent = true }
 )
+
+km.set("n", "<leader>cR", "<Cmd>LspRestart<CR>", { desc = "Restart LSP" })
+km.set("n", "<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })

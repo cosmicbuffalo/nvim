@@ -7,7 +7,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   callback = function()
     vim.cmd([[%s/\s\+$//e]])
   end,
-  pattern = "*"
+  pattern = "*",
 })
 
 -- Set wrap for telescope previews
@@ -16,4 +16,20 @@ vim.api.nvim_create_autocmd("User", {
     vim.opt_local.wrap = true
   end,
   pattern = "TelescopePreviewerLoaded",
+})
+
+tint_group = vim.api.nvim_create_augroup("dimming", { clear = true })
+vim.api.nvim_create_autocmd("FocusGained", {
+  group = tint_group,
+  pattern = "*",
+  callback = function()
+    require("tint").untint(vim.api.nvim_get_current_win())
+  end,
+})
+vim.api.nvim_create_autocmd("FocusLost", {
+  group = tint_group,
+  pattern = "*",
+  callback = function()
+    require("tint").tint(vim.api.nvim_get_current_win())
+  end,
 })
