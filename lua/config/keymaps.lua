@@ -44,6 +44,12 @@ km.set(
   { desc = "Search + replace under cursor" }
 )
 
+-- km.set("n", "<leader>e", function()
+--   require("neo-tree.command").execute({ toggle = true, dir = require("lazyvim.util").get_root() })
+--   require("edgy").toggle()
+-- end, { desc = "Toggle Sidebar" })
+
+
 function StartFindAndReplaceSelection()
   -- Yank the current selection
   vim.cmd([[normal! gvy]])
@@ -133,6 +139,8 @@ function SmartTab()
 end
 
 vim.api.nvim_set_keymap("i", "<Tab>", [[<Cmd>lua SmartTab()<CR>]], { noremap = true, silent = true })
+-- alt delete in insert mode deletes words
+vim.api.nvim_set_keymap("i", "<M-BS>", "<C-W>", { noremap = true, silent = true })
 
 -- text wrapping hacks
 km.set("n", "<localleader>[", [[ciw[<c-r>"]<esc>]], { desc = "Wrap word in []" })
