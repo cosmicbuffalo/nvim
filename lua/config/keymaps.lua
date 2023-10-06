@@ -312,6 +312,25 @@ km.set("n", "<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
 
 local Util = require("lazyvim.util")
 
+function isValidFilePath(path)
+  -- Check for characters not allowed in a file path
+  if path:match("[<>:\"|?*]") then
+    return false
+  end
+
+  -- Check for the presence of at least one '/' or one '.'
+  if not (path:match("[/]") or path:match("[.]")) then
+    return false
+  end
+
+  -- Check for an absolute path (starting with a slash) or a relative path (not containing any illegal characters)
+  if path:match("^/") or path:match("^[a-zA-Z0-9_/\\%.%-%s]+$") then
+    return true
+  end
+
+  return false
+end
+
 function LazygitEdit(original_buffer)
   -- git current terminal channel
   local bufnr = vim.fn.bufnr("%")
@@ -322,17 +341,13 @@ function LazygitEdit(original_buffer)
     return
   end
 
-  local existing_reg_contents = vim.fn.getreg("+")
-  print("existing: " .. existing_reg_contents)
   -- Use <c-o> to copy the relative file path to the system clipboard in Lazygit
   vim.fn.chansend(channel_id, "\15") -- \15 is <c-o>
   -- Give some time for the copy operation to complete
   vim.cmd("sleep 200m")
-  print("new: ".. vim.fn.getreg("+"))
-  print("existing: " .. existing_reg_contents)
-  if existing_reg_contents == vim.fn.getreg("+") then
-    -- clipboard contents did not change
-    -- could not copy to clipboard, most likely because lazygit is not in the files list
+
+  if not isValidFilePath(vim.fn.getreg("+")) then
+    print("Invalid file path copied to clipboard")
     return
   end
 
@@ -367,7 +382,7 @@ function StartLazygit()
   local float_term = Util.float_term({ "lazygit" }, { cwd = Util.get_root(), esc_esc = false, ctrl_hjkl = false })
   local created_buffer = float_term.buf
   -- set the custom keymap for "e" within it
-  vim.api.nvim_buf_set_keymap(created_buffer, "t", "e", string.format([[<Cmd>lua LazygitEdit(%d)<CR>]], current_buffer), { noremap = true, silent = true })
+  vim.api.nvim_buf_set_keymap(created_buffer, "t", "<c-e>", string.format([[<Cmd>lua LazygitEdit(%d)<CR>]], current_buffer), { noremap = true, silent = true })
 end
 
 vim.api.nvim_set_keymap("n", "<leader>gg", [[<Cmd>lua StartLazygit()<CR>]], { noremap = true, silent = true, desc={ "Lazygit (root dir)" } })
