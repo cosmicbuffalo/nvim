@@ -9,15 +9,15 @@ return {
           require("telescope").load_extension("undo")
         end,
       },
-      {
-        "nvim-telescope/telescope-frecency.nvim",
-        config = function()
-          require("telescope").load_extension("frecency")
-        end,
-        dependencies = {
-          "kkharji/sqlite.lua",
-        },
-      },
+      -- {
+      --   "nvim-telescope/telescope-frecency.nvim",
+      --   config = function()
+      --     require("telescope").load_extension("frecency")
+      --   end,
+      --   dependencies = {
+      --     "kkharji/sqlite.lua",
+      --   },
+      -- },
     },
     keys = {
       -- add a keymap to browse plugin files
@@ -29,16 +29,31 @@ return {
         desc = "Find Plugin File",
       },
       {
-        "<leader><leader>",
+        "<leader>fb",
         function()
-          require("telescope").extensions.frecency.frecency({
-            prompt_title = "Recent Files",
-            workspace = "CWD",
-            sorter = require("telescope.sorters").fuzzy_with_index_bias({}),
+          require("telescope.builtin").buffers({
+            attach_mappings = function(prompt_bufnr, map)
+              local actions = require('telescope.actions')
+              map("n", "<c-x>", actions.delete_buffer)
+              map("i", "<c-x>", actions.delete_buffer)
+              return true
+            end
           })
         end,
-        desc = "Find Recent Files",
-      },
+        desc = "Buffers"
+
+      }
+      -- {
+      --   "<leader><leader>",
+      --   function()
+      --     require("telescope").extensions.frecency.frecency({
+      --       prompt_title = "Recent Files",
+      --       workspace = "CWD",
+      --       sorter = require("telescope.sorters").fuzzy_with_index_bias({}),
+      --     })
+      --   end,
+      --   desc = "Find Recent Files",
+      -- },
     },
   },
 }

@@ -17,10 +17,10 @@ km.set("n", "<leader>uh", function()
 end, { desc = "Notification History" })
 
 -- tmux
-km.set("n", "<C-h>", ":TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left" })
-km.set("n", "<C-j>", ":TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down" })
-km.set("n", "<C-k>", ":TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up" })
-km.set("n", "<C-l>", ":TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right" })
+km.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left" })
+km.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down" })
+km.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up" })
+km.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right" })
 
 -- cursor position hacks
 km.set("n", "J", "mzJ`z", { desc = "Join Lines" })
@@ -112,6 +112,8 @@ end, { desc = "Go to next reference" })
 km.set("n", "<C-p>", function()
   require("illuminate").goto_prev_reference()
 end, { desc = "Go to previous reference" })
+
+km.set("v", "<leader>d", [["_d]], { desc = "Delete selection" })
 
 -- always insert at the correct indentation when inserting on a blank line
 function SmartInsert()
