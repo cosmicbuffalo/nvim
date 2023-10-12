@@ -6,7 +6,7 @@ local opt = vim.opt
 local vg = vim.g
 
 vg.maplocalleader = "_"
-
+vg.autoformat = false
 opt.softtabstop = 2
 opt.autoindent = true
 -- opt.swapfile = false
