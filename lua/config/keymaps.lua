@@ -311,6 +311,7 @@ km.set(
 
 km.set("n", "<leader>cR", "<Cmd>LspRestart<CR>", { desc = "Restart LSP" })
 km.set("n", "<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
+km.set("n", "<leader>ub", function() require('dropbar.api').pick() end, { desc = "Dropbar" })
 
 local Util = require("lazyvim.util")
 
@@ -387,4 +388,4 @@ function StartLazygit()
   vim.api.nvim_buf_set_keymap(created_buffer, "t", "<c-e>", string.format([[<Cmd>lua LazygitEdit(%d)<CR>]], current_buffer), { noremap = true, silent = true })
 end
 
-vim.api.nvim_set_keymap("n", "<leader>gg", [[<Cmd>lua StartLazygit()<CR>]], { noremap = true, silent = true, desc={ "Lazygit (root dir)" } })
+vim.api.nvim_set_keymap("n", "<leader>gg", [[<Cmd>lua StartLazygit()<CR>]], { noremap = true, silent = true, desc= "Lazygit (root dir)"  })

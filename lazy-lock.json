@@ -15,6 +15,7 @@
   "darkplus.nvim": { "branch": "main", "commit": "97a1d54348c10b804cd30cede5d88aec47aaeded" },
   "dashboard-nvim": { "branch": "master", "commit": "8721edccead31c07c2cda0bc5ac75b0491b5adcd" },
   "dressing.nvim": { "branch": "master", "commit": "1f2d1206a03bd3add8aedf6251e4534611de577f" },
+  "dropbar.nvim": { "branch": "master", "commit": "79309dccd5e5b94f9ddf5ee8587691d2bfea2858" },
   "flash.nvim": { "branch": "main", "commit": "6d76c5dee65181ab55cbdfb0760260e800d643f4" },
   "friendly-snippets": { "branch": "main", "commit": "43727c2ff84240e55d4069ec3e6158d74cb534b6" },
   "gitlinker.nvim": { "branch": "master", "commit": "cc59f732f3d043b626c8702cb725c82e54d35c25" },

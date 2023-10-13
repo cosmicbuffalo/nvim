@@ -7,6 +7,9 @@ local vg = vim.g
 
 vg.maplocalleader = "_"
 vg.autoformat = false
+vg.mouse = "a"
+vg.mousemoveevent = true
+vg.navic_silence = true
 opt.softtabstop = 2
 opt.autoindent = true
 -- opt.swapfile = false
