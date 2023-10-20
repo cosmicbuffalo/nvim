@@ -1,10 +1,14 @@
 return {
-  { "nvim-neotest/neotest-plenary" },
-  -- { "nvim-neotest/neotest-rspec" },
   {
     "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "antoinemadec/FixCursorHold.nvim",
+      "olimorris/neotest-rspec",
+    },
     opts = {
-      adapters = { "neotest-plenary", "neotest-rspec" },
+      adapters = { "neotest-rspec" },
     },
   },
 }

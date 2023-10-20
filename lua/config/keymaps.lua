@@ -311,13 +311,15 @@ km.set(
 
 km.set("n", "<leader>cR", "<Cmd>LspRestart<CR>", { desc = "Restart LSP" })
 km.set("n", "<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
-km.set("n", "<leader>ub", function() require('dropbar.api').pick() end, { desc = "Dropbar" })
+km.set("n", "<leader>ub", function()
+  require("dropbar.api").pick()
+end, { desc = "Dropbar" })
 
 local Util = require("lazyvim.util")
 
 function isValidFilePath(path)
   -- Check for characters not allowed in a file path
-  if path:match("[<>:\"|?*]") then
+  if path:match('[<>:"|?*]') then
     return false
   end
 
@@ -382,10 +384,22 @@ end
 -- Start Lazygit
 function StartLazygit()
   local current_buffer = vim.api.nvim_get_current_buf()
-  local float_term = Util.float_term({ "lazygit" }, { cwd = Util.get_root(), esc_esc = false, ctrl_hjkl = false })
+  local float_term = Util.terminal.open({ "lazygit" }, { cwd = Util.root.get(), esc_esc = false, ctrl_hjkl = false })
   local created_buffer = float_term.buf
   -- set the custom keymap for "e" within it
-  vim.api.nvim_buf_set_keymap(created_buffer, "t", "<c-e>", string.format([[<Cmd>lua LazygitEdit(%d)<CR>]], current_buffer), { noremap = true, silent = true })
+  vim.api.nvim_buf_set_keymap(
+    created_buffer,
+    "t",
+    "<c-e>",
+    string.format([[<Cmd>lua LazygitEdit(%d)<CR>]], current_buffer),
+    { noremap = true, silent = true }
+  )
 end
 
-vim.api.nvim_set_keymap("n", "<leader>gg", [[<Cmd>lua StartLazygit()<CR>]], { noremap = true, silent = true, desc= "Lazygit (root dir)"  })
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>gg",
+  [[<Cmd>lua StartLazygit()<CR>]],
+  { noremap = true, silent = true, desc = "Lazygit (root dir)" }
+)
+

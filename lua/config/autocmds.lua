@@ -33,3 +33,16 @@ vim.api.nvim_create_autocmd("FocusLost", {
     require("tint").tint(vim.api.nvim_get_current_win())
   end,
 })
+local baleia = require("baleia").setup({})
+vim.api.nvim_create_autocmd("BufReadPost", {
+  pattern = 'Trouble',
+  callback = function()
+    local bufnr = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
+    baleia.once(bufnr)
+    vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+
+  end
+})
+
+vim.cmd [[autocmd FileType ruby setlocal indentkeys-=.]]
