@@ -4,12 +4,12 @@
 
 local opt = vim.opt
 local vg = vim.g
-
 vg.maplocalleader = "_"
 vg.autoformat = false
 vg.mouse = "a"
 vg.mousemoveevent = true
 vg.navic_silence = true
+-- vg.minipairs_disable = true
 opt.softtabstop = 2
 opt.autoindent = true
 -- opt.swapfile = false
