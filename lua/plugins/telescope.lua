@@ -33,9 +33,32 @@ return {
         function()
           require("telescope.builtin").buffers({
             attach_mappings = function(prompt_bufnr, map)
-              local actions = require('telescope.actions')
-              map("n", "<c-x>", actions.delete_buffer)
-              map("i", "<c-x>", actions.delete_buffer)
+              local action_state = require "telescope.actions.state"
+              local bd = require("mini.bufremove").delete
+              local delete_buffer = function()
+                local current_picker = action_state.get_current_picker(prompt_bufnr)
+                current_picker:delete_selection(function(selection)
+                  local bufnr = selection.bufnr
+                  local force = vim.api.nvim_buf_get_option(bufnr, "buftype") == "terminal"
+                  if force then
+                    return pcall(vim.api.nvim_buf_delete, bufnr, { force = force })
+                  elseif vim.fn.getbufvar(bufnr, "&modified") == 1 then
+                    local choice = vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname(bufnr)), "&Yes\n&No\n&Cancel")
+                    if choice == 1 then -- Yes
+                      vim.api.nvim_buf_call(bufnr, function()
+                        vim.cmd("write")
+                      end)
+                      return bd(bufnr)
+                    elseif choice == 2 then -- No
+                      return bd(bufnr, true)
+                    end
+                  else
+                    return bd(bufnr)
+                  end
+                end)
+              end
+              map("n", "<c-x>", delete_buffer)
+              map("i", "<c-x>", delete_buffer)
               return true
             end
           })

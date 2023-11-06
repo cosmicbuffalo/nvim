@@ -24,8 +24,8 @@ km.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right
 
 -- cursor position hacks
 km.set("n", "J", "mzJ`z", { desc = "Join Lines" })
-km.set("n", "<C-d>", "<C-d>zt^", { desc = "Scroll Down" })
-km.set("n", "<C-u>", "<C-u>zt^", { desc = "Scroll Up" })
+km.set("n", "<C-d>", "<C-d>zz^", { desc = "Scroll Down" })
+km.set("n", "<C-u>", "<C-u>zz^", { desc = "Scroll Up" })
 km.set("n", "n", "nzzzv", { desc = "Next Search" })
 km.set("n", "N", "Nzzzv", { desc = "Previous Search" })
 
