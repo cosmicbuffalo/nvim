@@ -9,6 +9,12 @@ return {
           require("telescope").load_extension("undo")
         end,
       },
+      {
+        "jemag/telescope-diff.nvim",
+        config = function()
+          require("telescope").load_extension("diff")
+        end,
+      },
       -- {
       --   "nvim-telescope/telescope-frecency.nvim",
       --   config = function()
@@ -64,8 +70,15 @@ return {
           })
         end,
         desc = "Buffers"
-
+      },
+      {
+        "<leader>fd",
+        function()
+          require('telescope').extensions.diff.diff_current({ hidden = true })
+        end,
+        desc = "Diff with current file"
       }
+
       -- {
       --   "<leader><leader>",
       --   function()

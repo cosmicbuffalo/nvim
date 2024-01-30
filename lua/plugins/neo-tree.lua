@@ -3,6 +3,25 @@ return {
   {
     'nvim-neo-tree/neo-tree.nvim',
     opts = {
+      commands = {
+        open_in_finder = function(state)
+
+          local node = state.tree:get_node()
+          if node then
+            if node.type == "message" then
+              return
+            end
+
+            local path = node:get_id()
+            if node.type == "directory" then
+              vim.cmd('silent !open ' .. vim.fn.shellescape(path))
+            elseif node.type == "file" then
+              vim.cmd('silent !open -R ' .. vim.fn.shellescape(path))
+            end
+
+          end
+        end
+      },
       buffers = {
         commands = {
           buffer_delete = function(state)
@@ -31,7 +50,12 @@ return {
               local refresh = require("neo-tree.utils").wrap(manager.refresh, "buffers")
               refresh()
             end
-          end
+          end,
+        }
+      },
+      window = {
+        mappings = {
+          ["O"] = "open_in_finder",
         }
       }
     }

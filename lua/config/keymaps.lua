@@ -2,7 +2,6 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 local km = vim.keymap
-
 km.set("n", "<Leader>a", "ggVG<c-$>", { desc = "Select All" })
 
 km.set("v", "y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
@@ -21,6 +20,8 @@ km.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left" 
 km.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down" })
 km.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up" })
 km.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right" })
+
+km.set("n", "<leader>nc",":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer"})
 
 -- cursor position hacks
 km.set("n", "J", "mzJ`z", { desc = "Join Lines" })
@@ -363,7 +364,7 @@ function LazygitEdit(original_buffer)
   local rel_filepath = vim.fn.getreg("+")
 
   -- Combine with the current working directory to get the full path
-  local cwd = Util.get_root()
+  local cwd = Util.root.get()
   local abs_filepath = cwd .. "/" .. rel_filepath
 
   print("Opening " .. abs_filepath)
