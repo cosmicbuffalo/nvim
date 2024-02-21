@@ -1,6 +1,7 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    -- enabled = false,
     opts = {
       ensure_installed = {
         "ruby",
@@ -20,6 +21,7 @@ return {
   },
   {
     "nvim-treesitter/nvim-treesitter-context",
+    -- enabled = false,
     config = function()
       require("treesitter-context").setup({
         max_lines = 6,
@@ -30,8 +32,13 @@ return {
   },
   {
     "nvim-treesitter/nvim-treesitter-textobjects",
+    -- enabled = false,
     determines = {
       "nvim-treesitter/nvim-treesitter",
     },
   },
+  {
+    "windwp/nvim-ts-autotag",
+    -- enabled = false,
+  }
 }

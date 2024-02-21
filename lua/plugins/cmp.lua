@@ -1,6 +1,7 @@
 return {
   {
     "L3MON4D3/LuaSnip",
+    -- enabled = false,
     keys = function()
       return {}
     end,
@@ -8,6 +9,7 @@ return {
   {
     "hrsh7th/nvim-cmp",
     version = false, -- last release is way too old
+    -- enabled = false,
     event = "InsertEnter",
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
