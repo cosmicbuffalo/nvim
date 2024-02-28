@@ -3,6 +3,7 @@ return {
     "nvim-treesitter/nvim-treesitter",
     -- enabled = false,
     opts = {
+      autotag = { enable = true },
       ensure_installed = {
         "ruby",
         "bash",
@@ -16,6 +17,24 @@ return {
         "regex",
         "tsx",
         "yaml",
+      },
+      textobjects = {
+        select = {
+          enable = true,
+          keymaps = {
+            ["ac"] = { query = "@class.outer", desc = "Select around class" },
+            ["ic"] = { query = "@class.inner", desc = "Select inside class" },
+            ["af"] = { query = "@function.outer", desc = "Select around function" },
+            ["if"] = { query = "@function.inner", desc = "Select inside function" },
+            ["al"] = { query = "@loop.outer", desc = "Select around loop" },
+            ["il"] = { query = "@loop.inner", desc = "Select inside loop" },
+            ["ab"] = { query = "@block.outer", desc = "Select around block" },
+            ["ib"] = { query = "@block.inner", desc = "Select inside block" },
+          },
+          selection_modes = {
+            ['@class.outer'] = "V"
+          }
+        },
       },
     },
   },
@@ -40,5 +59,5 @@ return {
   {
     "windwp/nvim-ts-autotag",
     -- enabled = false,
-  }
+  },
 }

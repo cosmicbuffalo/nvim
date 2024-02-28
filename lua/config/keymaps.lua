@@ -156,6 +156,8 @@ km.set("n", "<localleader>'", [[ciw'<c-r>"'<esc>]], { desc = "Wrap word in ''" }
 km.set("v", "<localleader>'", [[c'<c-r>"'<esc>]], { desc = "Wrap selection in ''" })
 km.set("n", '<localleader>"', [[ciw"<c-r>""<esc>]], { desc = 'Wrap word in ""' })
 km.set("v", '<localleader>"', [[c"<c-r>"<esc>]], { desc = 'Wrap selection in ""' })
+km.set("n", '<localleader>`', [[ciw`<c-r>"`<esc>]], { desc = 'Wrap word in ``' })
+km.set("v", '<localleader>`', [[c`<c-r>"`<esc>]], { desc = 'Wrap selection in ``' })
 
 -- more granular undo break points
 km.set("i", "=", "=<c-g>u")

@@ -35,6 +35,14 @@ return {
         desc = "Find Plugin File",
       },
       {
+        "<leader>fh",
+        function()
+          require("telescope.builtin").help_tags()
+        end,
+        desc = "Find help tags",
+        silent = true,
+      },
+      {
         "<leader>fb",
         function()
           require("telescope.builtin").buffers({
@@ -91,5 +99,46 @@ return {
       --   desc = "Find Recent Files",
       -- },
     },
+    config = function(opts)
+      require("telescope").setup({
+        defaults = {
+          path_display = function(opts, path)
+            local file = require("telescope.utils").path_tail(path)
+            local path_without_file = path:gsub(file .. "$", ""):gsub("^/Users/[^/]+/", "~/")
+            if string.find(path_without_file, "^app/") or string.find(path_without_file, "^config/") then
+              return string.format("%s (%s)", file, path_without_file:gsub("/$", ""))
+            else
+              local dir = require("telescope.utils").path_tail(path_without_file:gsub("/$", ""))
+              if dir == "" or dir == file then
+                return string.format("%s", file)
+              end
+
+              -- local git_dir = vim.fn.finddir(".git", ".;")
+              -- if git_dir and #git_dir > 0 then
+              --   local rel_path = path:sub(#git_dir):gsub(dir .. "/" .. file .. "$", "")
+              --   return string.format("%s/%s (.%s)", dir, file, rel_path)
+              -- end
+
+              -- local rel_path = path:sub(#cwd):gsub(dir .. "/" .. file .. "$", "")
+              local rel_path = path_without_file:gsub(dir .. "/$", "")
+              if rel_path == "" then
+                return string.format("%s/%s", dir, file)
+              end
+              return string.format("%s/%s (%s)", dir, file, rel_path:gsub("/$", ""))
+            end
+          end,
+          mappings = {
+            i = {
+              ["<C-Down>"] = require('telescope.actions').cycle_history_next,
+              ["<C-Up>"] = require('telescope.actions').cycle_history_prev,
+            },
+            n = {
+              ["<C-Down>"] = require('telescope.actions').cycle_history_next,
+              ["<C-Up>"] = require('telescope.actions').cycle_history_prev,
+            },
+          }
+        }
+      })
+    end
   },
 }

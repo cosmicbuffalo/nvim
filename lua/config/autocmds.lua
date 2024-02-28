@@ -1,9 +1,10 @@
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 -- Add any additional autocmds here
-
+local augroup = vim.api.nvim_create_augroup
+local autocmd = vim.api.nvim_create_autocmd
 -- Remove trailing whitespace on save
-vim.api.nvim_create_autocmd("BufWritePre", {
+autocmd("BufWritePre", {
   callback = function()
     vim.cmd([[%s/\s\+$//e]])
   end,
@@ -11,22 +12,22 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 -- Set wrap for telescope previews
-vim.api.nvim_create_autocmd("User", {
+autocmd("User", {
   callback = function()
     vim.opt_local.wrap = true
   end,
   pattern = "TelescopePreviewerLoaded",
 })
 
-tint_group = vim.api.nvim_create_augroup("dimming", { clear = true })
-vim.api.nvim_create_autocmd("FocusGained", {
+tint_group = augroup("dimming", { clear = true })
+autocmd("FocusGained", {
   group = tint_group,
   pattern = "*",
   callback = function()
     require("tint").untint(vim.api.nvim_get_current_win())
   end,
 })
-vim.api.nvim_create_autocmd("FocusLost", {
+autocmd("FocusLost", {
   group = tint_group,
   pattern = "*",
   callback = function()
@@ -34,7 +35,7 @@ vim.api.nvim_create_autocmd("FocusLost", {
   end,
 })
 local baleia = require("baleia").setup({})
-vim.api.nvim_create_autocmd("BufReadPost", {
+autocmd("BufReadPost", {
   pattern = 'Trouble',
   callback = function()
     local bufnr = vim.api.nvim_get_current_buf()
@@ -46,3 +47,23 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 vim.cmd [[autocmd FileType ruby setlocal indentkeys-=.]]
+
+-- Opens non-text files in the default program instead of in Neovim
+local openFile = augroup("openFile", {})
+autocmd("BufReadPost", {
+  pattern = {
+    "*.jpeg",
+    "*.jpg",
+    "*.pdf",
+    "*.png",
+  },
+  callback = function()
+    vim.fn.jobstart('open "' .. vim.fn.expand("%") .. '"', {
+      detach = true,
+    })
+    local bd = require("mini.bufremove").delete
+    bd(0)
+    -- vim.api.nvim_buf_delete(0, {})
+  end,
+  group = openFile,
+})
