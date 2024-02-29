@@ -7,6 +7,9 @@ return {
         search = {
           enabled = false,
         },
+        char = {
+          enabled = false,
+        }
         -- treesitter = {
         --   -- labels = "neiotsrahdcmglpufbjywxzq",
         -- },

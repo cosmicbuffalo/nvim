@@ -116,32 +116,6 @@ end, { desc = "Go to previous reference" })
 
 km.set("v", "<leader>d", [["_d]], { desc = "Delete selection" })
 
--- always insert at the correct indentation when inserting on a blank line
-function SmartInsert()
-  local line = vim.fn.getline(".")
-  if string.match(line, "^%s*$") then
-    vim.api.nvim_feedkeys("_ddko", "t", false)
-  else
-    -- Regular behavior for 'i'
-    vim.api.nvim_feedkeys("i", "n", false)
-  end
-end
-
-vim.api.nvim_set_keymap("n", "i", [[<Cmd>lua SmartInsert()<CR>]], { noremap = true, silent = true })
-
-function SmartTab()
-  local line = vim.fn.getline(".")
-  if string.match(line, "^%s*$") then -- TODO: make this allow tabs after first tab on an otherwise all whitespace line
-    local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
-    vim.api.nvim_feedkeys(esc, "n", false)
-    vim.api.nvim_feedkeys("_ddko", "t", false)
-  else
-    local tab = vim.api.nvim_replace_termcodes("<Tab>", true, false, true)
-    vim.api.nvim_feedkeys(tab, "n", false)
-  end
-end
-
-vim.api.nvim_set_keymap("i", "<Tab>", [[<Cmd>lua SmartTab()<CR>]], { noremap = true, silent = true })
 -- alt delete in insert mode deletes words
 vim.api.nvim_set_keymap("i", "<M-BS>", "<C-W>", { noremap = true, silent = true })
 
@@ -314,9 +288,9 @@ km.set(
 
 km.set("n", "<leader>cR", "<Cmd>LspRestart<CR>", { desc = "Restart LSP" })
 km.set("n", "<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
-km.set("n", "<leader>ub", function()
-  require("dropbar.api").pick()
-end, { desc = "Dropbar" })
+-- km.set("n", "<leader>ub", function()
+--   require("dropbar.api").pick()
+-- end, { desc = "Dropbar" })
 
 local Util = require("lazyvim.util")
 
@@ -384,12 +358,12 @@ function LazygitEdit(original_buffer)
   vim.cmd("e " .. abs_filepath)
 end
 
--- Start Lazygit
+-- Start Lazygit with custom keymaps
 function StartLazygit()
   local current_buffer = vim.api.nvim_get_current_buf()
   local float_term = Util.terminal.open({ "lazygit" }, { cwd = Util.root.get(), esc_esc = false, ctrl_hjkl = false })
   local created_buffer = float_term.buf
-  -- set the custom keymap for "e" within it
+  -- set the custom keymap for "<c-e>" within it
   vim.api.nvim_buf_set_keymap(
     created_buffer,
     "t",

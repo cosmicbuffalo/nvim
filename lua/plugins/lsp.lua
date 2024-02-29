@@ -1,6 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    -- enabled = false,
     opts = {
       -- this is now done with vim.g.autoformat
       -- autoformat = false, -- Disable autoformat by default
