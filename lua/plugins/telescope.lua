@@ -102,6 +102,23 @@ return {
     config = function(opts)
       require("telescope").setup({
         defaults = {
+          -- border = false,
+          -- borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+          borderchars =    { "▄", "▌",  "",  "▐",  "▗", "▖", "",  "" },
+          borderchars =    { "▄", "",  "",  "▐",  "▗", "▖", "",  "" },
+          -- borderchars = { "", "", "", "", "", "", "", "" },
+          layout_strategy = "flex",
+          layout_config = {
+            height = 0.95,
+            width = 0.95,
+            horizontal = {
+              prompt_position = "top",
+              preview_width = 0.6
+            },
+            vertical = {
+              mirror = false
+            },
+          },
           path_display = function(opts, path)
             local file = require("telescope.utils").path_tail(path)
             local path_without_file = path:gsub(file .. "$", ""):gsub("^/Users/[^/]+/", "~/")
@@ -139,6 +156,30 @@ return {
           }
         }
       })
+      vim.cmd [[
+        highlight TelescopeBorder guifg=#282828
+        highlight TelescopePromptBorder guifg=#282828
+        highlight TelescopeResultsBorder guifg=#282828
+        highlight TelescopePreviewBorder guifg=#282828
+        highlight TelescopePromptTitle guifg=#FFFFFF
+        highlight TelescopeResultsTitle guifg=#FFFFFF
+        highlight TelescopePreviewTitle guifg=#FFFFFF
+        highlight TelescopeSelection guibg=#282828 guifg=#FFD700
+        highlight TelescopeSelectionCaret guifg=#ff5555
+        highlight TelescopeMatching guifg=#0D8Bd6
+      ]]
     end
   },
+  {
+    "stevearc/dressing.nvim",
+    config = function()
+      -- require("dressing").setup({
+      --   select = {
+      --     telescope = {
+      --       borderchars = { "", "", "", "", "", "", "", "" },
+      --     },
+      --   },
+      -- })
+    end,
+  }
 }
