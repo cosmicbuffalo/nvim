@@ -2,13 +2,16 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 local km = vim.keymap
+km.set("i", "hh", "<ESC>", { desc = "Exit insert mode" })
 km.set("n", "<Leader>a", "ggVG<c-$>", { desc = "Select All" })
 
 km.set("v", "y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
 
+km.set("n", "<leader>bq", ":bufdo bd<CR>", { desc = "Close all open buffers" })
+
 -- undotree
--- km.set("n", "<leader>U", ":UndotreeToggle<cr>", { desc = "Undo Tree" })
-vim.api.nvim_set_keymap("n", "<leader>U", ":Telescope undo<cr>", { desc = "Undo Tree" })
+km.set("n", "<leader>U", ":UndotreeToggle<CR>", { desc = "Undo Tree" })
+-- vim.api.nvim_set_keymap("n", "<leader>U", ":Telescope undo<cr>", { desc = "Undo Tree" })
 km.set("n", "U", "<C-r>", { desc = "Redo" })
 
 km.set("n", "<leader>uh", function()
@@ -21,7 +24,9 @@ km.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down" 
 km.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up" })
 km.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right" })
 
-km.set("n", "<leader>nc",":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer"})
+km.set("n", "<leader>nc", ":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer" })
+
+km.set("n", "zh", "zH", { desc = "Half screen to the left" })
 
 -- cursor position hacks
 km.set("n", "J", "mzJ`z", { desc = "Join Lines" })
@@ -45,6 +50,74 @@ km.set(
   [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
   { desc = "Search + replace under cursor" }
 )
+
+local function get_ruby_gems_directory()
+  local command = "gem env gemdir"
+  local handle = io.popen(command, "r") -- Run the command and open for reading
+  if handle == nil then
+    vim.notify("Failed to run command: " .. command)
+    return nil
+  end
+  local gem_dir = handle:read("*a") -- Read the entire output
+  handle:close()
+
+  -- Trim any trailing whitespace or new lines
+  gem_dir = string.gsub(gem_dir, "^%s*(.-)%s*$", "%1")
+
+  if gem_dir == "" then
+    vim.notify("No gems directory found.")
+    return nil
+  end
+
+  return gem_dir .. "/gems"
+end
+
+km.set("n", "<leader>fG", function()
+  local gem_dir = get_ruby_gems_directory()
+  if gem_dir == nil then
+    return nil
+  end
+  require("telescope.builtin").find_files({ cwd = gem_dir })
+end, { desc = "Find Ruby Gem File" })
+
+
+
+-- word motions that ignore underscores with Alt held down
+function CurrentCharIsUnderscore()
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local line = vim.api.nvim_get_current_line()
+  local char = line:sub(col + 1, col + 1)
+  return char == "_"
+end
+function CommandIgnoringUnderscores(cmd)
+  local old_iskeyword = vim.opt.iskeyword:get()
+  vim.opt.iskeyword:remove("_")
+  vim.cmd(cmd)
+  if CurrentCharIsUnderscore() then
+    vim.cmd(cmd)
+  end
+  vim.opt.iskeyword = old_iskeyword
+end
+km.set("n", "<M-w>", ':lua CommandIgnoringUnderscores("normal! w")<CR>', {
+  noremap = true,
+  silent = true,
+  desc = "Next word (ignoring underscores)"
+})
+km.set("n", "<M-b>", ':lua CommandIgnoringUnderscores("normal! b")<CR>', {
+  noremap = true,
+  silent = true,
+  desc = "Previous word (ignoring underscores)"
+})
+km.set("n", "<M-e>", ':lua CommandIgnoringUnderscores("normal! e")<CR>', {
+  noremap = true,
+  silent = true,
+  desc = "End of next word (ignoring underscores)"
+})
+km.set("n", "g<M-e>", ':lua CommandIgnoringUnderscores("normal! ge")<CR>', {
+  noremap = true,
+  silent = true,
+  desc = "End of previous word (ignoring underscores)"
+})
 
 -- km.set("n", "<leader>e", function()
 --   require("neo-tree.command").execute({ toggle = true, dir = require("lazyvim.util").get_root() })
@@ -75,6 +148,67 @@ vim.api.nvim_set_keymap(
   [[:lua StartFindAndReplaceSelection()<CR>]],
   { noremap = true, silent = true, desc = "Search + replace selection" }
 )
+
+function RunRubocopOnSelection()
+  -- Capture the current visual selection
+  local old_reg = vim.fn.getreg('') -- Save the current register
+  vim.cmd('normal! "xy') -- Yank the visual selection into register x
+
+  -- Write the yanked text to a temporary file
+  local temp_file = "/tmp/nvim_rubocop_format_temp.rb"
+  local f = io.open(temp_file, "w")
+  f:write(vim.fn.getreg('x')) -- Write the content of register x
+  f:close()
+
+  -- Format the temporary file with RuboCop
+  os.execute("rubocop -a -c ~/Blitz/.rubocop.yml " .. temp_file .. " > /dev/null 2>&1")
+
+  -- Read the formatted content back
+  f = io.open(temp_file, "r")
+  local formatted_content = f:read("*all")
+  f:close()
+  local lines = {}
+  for line in formatted_content:gmatch("[^\r\n]+") do
+    table.insert(lines, line)
+  end
+  local insert_start_line = vim.fn.line("'<")
+  local insert_end_line = insert_start_line + #lines - 1
+
+  -- Replace the current selection with the formatted content
+  -- - Delete the original selection with _ to avoid changing the default register
+  -- Set a mark 'a' at the start of the original selection to return to it later
+  vim.cmd("normal! gv\"_d`<kma")
+  -- vim.api.nvim_exec("'<,'>delete _", false) -- Delete the selection, avoiding the clipboard
+  vim.api.nvim_put(lines, 'l', true, true) -- 'l' to insert linewise
+
+  -- Auto-indent the inserted lines
+  -- Adjusting to use the calculated range based on actual content inserted
+  -- vim.cmd(insert_start_line .. "," .. insert_end_line .. "normal! =")
+  -- Move to mark 'a', then visually select to the end of the inserted content and indent
+  vim.cmd("normal! `aV`]=j^")
+
+  -- Restore the previous register
+  vim.fn.setreg('', old_reg)
+
+  -- Clean up: Remove the temporary file
+  -- os.remove(temp_file)
+end
+
+function FormatSelection()
+  local current_file = vim.fn.expand("%")
+  if string.match(current_file, "%.rb$") then
+    RunRubocopOnSelection()
+  else
+    vim.lsp.buf.format({
+      async = true,
+      range = {
+        ["start"] = vim.api.nvim_buf_get_mark(0, "<"),
+        ["end"] = vim.api.nvim_buf_get_mark(0, ">"),
+      },
+    })
+  end
+end
+km.set("v", "<leader>cf", function() FormatSelection() end, { desc = "Format selection" })
 
 km.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
 
@@ -130,14 +264,27 @@ km.set("n", "<localleader>'", [[ciw'<c-r>"'<esc>]], { desc = "Wrap word in ''" }
 km.set("v", "<localleader>'", [[c'<c-r>"'<esc>]], { desc = "Wrap selection in ''" })
 km.set("n", '<localleader>"', [[ciw"<c-r>""<esc>]], { desc = 'Wrap word in ""' })
 km.set("v", '<localleader>"', [[c"<c-r>"<esc>]], { desc = 'Wrap selection in ""' })
-km.set("n", '<localleader>`', [[ciw`<c-r>"`<esc>]], { desc = 'Wrap word in ``' })
-km.set("v", '<localleader>`', [[c`<c-r>"`<esc>]], { desc = 'Wrap selection in ``' })
+km.set("n", "<localleader>`", [[ciw`<c-r>"`<esc>]], { desc = "Wrap word in ``" })
+km.set("v", "<localleader>`", [[c`<c-r>"`<esc>]], { desc = "Wrap selection in ``" })
 
 -- more granular undo break points
 km.set("i", "=", "=<c-g>u")
 km.set("i", "<Space>", "<Space><c-g>u")
 km.set("i", "<CR>", "<c-g>u<CR>")
 km.set("i", ",", ",<c-g>u")
+
+km.set("n", "<leader>e", function()
+    local current_file = vim.fn.expand("%:p")
+    vim.notify("current_file" .. current_file)
+    require("neo-tree.command").execute({
+      toggle = true,
+      source = "filesystem",
+      dir = require("lazyvim.util").root(),
+      reveal = current_file,
+    })
+  end,
+  { desc = "Explorer NeoTree (Root Dir)" }
+)
 
 -- Test file navigation
 function GoToUnitTestFile()
@@ -176,6 +323,34 @@ function GoToSourceFile()
   end
 end
 
+function OpenOrCreatePR()
+  -- Get the current branch name
+  local handle = io.popen("git branch --show-current")
+  local branch = handle:read("*a"):gsub("%s+", "")
+  handle:close()
+
+  if branch == "" then
+    print("No active Git branch found.")
+    return
+  end
+
+  -- Check if a PR already exists for the current branch (simplified approach)
+  handle = io.popen("gh pr list --search 'head:" .. branch .. " ' -L 1")
+  local prExists = handle:read("*a") ~= ""
+  handle:close()
+
+  if prExists then
+    -- Navigate to the existing PR in the browser
+    os.execute("gh pr view --web")
+  else
+    -- Open GitHub PR creation page for this branch in the browser
+    os.execute("gh pr create --web")
+  end
+end
+
+-- Setting the keymap in Neovim
+vim.api.nvim_set_keymap('n', '<space>gp', '<cmd>lua OpenOrCreatePR()<CR>', {noremap = true, silent = true, desc = "Open or create PR in browser" })
+
 function CopyRspecContextCommand()
   local current_file = vim.fn.expand("%")
   local context_line = vim.fn.search([[^\s*context]], "bnc")
@@ -201,7 +376,7 @@ function CopyRspecDescribeCommand()
     return
   end
 
-  local describe_command = "rspec " .. current_file .. ":" .. describe_line
+  local describe_command = "rspec " .. current_file .. ":" .. describe_line .. " --fail-fast"
   vim.fn.setreg("+", describe_command)
   vim.notify("RSpec command copied to clipboard: " .. describe_command)
 end
@@ -265,10 +440,34 @@ function SetIntegrationTestFileKeymaps()
 end
 
 function SetRspecFileKeymaps()
-  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tyc", [[<Cmd> lua CopyRspecContextCommand()<CR>]], { desc = "Copy Rspec context command" })
-  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tyd", [[<Cmd> lua CopyRspecDescribeCommand()<CR>]], { desc = "Copy Rspec describe command" })
-  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tyf", [[<Cmd> lua CopyRspecFileCommand()<CR>]], { desc = "Copy Rspec file command" })
-  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tye", [[<Cmd> lua CopyRspecExampleCommand()<CR>]], { desc = "Copy Rspec example command" })
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>tyc",
+    [[<Cmd> lua CopyRspecContextCommand()<CR>]],
+    { desc = "Copy Rspec context command" }
+  )
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>tyd",
+    [[<Cmd> lua CopyRspecDescribeCommand()<CR>]],
+    { desc = "Copy Rspec describe command" }
+  )
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>tyf",
+    [[<Cmd> lua CopyRspecFileCommand()<CR>]],
+    { desc = "Copy Rspec file command" }
+  )
+  vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    "<leader>tye",
+    [[<Cmd> lua CopyRspecExampleCommand()<CR>]],
+    { desc = "Copy Rspec example command" }
+  )
 end
 
 vim.cmd([[
@@ -436,4 +635,3 @@ vim.api.nvim_set_keymap(
   [[<Cmd>lua StartLazygit()<CR>]],
   { noremap = true, silent = true, desc = "Lazygit (root dir)" }
 )
-

@@ -3,6 +3,7 @@ return {
     "nvim-treesitter/nvim-treesitter",
     -- enabled = false,
     opts = {
+      indent = { enable = false },
       autotag = { enable = true },
       ensure_installed = {
         "ruby",

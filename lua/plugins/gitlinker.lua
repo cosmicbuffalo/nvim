@@ -21,6 +21,13 @@ return {
         '<cmd>lua require"gitlinker".get_buf_range_url("v", {action_callback = require"gitlinker.actions".open_in_browser})<cr>',
         { desc = "Open in GitHub" }
       )
+      -- not actually a gitlinker feature but included in here since it's similar
+      vim.keymap.set(
+        "n",
+        "<leader>gp",
+        function() vim.fn.system('zsh -ic "pr"') end,
+        { desc = "Create or open PR in GitHub" }
+      )
     end,
   },
 }

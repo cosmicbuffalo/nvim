@@ -3,6 +3,9 @@ return {
   {
     'nvim-neo-tree/neo-tree.nvim',
     opts = {
+      source_selector = {
+        winbar = true
+      },
       commands = {
         open_in_finder = function(state)
 
@@ -56,6 +59,13 @@ return {
       window = {
         mappings = {
           ["O"] = "open_in_finder",
+        }
+      },
+      filesystem = {
+        filtered_items = {
+          visible = true,
+          hide_dotfiles = false,
+          hide_gitignored = false,
         }
       }
     }

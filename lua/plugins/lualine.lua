@@ -6,6 +6,18 @@ return {
       local icons = require("lazyvim.config").icons
       local Util = require("lazyvim.util").ui
 
+      local function wordcount()
+        return tostring(vim.fn.wordcount().words) .. " words"
+      end
+
+      local function readingtime()
+        return tostring(math.ceil(vim.fn.wordcount().words / 200.0)) .. " min"
+      end
+
+      local function is_markdown()
+        return vim.bo.filetype == "markdown" or vim.bo.filetype == "asciidoc"
+      end
+
       return {
         options = {
           theme = "auto",
@@ -67,6 +79,8 @@ return {
           lualine_y = {
             { "progress", separator = " ", padding = { left = 1, right = 0 } },
             { "location", padding = { left = 0, right = 1 } },
+            { wordcount, cond = is_markdown },
+            { readingtime, cond = is_markdown }
           },
           lualine_z = {
             function()

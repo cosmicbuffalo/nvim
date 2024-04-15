@@ -4,6 +4,10 @@
 
 local opt = vim.opt
 local vg = vim.g
+
+vim.diagnostic.disable() -- disable diagnostics by default
+
+opt.shell = "/bin/zsh"
 vg.maplocalleader = "_"
 vg.autoformat = false
 vg.mouse = "a"
@@ -12,6 +16,7 @@ vg.navic_silence = true
 -- vg.minipairs_disable = true
 opt.softtabstop = 2
 opt.autoindent = true
+-- opt.smartindent = false
 -- opt.swapfile = false
 opt.backup = false
 opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
