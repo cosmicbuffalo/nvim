@@ -18,6 +18,14 @@ km.set("n", "<leader>uh", function()
   require("telescope").extensions.notify.notify()
 end, { desc = "Notification History" })
 
+-- flash
+km.set({ "n", "x", "o" }, "gh", function()
+  require("flash").jump()
+end, { desc = "Flash" })
+km.set({ "n", "x", "o" }, "gH", function()
+  require("flash").treesitter()
+end, { desc = "Flash Treesitter"})
+
 -- tmux
 km.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left" })
 km.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down" })
@@ -37,7 +45,7 @@ km.set("n", "N", "Nzzzv", { desc = "Previous Search" })
 
 --
 -- greatest remap ever
-km.set("x", "<leader>p", [["_dP]], { desc = "Paste over selection" })
+-- km.set("x", "<leader>p", [["_dP]], { desc = "Paste over selection" }) -- Use s instead
 
 -- next greatest remap ever : asbjornHaland
 km.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
@@ -275,7 +283,7 @@ km.set("i", ",", ",<c-g>u")
 
 km.set("n", "<leader>e", function()
     local current_file = vim.fn.expand("%:p")
-    vim.notify("current_file" .. current_file)
+    -- vim.notify("current_file" .. current_file)
     require("neo-tree.command").execute({
       toggle = true,
       source = "filesystem",

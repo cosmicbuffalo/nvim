@@ -50,6 +50,11 @@ return {
           lualine_x = {
             -- stylua: ignore
             {
+              require("noice").api.statusline.mode.get,
+              cond = require("noice").api.statusline.mode.has,
+              color = Util.fg("Statement"),
+            },
+            {
               function() return require("noice").api.status.command.get() end,
               cond = function() return package.loaded["noice"] and require("noice").api.status.command.has() end,
               color = Util.fg("Statement"),

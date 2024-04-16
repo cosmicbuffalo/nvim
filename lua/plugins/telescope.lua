@@ -5,6 +5,12 @@ return {
       "nvim-lua/plenary.nvim",
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
       {
+        "nvim-telescope/telescope-ui-select.nvim",
+        config = function()
+          require("telescope").load_extension("ui-select")
+        end,
+      },
+      {
         "debugloop/telescope-undo.nvim",
         config = function()
           require("telescope").load_extension("undo")
@@ -171,6 +177,11 @@ return {
               ["<C-Down>"] = require("telescope.actions").cycle_history_next,
               ["<C-Up>"] = require("telescope.actions").cycle_history_prev,
             },
+          },
+        },
+        extensions = {
+          ["ui-select"] = {
+            require("telescope.themes").get_dropdown({}),
           },
         },
       })
