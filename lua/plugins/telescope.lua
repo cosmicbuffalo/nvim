@@ -5,6 +5,12 @@ return {
       "nvim-lua/plenary.nvim",
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
       {
+        "nvim-telescope/telescope-live-grep-args.nvim",
+        config = function()
+          require("telescope").load_extension("live_grep_args")
+        end,
+      },
+      {
         "nvim-telescope/telescope-ui-select.nvim",
         config = function()
           require("telescope").load_extension("ui-select")
@@ -42,12 +48,59 @@ return {
         desc = "Find Plugin File",
       },
       {
+        "<leader>fG",
+        function()
+          local function get_ruby_gems_directory()
+            local command = "gem env gemdir"
+            local handle = io.popen(command, "r") -- Run the command and open for reading
+            if handle == nil then
+              vim.notify("Failed to run command: " .. command)
+              return nil
+            end
+            local gem_dir = handle:read("*a") -- Read the entire output
+            handle:close()
+
+            -- Trim any trailing whitespace or new lines
+            gem_dir = string.gsub(gem_dir, "^%s*(.-)%s*$", "%1")
+
+            if gem_dir == "" then
+              vim.notify("No gems directory found.")
+              return nil
+            end
+
+            return gem_dir .. "/gems"
+          end
+          local gem_dir = get_ruby_gems_directory()
+          if gem_dir == nil then
+            vim.notify("Failed to find Ruby gems directory.")
+          end
+          require("telescope.builtin").find_files({ cwd = gem_dir })
+        end,
+        desc = "Find Ruby Gem File",
+      },
+      {
         "<leader>fh",
         function()
           require("telescope.builtin").help_tags()
         end,
         desc = "Find help tags",
         silent = true,
+      },
+      {
+        "<leader>fF",
+        function()
+          require("telescope.builtin").find_files({
+            find_command = {
+              "rg",
+              "--files",
+              "--hidden",
+              "--no-ignore",
+              "-g",
+              "!{.git,node_modules,redux_devtools,tmp,vendor}",
+            },
+          })
+        end,
+        desc = "Find Files (cwd)",
       },
       {
         "<leader>fb",
@@ -94,6 +147,28 @@ return {
         end,
         desc = "Diff with current file",
       },
+      {
+        "<leader>sg",
+        function()
+          require("telescope").extensions.live_grep_args.live_grep_args({ cwd = require("lazyvim.util").root() })
+        end,
+        desc = "Grep (args)",
+      },
+      {
+        "<leader>sw",
+        function()
+          require("telescope-live-grep-args.shortcuts").grep_word_under_cursor()
+        end,
+        desc = "Grep word under cursor (args)",
+      },
+      {
+        "<leader>sw",
+        function()
+          require("telescope-live-grep-args.shortcuts").grep_visual_selection()
+        end,
+        mode = "v",
+        desc = "Grep selection (args)",
+      },
 
       -- {
       --   "<leader><leader>",
@@ -124,6 +199,7 @@ return {
           :gsub("artisan_contractors", "arc")
           :gsub("builders_risk", "bldr")
       end
+      local lga_actions = require("telescope-live-grep-args.actions")
       require("telescope").setup({
         defaults = {
           -- border = false,
@@ -182,6 +258,16 @@ return {
         extensions = {
           ["ui-select"] = {
             require("telescope.themes").get_dropdown({}),
+          },
+
+          live_grep_args = {
+            auto_quoting = true,
+            mappings = {
+              i = {
+                ["<C-k>"] = lga_actions.quote_prompt(),
+                ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+              },
+            },
           },
         },
       })

@@ -2,7 +2,6 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 local km = vim.keymap
-km.set("i", "hh", "<ESC>", { desc = "Exit insert mode" })
 km.set("n", "<Leader>a", "ggVG<c-$>", { desc = "Select All" })
 
 km.set("v", "y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
@@ -24,13 +23,13 @@ km.set({ "n", "x", "o" }, "gh", function()
 end, { desc = "Flash" })
 km.set({ "n", "x", "o" }, "gH", function()
   require("flash").treesitter()
-end, { desc = "Flash Treesitter"})
+end, { desc = "Flash Treesitter" })
 
 -- tmux
-km.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left" })
+km.set({ "n", "i", "x", "o" }, "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left" })
 km.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down" })
 km.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up" })
-km.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right" })
+km.set({ "n", "i", "x", "o" }, "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right" })
 
 km.set("n", "<leader>nc", ":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer" })
 
@@ -59,73 +58,45 @@ km.set(
   { desc = "Search + replace under cursor" }
 )
 
-local function get_ruby_gems_directory()
-  local command = "gem env gemdir"
-  local handle = io.popen(command, "r") -- Run the command and open for reading
-  if handle == nil then
-    vim.notify("Failed to run command: " .. command)
-    return nil
-  end
-  local gem_dir = handle:read("*a") -- Read the entire output
-  handle:close()
-
-  -- Trim any trailing whitespace or new lines
-  gem_dir = string.gsub(gem_dir, "^%s*(.-)%s*$", "%1")
-
-  if gem_dir == "" then
-    vim.notify("No gems directory found.")
-    return nil
-  end
-
-  return gem_dir .. "/gems"
-end
-
-km.set("n", "<leader>fG", function()
-  local gem_dir = get_ruby_gems_directory()
-  if gem_dir == nil then
-    return nil
-  end
-  require("telescope.builtin").find_files({ cwd = gem_dir })
-end, { desc = "Find Ruby Gem File" })
-
 
 
 -- word motions that ignore underscores with Alt held down
-function CurrentCharIsUnderscore()
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-  local line = vim.api.nvim_get_current_line()
-  local char = line:sub(col + 1, col + 1)
-  return char == "_"
-end
-function CommandIgnoringUnderscores(cmd)
-  local old_iskeyword = vim.opt.iskeyword:get()
-  vim.opt.iskeyword:remove("_")
-  vim.cmd(cmd)
-  if CurrentCharIsUnderscore() then
-    vim.cmd(cmd)
-  end
-  vim.opt.iskeyword = old_iskeyword
-end
-km.set("n", "<M-w>", ':lua CommandIgnoringUnderscores("normal! w")<CR>', {
-  noremap = true,
-  silent = true,
-  desc = "Next word (ignoring underscores)"
-})
-km.set("n", "<M-b>", ':lua CommandIgnoringUnderscores("normal! b")<CR>', {
-  noremap = true,
-  silent = true,
-  desc = "Previous word (ignoring underscores)"
-})
-km.set("n", "<M-e>", ':lua CommandIgnoringUnderscores("normal! e")<CR>', {
-  noremap = true,
-  silent = true,
-  desc = "End of next word (ignoring underscores)"
-})
-km.set("n", "g<M-e>", ':lua CommandIgnoringUnderscores("normal! ge")<CR>', {
-  noremap = true,
-  silent = true,
-  desc = "End of previous word (ignoring underscores)"
-})
+-- replaced all these with the spider plugin
+-- function CurrentCharIsUnderscore()
+--   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+--   local line = vim.api.nvim_get_current_line()
+--   local char = line:sub(col + 1, col + 1)
+--   return char == "_"
+-- end
+-- function CommandIgnoringUnderscores(cmd)
+--   local old_iskeyword = vim.opt.iskeyword:get()
+--   vim.opt.iskeyword:remove("_")
+--   vim.cmd(cmd)
+--   if CurrentCharIsUnderscore() then
+--     vim.cmd(cmd)
+--   end
+--   vim.opt.iskeyword = old_iskeyword
+-- end
+-- km.set("n", "<M-w>", ':lua CommandIgnoringUnderscores("normal! w")<CR>', {
+--   noremap = true,
+--   silent = true,
+--   desc = "Next word (ignoring underscores)",
+-- })
+-- km.set("n", "<M-b>", ':lua CommandIgnoringUnderscores("normal! b")<CR>', {
+--   noremap = true,
+--   silent = true,
+--   desc = "Previous word (ignoring underscores)",
+-- })
+-- km.set("n", "<M-e>", ':lua CommandIgnoringUnderscores("normal! e")<CR>', {
+--   noremap = true,
+--   silent = true,
+--   desc = "End of next word (ignoring underscores)",
+-- })
+-- km.set("n", "g<M-e>", ':lua CommandIgnoringUnderscores("normal! ge")<CR>', {
+--   noremap = true,
+--   silent = true,
+--   desc = "End of previous word (ignoring underscores)",
+-- })
 
 -- km.set("n", "<leader>e", function()
 --   require("neo-tree.command").execute({ toggle = true, dir = require("lazyvim.util").get_root() })
@@ -159,13 +130,13 @@ vim.api.nvim_set_keymap(
 
 function RunRubocopOnSelection()
   -- Capture the current visual selection
-  local old_reg = vim.fn.getreg('') -- Save the current register
+  local old_reg = vim.fn.getreg("") -- Save the current register
   vim.cmd('normal! "xy') -- Yank the visual selection into register x
 
   -- Write the yanked text to a temporary file
   local temp_file = "/tmp/nvim_rubocop_format_temp.rb"
   local f = io.open(temp_file, "w")
-  f:write(vim.fn.getreg('x')) -- Write the content of register x
+  f:write(vim.fn.getreg("x")) -- Write the content of register x
   f:close()
 
   -- Format the temporary file with RuboCop
@@ -185,9 +156,9 @@ function RunRubocopOnSelection()
   -- Replace the current selection with the formatted content
   -- - Delete the original selection with _ to avoid changing the default register
   -- Set a mark 'a' at the start of the original selection to return to it later
-  vim.cmd("normal! gv\"_d`<kma")
+  vim.cmd('normal! gv"_d`<kma')
   -- vim.api.nvim_exec("'<,'>delete _", false) -- Delete the selection, avoiding the clipboard
-  vim.api.nvim_put(lines, 'l', true, true) -- 'l' to insert linewise
+  vim.api.nvim_put(lines, "l", true, true) -- 'l' to insert linewise
 
   -- Auto-indent the inserted lines
   -- Adjusting to use the calculated range based on actual content inserted
@@ -196,7 +167,7 @@ function RunRubocopOnSelection()
   vim.cmd("normal! `aV`]=j^")
 
   -- Restore the previous register
-  vim.fn.setreg('', old_reg)
+  vim.fn.setreg("", old_reg)
 
   -- Clean up: Remove the temporary file
   -- os.remove(temp_file)
@@ -216,7 +187,9 @@ function FormatSelection()
     })
   end
 end
-km.set("v", "<leader>cf", function() FormatSelection() end, { desc = "Format selection" })
+km.set("v", "<leader>cf", function()
+  FormatSelection()
+end, { desc = "Format selection" })
 
 km.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
 
@@ -235,19 +208,6 @@ function CopyRelativePath()
   os.execute("echo '" .. relative_path .. "\\c' | pbcopy")
 end
 
-km.set("n", "<leader>fF", function()
-  require("telescope.builtin").find_files({
-    find_command = {
-      "rg",
-      "--files",
-      "--hidden",
-      "--no-ignore",
-      "-g",
-      "!{.git,node_modules,redux_devtools,tmp,vendor}",
-    },
-  })
-end, { desc = "Find Files (cwd)" })
-
 km.set("n", "<C-n>", function()
   require("illuminate").goto_next_reference()
 end, { desc = "Go to next reference" })
@@ -262,18 +222,19 @@ km.set("v", "<leader>d", [["_d]], { desc = "Delete selection" })
 vim.api.nvim_set_keymap("i", "<M-BS>", "<C-W>", { noremap = true, silent = true })
 
 -- text wrapping hacks
-km.set("n", "<localleader>[", [[ciw[<c-r>"]<esc>]], { desc = "Wrap word in []" })
-km.set("v", "<localleader>[", [[c[<c-r>"]<esc>]], { desc = "Wrap selection in []" })
-km.set("n", "<localleader>(", [[ciw(<c-r>")<esc>]], { desc = "Wrap word in ()" })
-km.set("v", "<localleader>(", [[c(<c-r>")<esc>]], { desc = "Wrap selection in ()" })
-km.set("n", "<localleader>{", [[ciw{<c-r>"}<esc>]], { desc = "Wrap word in {}" })
-km.set("v", "<localleader>{", [[c{<c-r>"}<esc>]], { desc = "Wrap selection in {}" })
-km.set("n", "<localleader>'", [[ciw'<c-r>"'<esc>]], { desc = "Wrap word in ''" })
-km.set("v", "<localleader>'", [[c'<c-r>"'<esc>]], { desc = "Wrap selection in ''" })
-km.set("n", '<localleader>"', [[ciw"<c-r>""<esc>]], { desc = 'Wrap word in ""' })
-km.set("v", '<localleader>"', [[c"<c-r>"<esc>]], { desc = 'Wrap selection in ""' })
-km.set("n", "<localleader>`", [[ciw`<c-r>"`<esc>]], { desc = "Wrap word in ``" })
-km.set("v", "<localleader>`", [[c`<c-r>"`<esc>]], { desc = "Wrap selection in ``" })
+-- replaced with surround plugin
+-- km.set("n", "<localleader>[", [[ciw[<c-r>"]<esc>]], { desc = "Wrap word in []" })
+-- km.set("v", "<localleader>[", [[c[<c-r>"]<esc>]], { desc = "Wrap selection in []" })
+-- km.set("n", "<localleader>(", [[ciw(<c-r>")<esc>]], { desc = "Wrap word in ()" })
+-- km.set("v", "<localleader>(", [[c(<c-r>")<esc>]], { desc = "Wrap selection in ()" })
+-- km.set("n", "<localleader>{", [[ciw{<c-r>"}<esc>]], { desc = "Wrap word in {}" })
+-- km.set("v", "<localleader>{", [[c{<c-r>"}<esc>]], { desc = "Wrap selection in {}" })
+-- km.set("n", "<localleader>'", [[ciw'<c-r>"'<esc>]], { desc = "Wrap word in ''" })
+-- km.set("v", "<localleader>'", [[c'<c-r>"'<esc>]], { desc = "Wrap selection in ''" })
+-- km.set("n", '<localleader>"', [[ciw"<c-r>""<esc>]], { desc = 'Wrap word in ""' })
+-- km.set("v", '<localleader>"', [[c"<c-r>"<esc>]], { desc = 'Wrap selection in ""' })
+-- km.set("n", "<localleader>`", [[ciw`<c-r>"`<esc>]], { desc = "Wrap word in ``" })
+-- km.set("v", "<localleader>`", [[c`<c-r>"`<esc>]], { desc = "Wrap selection in ``" })
 
 -- more granular undo break points
 km.set("i", "=", "=<c-g>u")
@@ -282,52 +243,68 @@ km.set("i", "<CR>", "<c-g>u<CR>")
 km.set("i", ",", ",<c-g>u")
 
 km.set("n", "<leader>e", function()
-    local current_file = vim.fn.expand("%:p")
-    -- vim.notify("current_file" .. current_file)
-    require("neo-tree.command").execute({
-      toggle = true,
-      source = "filesystem",
-      dir = require("lazyvim.util").root(),
-      reveal = current_file,
-    })
-  end,
-  { desc = "Explorer NeoTree (Root Dir)" }
-)
+  local current_file = vim.fn.expand("%:p")
+  -- vim.notify("current_file" .. current_file)
+  require("neo-tree.command").execute({
+    toggle = true,
+    source = "filesystem",
+    dir = require("lazyvim.util").root(),
+    reveal = current_file,
+  })
+end, { desc = "Explorer NeoTree (Root Dir)" })
 
 -- Test file navigation
 function GoToUnitTestFile()
   local current_file = vim.fn.expand("%:p")
+  local unit_test_file = nil
 
   if string.match(current_file, "lib/.*%.rb") then
-    local unit_test_file = string.gsub(current_file, "lib/(.*)%.rb", "spec/unit/%1_spec.rb")
-    vim.cmd("e" .. unit_test_file)
+    unit_test_file = string.gsub(current_file, "lib/(.*)%.rb", "spec/unit/%1_spec.rb")
+  elseif string.match(current_file, "app/.*%.rb") then
+    unit_test_file = string.gsub(current_file, "app/(.*)%.rb", "spec/unit/%1_spec.rb")
   elseif string.match(current_file, "spec/integration/.*_spec%.rb") then
-    local unit_test_file = string.gsub(current_file, "spec/integration/(.*)_spec%.rb", "spec/unit/%1_spec.rb")
-    vim.cmd("e" .. unit_test_file)
+    unit_test_file = string.gsub(current_file, "spec/integration/(.*)_spec%.rb", "spec/unit/%1_spec.rb")
   end
+  if io.open(unit_test_file, "r") == nil then
+    vim.notify("No unit test file found, opening new buffer at path")
+  end
+  vim.cmd("e" .. unit_test_file)
 end
 
 function GoToIntegrationTestFile()
   local current_file = vim.fn.expand("%:p")
-
+  local integration_test_file = nil
   if string.match(current_file, "lib/.*%.rb") then
-    local unit_test_file = string.gsub(current_file, "lib/(.*)%.rb", "spec/integration/%1_spec.rb")
-    vim.cmd("e" .. unit_test_file)
+    integration_test_file = string.gsub(current_file, "lib/(.*)%.rb", "spec/integration/%1_spec.rb")
+  elseif string.match(current_file, "app/.*%.rb") then
+    integration_test_file = string.gsub(current_file, "app/(.*)%.rb", "spec/integration/%1_spec.rb")
   elseif string.match(current_file, "spec/unit/.*_spec%.rb") then
-    local integration_test_file = string.gsub(current_file, "spec/unit/(.*)_spec%.rb", "spec/integration/%1_spec.rb")
-    vim.cmd("e" .. integration_test_file)
+    integration_test_file = string.gsub(current_file, "spec/unit/(.*)_spec%.rb", "spec/integration/%1_spec.rb")
   end
+  if io.open(integration_test_file, "r") == nil then
+    vim.notify("No integration test file found, opening new buffer at path")
+  end
+  vim.cmd("e" .. integration_test_file)
 end
 
 function GoToSourceFile()
   local current_file = vim.fn.expand("%:p")
-
+  local lib_file = nil
   if string.match(current_file, "spec/unit/.*_spec%.rb") then
-    local lib_file = string.gsub(current_file, "spec/unit/(.*)_spec%.rb", "lib/%1.rb")
-    vim.cmd("e" .. lib_file)
+    lib_file = string.gsub(current_file, "spec/unit/(.*)_spec%.rb", "lib/%1.rb")
   elseif string.match(current_file, "spec/integration/.*_spec%.rb") then
-    local lib_file = string.gsub(current_file, "spec/integration/(.*)_spec%.rb", "lib/%1.rb")
+    lib_file = string.gsub(current_file, "spec/integration/(.*)_spec%.rb", "lib/%1.rb")
+  else
+    vim.notify("Not a unit or integration test file", "error")
+    return
+  end
+
+  if io.open(lib_file, "r") then
     vim.cmd("e" .. lib_file)
+  elseif io.open(string.gsub(lib_file, "lib/", "app/"), "r") then
+    vim.cmd("e" .. string.gsub(lib_file, "lib/", "app/"))
+  else
+    vim.notify("No source file found.", "error")
   end
 end
 
@@ -357,7 +334,12 @@ function OpenOrCreatePR()
 end
 
 -- Setting the keymap in Neovim
-vim.api.nvim_set_keymap('n', '<space>gp', '<cmd>lua OpenOrCreatePR()<CR>', {noremap = true, silent = true, desc = "Open or create PR in browser" })
+vim.api.nvim_set_keymap(
+  "n",
+  "<space>gp",
+  "<cmd>lua OpenOrCreatePR()<CR>",
+  { noremap = true, silent = true, desc = "Open or create PR in browser" }
+)
 
 function CopyRspecContextCommand()
   local current_file = vim.fn.expand("%")
@@ -482,6 +464,7 @@ vim.cmd([[
   augroup TestNavigationKeymaps
     autocmd!
     autocmd BufRead,BufNewFile */lib/**/*.rb :lua SetSourceFileKeymaps()
+    autocmd BufRead,BufNewFile */app/**/*.rb :lua SetSourceFileKeymaps()
     autocmd BufRead,BufNewFile */spec/unit/**/*.rb :lua SetUnitTestFileKeymaps()
     autocmd BufRead,BufNewFile */spec/integration/**/*.rb :lua SetIntegrationTestFileKeymaps()
     autocmd BufRead,BufNewFile */spec/**/*_spec.rb :lua SetRspecFileKeymaps()
