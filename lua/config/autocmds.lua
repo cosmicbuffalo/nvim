@@ -70,15 +70,15 @@ autocmd("BufReadPost", {
   group = openFile,
 })
 
-autocmd("VimEnter", {
-  pattern = "*",
-  callback = function()
-    vim.defer_fn(function()
-      -- Util.notify("closing neo tree and restoring session")
-      require("neo-tree").close_all()
-      vim.defer_fn(function()
-        require("persistence").load()
-      end, 100)
-    end, 400)
-  end,
-})
+-- autocmd("VimEnter", {
+--   pattern = "*",
+--   callback = function()
+--     vim.defer_fn(function()
+--       -- Util.notify("closing neo tree and restoring session")
+--       require("neo-tree").close_all()
+--       vim.defer_fn(function()
+--         require("persistence").load()
+--       end, 100)
+--     end, 400)
+--   end,
+-- })

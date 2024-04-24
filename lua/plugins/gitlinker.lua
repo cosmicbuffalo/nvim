@@ -25,7 +25,7 @@ return {
       vim.keymap.set(
         "n",
         "<leader>gp",
-        function() vim.fn.system('zsh -ic "pr"') end,
+        ':VimuxRunCommand "pr"<CR>',
         { desc = "Create or open PR in GitHub" }
       )
     end,

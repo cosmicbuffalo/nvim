@@ -4,30 +4,10 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-      {
-        "nvim-telescope/telescope-live-grep-args.nvim",
-        config = function()
-          require("telescope").load_extension("live_grep_args")
-        end,
-      },
-      {
-        "nvim-telescope/telescope-ui-select.nvim",
-        config = function()
-          require("telescope").load_extension("ui-select")
-        end,
-      },
-      {
-        "debugloop/telescope-undo.nvim",
-        config = function()
-          require("telescope").load_extension("undo")
-        end,
-      },
-      {
-        "jemag/telescope-diff.nvim",
-        config = function()
-          require("telescope").load_extension("diff")
-        end,
-      },
+      "nvim-telescope/telescope-live-grep-args.nvim",
+      "nvim-telescope/telescope-ui-select.nvim",
+      "debugloop/telescope-undo.nvim",
+      "jemag/telescope-diff.nvim",
       -- {
       --   "nvim-telescope/telescope-frecency.nvim",
       --   config = function()
@@ -271,6 +251,11 @@ return {
           },
         },
       })
+      require("telescope").load_extension("session-lens")
+      require("telescope").load_extension("live_grep_args")
+      require("telescope").load_extension("diff")
+      require("telescope").load_extension("undo")
+      require("telescope").load_extension("ui-select")
       vim.cmd([[
         highlight TelescopeBorder guifg=#282828
         highlight TelescopePromptBorder guifg=#282828

@@ -29,15 +29,9 @@ return {
           lualine_a = { "mode" },
           lualine_b = { "branch" },
           lualine_c = {
-            {
-              "diagnostics",
-              symbols = {
-                error = icons.diagnostics.Error,
-                warn = icons.diagnostics.Warn,
-                info = icons.diagnostics.Info,
-                hint = icons.diagnostics.Hint,
-              },
-            },
+            -- {
+            --   require('auto-session.lib').current_session_name
+            -- },
             { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
             -- { "filename", path = 1, symbols = { modified = "  ", readonly = "", unnamed = "" } },
             { "filename", path = 4 },
@@ -73,6 +67,16 @@ return {
             },
             { require("lazy.status").updates, cond = require("lazy.status").has_updates, color = Util.fg("Special") },
             {
+              "diagnostics",
+              symbols = {
+                error = icons.diagnostics.Error,
+                warn = icons.diagnostics.Warn,
+                info = icons.diagnostics.Info,
+                hint = icons.diagnostics.Hint,
+              },
+              -- separator = ""
+            },
+            {
               "diff",
               symbols = {
                 added = icons.git.added,
@@ -82,15 +86,15 @@ return {
             },
           },
           lualine_y = {
-            { "progress", separator = " ", padding = { left = 1, right = 0 } },
-            { "location", padding = { left = 0, right = 1 } },
+            { "progress", separator = " ", padding = { left = 1, right = 1 } },
             { wordcount, cond = is_markdown },
             { readingtime, cond = is_markdown }
           },
           lualine_z = {
-            function()
-              return " " .. os.date("%R")
-            end,
+            -- function()
+            --   return " " .. os.date("%R")
+            -- end,
+            { "location", padding = { left = 1, right = 1 } },
           },
         },
         extensions = { "neo-tree", "lazy" },
