@@ -3,7 +3,7 @@
 -- Add any additional keymaps here
 local km = vim.keymap
 km.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
-km.set({ "i", "x", "n", "s" }, "<C-s>", "", { desc = "which_key_ignore" })
+km.set({ "i", "x", "n", "s" }, "<C-s>", "<NOP>", { desc = "which_key_ignore" })
 
 km.set("n", "<Leader>a", "ggVG<c-$>", { desc = "Select All" })
 
@@ -102,7 +102,7 @@ km.set(
 -- })
 
 -- km.set("n", "<leader>e", function()
---   require("neo-tree.command").execute({ toggle = true, dir = require("lazyvim.util").get_root() })
+--   require("neo-tree.command").execute({ toggle = true, dir = LazyVim.get_root() })
 --   require("edgy").toggle()
 -- end, { desc = "Toggle Sidebar" })
 
@@ -251,7 +251,7 @@ km.set("n", "<leader>e", function()
   require("neo-tree.command").execute({
     toggle = true,
     source = "filesystem",
-    dir = require("lazyvim.util").root(),
+    dir = LazyVim.root(),
     reveal = current_file,
   })
 end, { desc = "Explorer NeoTree (Root Dir)" })
@@ -542,7 +542,7 @@ km.set("n", "<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
 --   require("dropbar.api").pick()
 -- end, { desc = "Dropbar" })
 
-local Util = require("lazyvim.util")
+local Util = LazyVim
 
 function isValidFilePath(path)
   -- Check for characters not allowed in a file path
