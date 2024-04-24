@@ -2,6 +2,9 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 local km = vim.keymap
+km.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
+km.set({ "i", "x", "n", "s" }, "<C-s>", "", { desc = "which_key_ignore" })
+
 km.set("n", "<Leader>a", "ggVG<c-$>", { desc = "Select All" })
 
 km.set("v", "y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
