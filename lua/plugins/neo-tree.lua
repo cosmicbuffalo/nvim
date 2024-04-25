@@ -62,13 +62,6 @@ return {
         }
       },
       commands = {
-        -- open_and_close_tree = function(state)
-        --   local cc = require("neo-tree.sources.common.commands")
-        --   local fs = require("neo-tree.sources.filesystem")
-        --   local utils = require("neo-tree.utils")
-        --   cc.open(state, utils.wrap(fs.toggle_directory, state))
-        --   vim.cmd([[Neotree close]])
-        -- end,
         open_in_finder = function(state)
           local node = state.tree:get_node()
           if node then
@@ -119,7 +112,6 @@ return {
       window = {
         mappings = {
           ["<space>"] = "none",
-          -- ["e"] = "open_and_close_tree",
           ["Y"] = {
             function(state)
               local node = state.tree:get_node()
@@ -149,16 +141,6 @@ return {
           expander_highlight = "NeoTreeExpander",
         },
       },
-      -- event_handlers = {
-      --   {
-      --     event = "file_opened",
-      --     handler = function(file_path)
-      --       --auto close
-      --       vim.notify("auto closing neo-tree")
-      --       require("neo-tree.command").execute({ action = "close" })
-      --     end
-      --   },
-      -- }
     },
     config = function(_, opts)
       -- vim.notify("calling neo-tree config")

@@ -5,7 +5,22 @@ return {
 
   -- ui components
   { "MunifTanjim/nui.nvim", lazy = true },
-
+  {
+    "stevearc/dressing.nvim",
+    lazy = true,
+    init = function()
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.ui.select = function(...)
+        require("lazy").load({ plugins = { "dressing.nvim" } })
+        return vim.ui.select(...)
+      end
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.ui.input = function(...)
+        require("lazy").load({ plugins = { "dressing.nvim" } })
+        return vim.ui.input(...)
+      end
+    end,
+  },
   {
     "nvimdev/dashboard-nvim",
     event = "VimEnter",
@@ -37,7 +52,6 @@ return {
             { action = "Telescope oldfiles",                                       desc = " Recent Files",    icon = " ", key = "r" },
             { action = "Telescope live_grep",                                      desc = " Find Text",       icon = " ", key = "g" },
             { action = [[lua LazyVim.telescope.config_files()()]],                 desc = " Config",          icon = " ", key = "c" },
-            -- { action = 'lua require("persistence").load()',                        desc = " Restore Session", icon = " ", key = "s" },
             { action = "LazyExtras",                                               desc = " Lazy Extras",     icon = " ", key = "x" },
             { action = "Lazy",                                                     desc = " Lazy",            icon = "󰒲 ", key = "l" },
             { action = "qa",                                                       desc = " Quit",            icon = " ", key = "q" },

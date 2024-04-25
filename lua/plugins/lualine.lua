@@ -68,11 +68,11 @@ return {
           },
           lualine_x = {
             -- stylua: ignore
-            {
-              require("noice").api.statusline.mode.get,
-              cond = require("noice").api.statusline.mode.has,
-              color = Util.fg("Statement"),
-            },
+            -- {
+            --   require("noice").api.statusline.mode.get,
+            --   cond = require("noice").api.statusline.mode.has,
+            --   color = Util.fg("Statement"),
+            -- },
             -- copilot status
             -- {
             --   function()

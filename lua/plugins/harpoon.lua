@@ -1,4 +1,5 @@
 return {
+  -- quick navigation betweeen files
   {
     "ThePrimeagen/harpoon",
     enabled = true,

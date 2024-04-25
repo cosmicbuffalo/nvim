@@ -61,7 +61,6 @@
   "plenary.nvim": { "branch": "master", "commit": "5129a3693c482fcbc5ab99a7706ffc4360b995a0" },
   "promise-async": { "branch": "main", "commit": "93540c168c5ed2b030ec3e6c40ab8bbb85e36355" },
   "spec-outline.vim": { "branch": "master", "commit": "fe4f6da58a4f5b2168a371ecf4d70904300e0d6a" },
-  "sqlite.lua": { "branch": "master", "commit": "d0ffd703b56d090d213b497ed4eb840495f14a11" },
   "statuscol.nvim": { "branch": "main", "commit": "483b9a596dfd63d541db1aa51ee6ee9a1441c4cc" },
   "substitute.nvim": { "branch": "main", "commit": "17ffaeb5a1dc2dbef39cf0865d8a4b6000836714" },
   "telescope-diff.nvim": { "branch": "master", "commit": "141afaaed3e2dfdb7badad6558cdd682441dfe5f" },

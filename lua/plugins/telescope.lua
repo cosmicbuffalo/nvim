@@ -358,6 +358,7 @@ return {
       require("telescope").load_extension("diff")
       require("telescope").load_extension("undo")
       require("telescope").load_extension("ui-select")
+      require("telescope").load_extension("yank_history")
       vim.cmd([[
         highlight TelescopeBorder guifg=#282828
         highlight TelescopePromptBorder guifg=#282828
@@ -372,18 +373,6 @@ return {
         highlight TelescopeSelectionCaret guibg=#282828 guifg=#FFD700
         highlight TelescopeMatching guifg=#0D8Bd6
       ]])
-    end,
-  },
-  {
-    "stevearc/dressing.nvim",
-    config = function()
-      -- require("dressing").setup({
-      --   select = {
-      --     telescope = {
-      --       borderchars = { "", "", "", "", "", "", "", "" },
-      --     },
-      --   },
-      -- })
     end,
   },
 }

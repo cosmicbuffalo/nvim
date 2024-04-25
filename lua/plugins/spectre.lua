@@ -1,5 +1,4 @@
 return {
-
   -- search/replace in multiple files
   {
     "nvim-pack/nvim-spectre",

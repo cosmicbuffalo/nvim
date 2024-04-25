@@ -1,4 +1,4 @@
-
+-- taken directly from lazyvim's linting.lua
 return {
   {
     "mfussenegger/nvim-lint",

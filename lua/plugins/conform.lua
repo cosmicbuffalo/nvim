@@ -1,3 +1,4 @@
+-- taken from lazyvim's formatting.lua
 local M = {}
 
 ---@param opts ConformOpts

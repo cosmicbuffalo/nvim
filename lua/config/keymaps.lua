@@ -286,38 +286,38 @@ function GoToSourceFile()
   end
 end
 
-function OpenOrCreatePR()
-  -- Get the current branch name
-  local handle = io.popen("git branch --show-current")
-  local branch = handle:read("*a"):gsub("%s+", "")
-  handle:close()
-
-  if branch == "" then
-    print("No active Git branch found.")
-    return
-  end
-
-  -- Check if a PR already exists for the current branch (simplified approach)
-  handle = io.popen("gh pr list --search 'head:" .. branch .. " ' -L 1")
-  local prExists = handle:read("*a") ~= ""
-  handle:close()
-
-  if prExists then
-    -- Navigate to the existing PR in the browser
-    os.execute("gh pr view --web")
-  else
-    -- Open GitHub PR creation page for this branch in the browser
-    os.execute("gh pr create --web")
-  end
-end
+-- function OpenOrCreatePR()
+--   -- Get the current branch name
+--   local handle = io.popen("git branch --show-current")
+--   local branch = handle:read("*a"):gsub("%s+", "")
+--   handle:close()
+--
+--   if branch == "" then
+--     print("No active Git branch found.")
+--     return
+--   end
+--
+--   -- Check if a PR already exists for the current branch (simplified approach)
+--   handle = io.popen("gh pr list --search 'head:" .. branch .. " ' -L 1")
+--   local prExists = handle:read("*a") ~= ""
+--   handle:close()
+--
+--   if prExists then
+--     -- Navigate to the existing PR in the browser
+--     os.execute("gh pr view --web")
+--   else
+--     -- Open GitHub PR creation page for this branch in the browser
+--     os.execute("gh pr create --web")
+--   end
+-- end
 
 -- Setting the keymap in Neovim
-vim.api.nvim_set_keymap(
-  "n",
-  "<space>gp",
-  "<cmd>lua OpenOrCreatePR()<CR>",
-  { noremap = true, silent = true, desc = "Open or create PR in browser" }
-)
+-- vim.api.nvim_set_keymap(
+--   "n",
+--   "<space>gp",
+--   "<cmd>lua OpenOrCreatePR()<CR>",
+--   { noremap = true, silent = true, desc = "Open or create PR in browser" }
+-- )
 
 function CopyRspecContextCommand()
   local current_file = vim.fn.expand("%")

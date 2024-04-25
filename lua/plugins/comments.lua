@@ -7,6 +7,7 @@ return {
       enable_autocmd = false,
     },
   },
+  -- Commenting with gc{motion} and gcc
   {
     "echasnovski/mini.comment",
     event = "VeryLazy",

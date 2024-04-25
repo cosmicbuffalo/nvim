@@ -2,11 +2,9 @@ return {
   -- better yank/paste
   {
     "gbprod/yanky.nvim",
-    dependencies = { "kkharji/sqlite.lua" },
     lazy = false,
     opts = {
       highlight = { timer = 250 },
-      ring = { storage = "sqlite" },
     },
     keys = {
         -- stylua: ignore
