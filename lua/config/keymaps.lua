@@ -224,37 +224,12 @@ km.set("v", "<leader>d", [["_d]], { desc = "Delete selection" })
 -- alt delete in insert mode deletes words
 vim.api.nvim_set_keymap("i", "<M-BS>", "<C-W>", { noremap = true, silent = true })
 
--- text wrapping hacks
--- replaced with surround plugin
--- km.set("n", "<localleader>[", [[ciw[<c-r>"]<esc>]], { desc = "Wrap word in []" })
--- km.set("v", "<localleader>[", [[c[<c-r>"]<esc>]], { desc = "Wrap selection in []" })
--- km.set("n", "<localleader>(", [[ciw(<c-r>")<esc>]], { desc = "Wrap word in ()" })
--- km.set("v", "<localleader>(", [[c(<c-r>")<esc>]], { desc = "Wrap selection in ()" })
--- km.set("n", "<localleader>{", [[ciw{<c-r>"}<esc>]], { desc = "Wrap word in {}" })
--- km.set("v", "<localleader>{", [[c{<c-r>"}<esc>]], { desc = "Wrap selection in {}" })
--- km.set("n", "<localleader>'", [[ciw'<c-r>"'<esc>]], { desc = "Wrap word in ''" })
--- km.set("v", "<localleader>'", [[c'<c-r>"'<esc>]], { desc = "Wrap selection in ''" })
--- km.set("n", '<localleader>"', [[ciw"<c-r>""<esc>]], { desc = 'Wrap word in ""' })
--- km.set("v", '<localleader>"', [[c"<c-r>"<esc>]], { desc = 'Wrap selection in ""' })
--- km.set("n", "<localleader>`", [[ciw`<c-r>"`<esc>]], { desc = "Wrap word in ``" })
--- km.set("v", "<localleader>`", [[c`<c-r>"`<esc>]], { desc = "Wrap selection in ``" })
 
 -- more granular undo break points
 km.set("i", "=", "=<c-g>u")
 km.set("i", "<Space>", "<Space><c-g>u")
 km.set("i", "<CR>", "<c-g>u<CR>")
 km.set("i", ",", ",<c-g>u")
-
-km.set("n", "<leader>e", function()
-  local current_file = vim.fn.expand("%:p")
-  -- vim.notify("current_file" .. current_file)
-  require("neo-tree.command").execute({
-    toggle = true,
-    source = "filesystem",
-    dir = LazyVim.root(),
-    reveal = current_file,
-  })
-end, { desc = "Explorer NeoTree (Root Dir)" })
 
 -- Test file navigation
 function GoToUnitTestFile()

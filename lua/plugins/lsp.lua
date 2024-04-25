@@ -154,7 +154,13 @@ return {
 
       -- `/` cmdline setup.
       cmp.setup.cmdline("/", {
-        mapping = cmp.mapping.preset.cmdline(),
+        mapping = cmp.mapping.preset.cmdline({
+          -- custom mappings
+          ["<M-n>"] = { c = cmp.mapping.select_next_item(cmp_select) },
+          ["<M-e>"] = { c = cmp.mapping.select_prev_item(cmp_select) },
+          ["<M-i>"] = { c = cmp.mapping.confirm({ select = true }) },
+          ["<M-o>"] = { c = cmp.mapping.abort() },
+        }),
         sources = {
           { name = "buffer" },
         },
@@ -162,7 +168,15 @@ return {
 
       -- `:` cmdline setup.
       cmp.setup.cmdline(":", {
-        mapping = cmp.mapping.preset.cmdline(),
+        mapping = cmp.mapping.preset.cmdline({
+          -- custom mappings
+          ["<M-n>"] = { c = cmp.mapping.select_next_item(cmp_select) },
+          ["<M-e>"] = { c = cmp.mapping.select_prev_item(cmp_select) },
+          ["<M-i>"] = { c = cmp.mapping.confirm({ select = true }) },
+          ["<M-o>"] = { c = cmp.mapping.abort() },
+          ["<M-p>"] = { c = cmp.mapping.scroll_docs(-4) },
+          ["<M-f>"] = { c = cmp.mapping.scroll_docs(4) },
+        }),
         sources = cmp.config.sources({
           { name = "path" },
         }, {
@@ -192,7 +206,7 @@ return {
           -- default mappings
           ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
           ["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
-          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          -- ["<CR>"] = cmp.mapping.confirm({ select = true }),
           ["<C-Space>"] = cmp.mapping.complete(),
           -- custom mappings
           ["<M-n>"] = cmp.mapping.select_next_item(cmp_select),

@@ -1,30 +1,5 @@
 return {
 
-  -- {
-  --   "nvim-neo-tree/neo-tree.nvim",
-  --   init = function()
-  --     if vim.fn.argc(-1) == 1 then
-  --       local stat = vim.uv.fs_stat(vim.fn.argv(0))
-  --       if stat and stat.type == "directory" then
-  --         require("neo-tree")
-  --       end
-  --     end
-  --   end,
-  --   opts = {
-  --     window = {
-  --       mappings = {
-  --         ["O"] = {
-  --           function(state)
-  --             require("lazy.util").open(state.tree:get_node().path, { system = true })
-  --           end,
-  --           desc = "Open with System Application",
-  --         },
-  --       },
-  --     },
-  --   },
-  --
-  -- },
-
   {
     'nvim-neo-tree/neo-tree.nvim',
     branch = "v3.x",
@@ -33,7 +8,14 @@ return {
       {
         "<leader>fe",
         function()
-          require("neo-tree.command").execute({ toggle = true, dir = LazyVim.root() })
+          local current_file = vim.fn.expand("%:p")
+          -- vim.notify("current_file" .. current_file)
+          require("neo-tree.command").execute({
+            toggle = true,
+            source = "filesystem",
+            dir = LazyVim.root(),
+            reveal = current_file,
+          })
         end,
         desc = "Explorer NeoTree (Root Dir)",
       },
@@ -65,14 +47,29 @@ return {
       vim.cmd([[Neotree close]])
     end,
     opts = {
-      sources = { "filesystem", "buffers", "git_status", "document_symbols" },
+      sources = { "filesystem", "buffers", "git_status" },
+      auto_clean_after_session_restore = true, -- Automatically clean up broken neo-tree buffers saved in sessions
+      -- hide_root_node = true,
       open_files_do_not_replace_types = { "terminal", "Trouble", "trouble", "qf", "Outline" },
       source_selector = {
-        winbar = true
+        winbar = true,
+        -- statusline = true,
+        sources = {
+          { source = "filesystem" },
+          { source = "buffers" },
+          { source = "git_status" },
+          -- { source = "document_symbols" }
+        }
       },
       commands = {
+        -- open_and_close_tree = function(state)
+        --   local cc = require("neo-tree.sources.common.commands")
+        --   local fs = require("neo-tree.sources.filesystem")
+        --   local utils = require("neo-tree.utils")
+        --   cc.open(state, utils.wrap(fs.toggle_directory, state))
+        --   vim.cmd([[Neotree close]])
+        -- end,
         open_in_finder = function(state)
-
           local node = state.tree:get_node()
           if node then
             if node.type == "message" then
@@ -85,7 +82,6 @@ return {
             elseif node.type == "file" then
               vim.cmd('silent !open -R ' .. vim.fn.shellescape(path))
             end
-
           end
         end
       },
@@ -123,6 +119,7 @@ return {
       window = {
         mappings = {
           ["<space>"] = "none",
+          -- ["e"] = "open_and_close_tree",
           ["Y"] = {
             function(state)
               local node = state.tree:get_node()
@@ -152,8 +149,19 @@ return {
           expander_highlight = "NeoTreeExpander",
         },
       },
+      -- event_handlers = {
+      --   {
+      --     event = "file_opened",
+      --     handler = function(file_path)
+      --       --auto close
+      --       vim.notify("auto closing neo-tree")
+      --       require("neo-tree.command").execute({ action = "close" })
+      --     end
+      --   },
+      -- }
     },
     config = function(_, opts)
+      -- vim.notify("calling neo-tree config")
       local function on_move(data)
         LazyVim.lsp.on_rename(data.source, data.destination)
       end
@@ -161,10 +169,18 @@ return {
       local events = require("neo-tree.events")
       opts.event_handlers = opts.event_handlers or {}
       vim.list_extend(opts.event_handlers, {
-        { event = events.FILE_MOVED, handler = on_move },
+        { event = events.FILE_MOVED,   handler = on_move },
         { event = events.FILE_RENAMED, handler = on_move },
+        {
+          event = events.FILE_OPENED,
+          handler = function(data)
+            -- vim.notify("auto closing neo-tree")
+            require("neo-tree.command").execute({ action = "close" })
+          end
+        }
       })
       require("neo-tree").setup(opts)
+
       vim.api.nvim_create_autocmd("TermClose", {
         pattern = "*lazygit",
         callback = function()

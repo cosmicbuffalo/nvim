@@ -52,7 +52,7 @@ return {
     ---@diagnostic disable-next-line: missing-fields
     opts = {
       highlight = { enable = true },
-      indent = { enable = true },
+      indent = { enable = false },
       autotag = { enable = true },
       ensure_installed = {
         "ruby",

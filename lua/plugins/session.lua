@@ -1,19 +1,4 @@
 return {
-  -- Session management. This saves your session in the background,
-  -- keeping track of open buffers, window arrangement, and more.
-  -- You can restore sessions when returning through the dashboard.
-  {
-    "folke/persistence.nvim",
-    enabled = false,
-    event = "BufReadPre",
-    opts = { options = vim.opt.sessionoptions:get() },
-    -- stylua: ignore
-    keys = {
-      -- { "<leader>qs", function() require("persistence").load() end, desc = "Restore Session" },
-      { "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
-      { "<leader>qd", function() require("persistence").stop() end, desc = "Don't Save Current Session" },
-    },
-  },
   {
     "rmagatti/auto-session",
     -- enabled = false,
@@ -32,11 +17,23 @@ return {
         post_cwd_changed_hook = function()
           require("lualine").refresh() -- refresh lualine so the new session name is displayed in the status bar
         end,
+        pre_save_cmds = {
+          function()
+            vim.cmd([[Neotree close]])
+          end
+        },
+        post_restore_cmds = {
+          function()
+            vim.cmd([[Neotree close]])
+          end
+        },
       })
-      vim.keymap.set("n", "<leader>qs", require("auto-session.session-lens").search_session, {
-        noremap = true,
-        desc = "Sessions",
-      })
+      -- stylua: ignore
+      vim.keymap.set("n", "<leader>qS", require("auto-session.session-lens").search_session, { noremap = true, desc = "Session List" })
+      vim.keymap.set("n", "<leader>qs", ":SessionSave<cr>", { noremap = true, desc = "Save Session", })
+      vim.keymap.set("n", "<leader>qd", ":SessionDelete<cr>", { noremap = true, desc = "Delete Session", })
+      vim.keymap.set("n", "<leader>qr", ":SessionRestore<cr>", { noremap = true, desc = "Restore Session", })
+      vim.keymap.set("n", "<leader>qp", ":SessionPurgeOrphaned<cr>", { noremap = true, desc = "Purge Orphaned Sessions", })
     end,
   },
 }

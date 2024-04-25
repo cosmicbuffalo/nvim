@@ -6,7 +6,7 @@ local opt = vim.opt
 local vg = vim.g
 
 vim.diagnostic.disable() -- disable diagnostics by default
-vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,options,localoptions"
 
 opt.shell = "/bin/zsh"
 vg.maplocalleader = "_"

@@ -1,18 +1,5 @@
 return {
   {
-    "nvim-neotest/neotest",
-    enabled = false,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-      "antoinemadec/FixCursorHold.nvim",
-      "olimorris/neotest-rspec",
-    },
-    opts = {
-      adapters = { "neotest-rspec" },
-    },
-  },
-  {
     "emilsoman/spec-outline.vim",
     config = function()
       vim.g.spec_outline_orientation = "right"
