@@ -203,11 +203,20 @@ return {
           ["<M-o>"] = cmp.mapping.abort(),
           ["<M-p>"] = cmp.mapping.scroll_docs(-4),
           ["<M-f>"] = cmp.mapping.scroll_docs(4),
+          -- override mappings
           ["<Right>"] = cmp.mapping(function(fallback)
             cmp.close()
             fallback()
           end, { "i" }),
           ["<Left>"] = cmp.mapping(function(fallback)
+            cmp.close()
+            fallback()
+          end, { "i" }),
+          ["<Down>"] = cmp.mapping(function(fallback)
+            cmp.close()
+            fallback()
+          end, { "i" }),
+          ["<Up>"] = cmp.mapping(function(fallback)
             cmp.close()
             fallback()
           end, { "i" }),

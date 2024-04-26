@@ -2,7 +2,7 @@ return {
   -- better yank/paste
   {
     "gbprod/yanky.nvim",
-    -- lazy = false,
+    lazy = false,
     dependencies = not LazyVim.is_win() and { "kkharji/sqlite.lua" } or {},
     opts = {
       ring = { storage = LazyVim.is_win() and "shada" or "sqlite" },
