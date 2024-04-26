@@ -2,12 +2,13 @@ return {
   -- better yank/paste
   {
     "gbprod/yanky.nvim",
-    lazy = false,
+    -- lazy = false,
+    dependencies = not LazyVim.is_win() and { "kkharji/sqlite.lua" } or {},
     opts = {
-      highlight = { timer = 250 },
+      ring = { storage = LazyVim.is_win() and "shada" or "sqlite" },
     },
     keys = {
-        -- stylua: ignore
+      -- stylua: ignore
       { "<leader>p", function() require("telescope").extensions.yank_history.yank_history({ }) end, desc = "Open Yank History" },
       { "y", "<Plug>(YankyYank)", mode = { "n", "x" }, desc = "Yank Text" },
       { "p", "<Plug>(YankyPutAfter)", mode = { "n", "x" }, desc = "Put Yanked Text After Cursor" },
@@ -27,5 +28,9 @@ return {
       { "=p", "<Plug>(YankyPutAfterFilter)", desc = "Put After Applying a Filter" },
       { "=P", "<Plug>(YankyPutBeforeFilter)", desc = "Put Before Applying a Filter" },
     },
-  },
+    config = function(opts)
+      require("yanky").setup(opts)
+      require("telescope").load_extension("yank_history")
+    end
+  }
 }

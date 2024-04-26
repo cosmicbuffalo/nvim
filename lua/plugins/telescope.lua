@@ -353,12 +353,10 @@ return {
         },
       })
       require("telescope").load_extension("fzf")
-      require("telescope").load_extension("session-lens")
       require("telescope").load_extension("live_grep_args")
       require("telescope").load_extension("diff")
       require("telescope").load_extension("undo")
       require("telescope").load_extension("ui-select")
-      require("telescope").load_extension("yank_history")
       vim.cmd([[
         highlight TelescopeBorder guifg=#282828
         highlight TelescopePromptBorder guifg=#282828

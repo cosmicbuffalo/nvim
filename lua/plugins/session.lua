@@ -29,6 +29,7 @@ return {
         },
       })
       -- stylua: ignore
+      require("telescope").load_extension("session-lens")
       vim.keymap.set("n", "<leader>qS", require("auto-session.session-lens").search_session, { noremap = true, desc = "Session List" })
       vim.keymap.set("n", "<leader>qs", ":SessionSave<cr>", { noremap = true, desc = "Save Session", })
       vim.keymap.set("n", "<leader>qd", ":SessionDelete<cr>", { noremap = true, desc = "Delete Session", })

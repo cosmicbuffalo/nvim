@@ -1,3 +1,4 @@
+
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 -- Add any additional autocmds here
@@ -19,22 +20,22 @@ autocmd("User", {
   pattern = "TelescopePreviewerLoaded",
 })
 
-tint_group = augroup("dimming", { clear = true })
-autocmd("FocusGained", {
-  group = tint_group,
-  pattern = "*",
-  callback = function()
-    require("tint").untint(vim.api.nvim_get_current_win())
-  end,
-})
-
-autocmd("FocusLost", {
-  group = tint_group,
-  pattern = "*",
-  callback = function()
-    require("tint").tint(vim.api.nvim_get_current_win())
-  end,
-})
+-- tint_group = augroup("dimming", { clear = true })
+-- autocmd({ "FocusGained", "VimEnter", "BufEnter" }, {
+--   group = tint_group,
+--   pattern = "*",
+--   callback = function()
+--     require("tint").untint(vim.api.nvim_get_current_win())
+--   end,
+-- })
+--
+-- autocmd("FocusLost", {
+--   group = tint_group,
+--   pattern = "*",
+--   callback = function()
+--     require("tint").tint(vim.api.nvim_get_current_win())
+--   end,
+-- })
 
 local baleia = require("baleia").setup({})
 autocmd("BufReadPost", {

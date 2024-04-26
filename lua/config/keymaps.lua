@@ -47,7 +47,7 @@ km.set("n", "N", "Nzzzv", { desc = "Previous Search" })
 
 --
 -- greatest remap ever
--- km.set("x", "<leader>p", [["_dP]], { desc = "Paste over selection" }) -- Use s instead
+km.set("x", "<leader>p", [["_dP]], { desc = "Paste over selection" }) -- Use s instead
 
 -- next greatest remap ever : asbjornHaland
 km.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
@@ -60,51 +60,6 @@ km.set(
   [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
   { desc = "Search + replace under cursor" }
 )
-
-
-
--- word motions that ignore underscores with Alt held down
--- replaced all these with the spider plugin
--- function CurrentCharIsUnderscore()
---   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
---   local line = vim.api.nvim_get_current_line()
---   local char = line:sub(col + 1, col + 1)
---   return char == "_"
--- end
--- function CommandIgnoringUnderscores(cmd)
---   local old_iskeyword = vim.opt.iskeyword:get()
---   vim.opt.iskeyword:remove("_")
---   vim.cmd(cmd)
---   if CurrentCharIsUnderscore() then
---     vim.cmd(cmd)
---   end
---   vim.opt.iskeyword = old_iskeyword
--- end
--- km.set("n", "<M-w>", ':lua CommandIgnoringUnderscores("normal! w")<CR>', {
---   noremap = true,
---   silent = true,
---   desc = "Next word (ignoring underscores)",
--- })
--- km.set("n", "<M-b>", ':lua CommandIgnoringUnderscores("normal! b")<CR>', {
---   noremap = true,
---   silent = true,
---   desc = "Previous word (ignoring underscores)",
--- })
--- km.set("n", "<M-e>", ':lua CommandIgnoringUnderscores("normal! e")<CR>', {
---   noremap = true,
---   silent = true,
---   desc = "End of next word (ignoring underscores)",
--- })
--- km.set("n", "g<M-e>", ':lua CommandIgnoringUnderscores("normal! ge")<CR>', {
---   noremap = true,
---   silent = true,
---   desc = "End of previous word (ignoring underscores)",
--- })
-
--- km.set("n", "<leader>e", function()
---   require("neo-tree.command").execute({ toggle = true, dir = LazyVim.get_root() })
---   require("edgy").toggle()
--- end, { desc = "Toggle Sidebar" })
 
 function StartFindAndReplaceSelection()
   -- Yank the current selection
@@ -190,25 +145,56 @@ function FormatSelection()
     })
   end
 end
-km.set("v", "<leader>cf", function()
-  FormatSelection()
-end, { desc = "Format selection" })
+
+km.set("v", "<leader>cf", function() FormatSelection() end, { desc = "Format selection" })
 
 km.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
 
-km.set("n", "<leader>fy", function()
-  CopyRelativePath()
-end, { desc = "Copy relative path" })
+km.set("n", "<leader>fy", function() CopyRelativePath() end, { desc = "Copy Relative Path" })
+km.set("n", "<leader>fY", function() CopyPath() end, { desc = "Copy Path" })
+
 
 function CopyRelativePath()
   local current_dir = vim.fn.expand("%:p:h")
   vim.fn.chdir(current_dir)
 
+  -- Attempt to get the git root directory
   local root_dir = vim.fn.system("git rev-parse --show-toplevel"):gsub("\n", "")
   local file_path = vim.fn.expand("%:p")
-  local relative_path = file_path:sub(#root_dir + 2)
+  local relative_path
+
+  if vim.v.shell_error == 0 then
+    -- If inside a git repository
+    relative_path = file_path:sub(#root_dir + 2)
+  else
+    -- If not inside a git repository, make path relative to home directory
+    local home_dir = os.getenv("HOME")
+    if file_path:find(home_dir) == 1 then
+      relative_path = '~' .. file_path:sub(#home_dir + 1)
+    else
+      relative_path = file_path -- Use absolute path as a fallback
+    end
+  end
 
   os.execute("echo '" .. relative_path .. "\\c' | pbcopy")
+  vim.notify("Copied relative path to clipboard: " .. relative_path)
+end
+
+function CopyPath()
+  local current_dir = vim.fn.expand("%:p:h")
+  vim.fn.chdir(current_dir)
+
+  local file_path = vim.fn.expand("%:p")
+  local relative_path
+
+  local home_dir = os.getenv("HOME")
+  if file_path:find(home_dir) == 1 then
+    relative_path = '~' .. file_path:sub(#home_dir + 1)
+  else
+    relative_path = file_path -- Use absolute path as a fallback
+  end
+  os.execute("echo '" .. relative_path .. "\\c' | pbcopy")
+  vim.notify("Copied path to clipboard: " .. relative_path)
 end
 
 km.set("n", "<C-n>", function()
