@@ -1,10 +1,7 @@
 return {
   {
-    "folke/persistence.nvim",
-    enabled = false,
-  },
-  {
     "rmagatti/auto-session",
+    -- enabled = false,
     config = function()
       require("auto-session").setup({
         log_level = "error",
@@ -20,11 +17,24 @@ return {
         post_cwd_changed_hook = function()
           require("lualine").refresh() -- refresh lualine so the new session name is displayed in the status bar
         end,
+        pre_save_cmds = {
+          function()
+            vim.cmd([[Neotree close]])
+          end
+        },
+        post_restore_cmds = {
+          function()
+            vim.cmd([[Neotree close]])
+          end
+        },
       })
-      vim.keymap.set("n", "<leader>qs", require("auto-session.session-lens").search_session, {
-        noremap = true,
-        desc = "Sessions",
-      })
+      -- stylua: ignore
+      require("telescope").load_extension("session-lens")
+      vim.keymap.set("n", "<leader>qS", require("auto-session.session-lens").search_session, { noremap = true, desc = "Session List" })
+      vim.keymap.set("n", "<leader>qs", ":SessionSave<cr>", { noremap = true, desc = "Save Session", })
+      vim.keymap.set("n", "<leader>qd", ":SessionDelete<cr>", { noremap = true, desc = "Delete Session", })
+      vim.keymap.set("n", "<leader>qr", ":SessionRestore<cr>", { noremap = true, desc = "Restore Session", })
+      vim.keymap.set("n", "<leader>qp", ":SessionPurgeOrphaned<cr>", { noremap = true, desc = "Purge Orphaned Sessions", })
     end,
   },
 }

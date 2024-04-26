@@ -1,9 +1,9 @@
+
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 -- Add any additional autocmds here
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
-local Util = require("lazyvim.util")
 -- Remove trailing whitespace on save
 autocmd("BufWritePre", {
   callback = function()
@@ -20,22 +20,22 @@ autocmd("User", {
   pattern = "TelescopePreviewerLoaded",
 })
 
-tint_group = augroup("dimming", { clear = true })
-autocmd("FocusGained", {
-  group = tint_group,
-  pattern = "*",
-  callback = function()
-    require("tint").untint(vim.api.nvim_get_current_win())
-  end,
-})
-
-autocmd("FocusLost", {
-  group = tint_group,
-  pattern = "*",
-  callback = function()
-    require("tint").tint(vim.api.nvim_get_current_win())
-  end,
-})
+-- tint_group = augroup("dimming", { clear = true })
+-- autocmd({ "FocusGained", "VimEnter", "BufEnter" }, {
+--   group = tint_group,
+--   pattern = "*",
+--   callback = function()
+--     require("tint").untint(vim.api.nvim_get_current_win())
+--   end,
+-- })
+--
+-- autocmd("FocusLost", {
+--   group = tint_group,
+--   pattern = "*",
+--   callback = function()
+--     require("tint").tint(vim.api.nvim_get_current_win())
+--   end,
+-- })
 
 local baleia = require("baleia").setup({})
 autocmd("BufReadPost", {
@@ -69,16 +69,3 @@ autocmd("BufReadPost", {
   end,
   group = openFile,
 })
-
--- autocmd("VimEnter", {
---   pattern = "*",
---   callback = function()
---     vim.defer_fn(function()
---       -- Util.notify("closing neo tree and restoring session")
---       require("neo-tree").close_all()
---       vim.defer_fn(function()
---         require("persistence").load()
---       end, 100)
---     end, 400)
---   end,
--- })

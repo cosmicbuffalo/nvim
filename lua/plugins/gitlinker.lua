@@ -1,4 +1,5 @@
 return {
+  -- shortcuts for github things
   {
     "ruifm/gitlinker.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },

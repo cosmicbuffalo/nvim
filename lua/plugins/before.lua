@@ -14,6 +14,7 @@ return {
     vim.keymap.set("n", "<M-i>", before.jump_to_next_edit, { desc = "Go to next edit" })
 
     -- Move edit history to quickfix (or telescope)
-    vim.keymap.set("n", "<leader>oe", before.show_edits, { desc = "Open edit list" })
+    -- FIXME: This doesn't work
+    -- vim.keymap.set("n", "<leader>oe", before.show_edits, { desc = "Open edit list" })
   end,
 }
