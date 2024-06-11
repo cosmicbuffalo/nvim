@@ -2,6 +2,8 @@ return {
 
   {
     'nvim-neo-tree/neo-tree.nvim',
+    lazy = false,
+    event = "VimEnter",
     branch = "v3.x",
     cmd = "Neotree",
     keys = {
@@ -52,7 +54,7 @@ return {
       -- hide_root_node = true,
       open_files_do_not_replace_types = { "terminal", "Trouble", "trouble", "qf", "Outline" },
       source_selector = {
-        winbar = true,
+        -- winbar = true,
         -- statusline = true,
         sources = {
           { source = "filesystem" },
@@ -105,8 +107,23 @@ return {
               local manager = require("neo-tree.sources.manager")
               local refresh = require("neo-tree.utils").wrap(manager.refresh, "buffers")
               refresh()
+            else
+              vim.notify("No node found to delete", "error")
             end
           end,
+          -- buffer_save = function(state)
+          --   local node = state.tree:get_node()
+          --   if node then
+          --     if node.type == "message" then
+          --       return
+          --     end
+          --
+          --     local bufnr = node.extra.bufnr
+          --     -- TODO save buffer
+          --   else
+          --     vim.notify("No node found to save", "error")
+          --   end
+          -- end
         }
       },
       window = {
@@ -153,13 +170,13 @@ return {
       vim.list_extend(opts.event_handlers, {
         { event = events.FILE_MOVED,   handler = on_move },
         { event = events.FILE_RENAMED, handler = on_move },
-        {
-          event = events.FILE_OPENED,
-          handler = function(data)
-            -- vim.notify("auto closing neo-tree")
-            require("neo-tree.command").execute({ action = "close" })
-          end
-        }
+        -- {
+        --   event = events.FILE_OPENED,
+        --   handler = function(data)
+        --     -- vim.notify("auto closing neo-tree")
+        --     require("neo-tree.command").execute({ action = "close" })
+        --   end
+        -- }
       })
       require("neo-tree").setup(opts)
 

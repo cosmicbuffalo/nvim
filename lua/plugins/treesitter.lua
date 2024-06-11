@@ -159,18 +159,19 @@ return {
   },
 
   -- Automatically add closing tags for HTML and JSX
-  {
-    "windwp/nvim-ts-autotag",
-    event = "LazyFile",
-    opts = {},
-  },
+  -- {
+  --   "windwp/nvim-ts-autotag",
+  --   event = "LazyFile",
+  --   opts = {},
+  -- },
   -- better text objects
   {
     "echasnovski/mini.ai",
-    -- keys = {
-    --   { "a", mode = { "x", "o" } },
-    --   { "i", mode = { "x", "o" } },
-    -- },
+    lazy = false,
+    keys = {
+      { "a", mode = { "x", "o" } },
+      { "i", mode = { "x", "o" } },
+    },
     event = "VeryLazy",
     opts = function()
       local ai = require("mini.ai")

@@ -89,7 +89,7 @@ vim.api.nvim_set_keymap(
 function RunRubocopOnSelection()
   -- Capture the current visual selection
   local old_reg = vim.fn.getreg("") -- Save the current register
-  vim.cmd('normal! "xy') -- Yank the visual selection into register x
+  vim.cmd('normal! "xy')            -- Yank the visual selection into register x
 
   -- Write the yanked text to a temporary file
   local temp_file = "/tmp/nvim_rubocop_format_temp.rb"
@@ -271,39 +271,6 @@ function GoToSourceFile()
     vim.notify("No source file found.", "error")
   end
 end
-
--- function OpenOrCreatePR()
---   -- Get the current branch name
---   local handle = io.popen("git branch --show-current")
---   local branch = handle:read("*a"):gsub("%s+", "")
---   handle:close()
---
---   if branch == "" then
---     print("No active Git branch found.")
---     return
---   end
---
---   -- Check if a PR already exists for the current branch (simplified approach)
---   handle = io.popen("gh pr list --search 'head:" .. branch .. " ' -L 1")
---   local prExists = handle:read("*a") ~= ""
---   handle:close()
---
---   if prExists then
---     -- Navigate to the existing PR in the browser
---     os.execute("gh pr view --web")
---   else
---     -- Open GitHub PR creation page for this branch in the browser
---     os.execute("gh pr create --web")
---   end
--- end
-
--- Setting the keymap in Neovim
--- vim.api.nvim_set_keymap(
---   "n",
---   "<space>gp",
---   "<cmd>lua OpenOrCreatePR()<CR>",
---   { noremap = true, silent = true, desc = "Open or create PR in browser" }
--- )
 
 function CopyRspecContextCommand()
   local current_file = vim.fn.expand("%")
@@ -590,3 +557,90 @@ vim.api.nvim_set_keymap(
   [[<Cmd>lua StartLazygit()<CR>]],
   { noremap = true, silent = true, desc = "Lazygit (root dir)" }
 )
+
+function RemoveQuickfixItem()
+  local line = vim.api.nvim_win_get_cursor(0)[1]
+  local qf_list = vim.fn.getqflist()
+  if #qf_list > 0 then
+    table.remove(qf_list, line)
+    vim.fn.setqflist(qf_list, 'r')
+
+    if #qf_list == 0 then
+      vim.cmd('cclose')
+    else
+      vim.cmd('copen')
+      if line > #qf_list then
+        vim.api.nvim_win_set_cursor(0, { #qf_list, 0 }) -- Move cursor to the last item if removed item was the last
+      else
+        vim.api.nvim_win_set_cursor(0, { line, 0 })
+      end
+    end
+  end
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "qf",
+  callback = function()
+    vim.api.nvim_buf_set_keymap(0, 'n', '<leader>d', '<cmd>lua RemoveQuickfixItem()<CR>',
+      { noremap = true, silent = true, desc = "Remove Quickfix Item" })
+  end
+})
+
+-- vim.api.nvim_create_autocmd({"FileType", "ColorScheme"}, {
+--   pattern = "qf",
+--   callback = function()
+--     vim.defer_fn(function()
+--       vim.cmd("highlight CursorLine guibg=#1b2817") -- Change the color code as needed
+--       vim.cmd("setlocal cursorline")
+--     end, 100)
+--   end
+-- })
+
+-- Global timer variable
+_G.last_key_time = 0
+
+-- Function to handle magic key behavior for "/"
+_G.magic_key = function()
+  local current_time = vim.fn.reltimefloat(vim.fn.reltime())
+  local time_diff = current_time - _G.last_key_time
+
+  -- Check if the time difference is within the desired threshold (e.g., 500 ms)
+  if time_diff > 0.5 then
+    -- Reset last_key_time
+    _G.last_key_time = current_time
+    return "/" -- Default behavior if time threshold is exceeded
+  end
+
+  -- Get the character before the cursor
+  local col = vim.fn.col('.') - 1
+  if col <= 0 then return end
+
+  local prev_char = vim.fn.getline('.'):sub(col, col)
+  local output = ""
+
+  -- Define your magic key behavior
+  if prev_char == "k" then
+    output = "e"
+  elseif prev_char == "a" then
+    output = "nd"
+  else
+    output = "/" -- Default behavior if no condition matches
+  end
+
+  -- Update last_key_time
+  _G.last_key_time = current_time
+
+  -- Return the output to be inserted
+  return output
+end
+
+-- Set up the mapping in insert mode
+vim.api.nvim_set_keymap('i', '/', 'v:lua.magic_key()', { noremap = true, expr = true, silent = true })
+
+-- Update last_key_time on each keypress
+vim.cmd([[
+  augroup UpdateKeyPressTime
+    autocmd!
+    autocmd InsertCharPre * lua _G.last_key_time = vim.fn.reltimefloat(vim.fn.reltime())
+  augroup END
+]])

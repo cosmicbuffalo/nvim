@@ -3,6 +3,7 @@ return {
   {
     "lukas-reineke/indent-blankline.nvim",
     event = "LazyFile",
+    version = 'v3.5.4',
     main = "ibl",
     opts = {
       indent = {
@@ -26,17 +27,17 @@ return {
         },
       },
     },
-    config = function()
-      local highlight = { "DarkIndent" }
-      local hooks = require("ibl.hooks")
-      hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-        vim.api.nvim_set_hl(0, "DarkIndent", { fg = "#282828" })
-      end)
-      require("ibl").setup({
-        indent = { highlight = highlight },
-        scope = { enabled = false }
-      })
-    end,
+    -- config = function()
+    --   local highlight = { "DarkIndent" }
+    --   local hooks = require("ibl.hooks")
+    --   hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+    --     vim.api.nvim_set_hl(0, "DarkIndent", { fg = "#282828" })
+    --   end)
+    --   require("ibl").setup({
+    --     indent = { highlight = highlight },
+    --     scope = { enabled = false }
+    --   })
+    -- end,
   },
   -- Active indent guide and indent text objects. When you're browsing
   -- code, this highlights the current level of indentation, and animates

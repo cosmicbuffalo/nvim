@@ -79,6 +79,7 @@ return {
       table.insert(newVirtText, { suffix, "MoreMsg" })
       return newVirtText
     end
+
     opts["fold_virt_text_handler"] = handler
     require("ufo").setup(opts)
     vim.keymap.set("n", "zR", require("ufo").openAllFolds)

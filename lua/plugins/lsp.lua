@@ -127,6 +127,19 @@ return {
             local lua_opts = lsp.nvim_lua_ls()
             require("lspconfig").lua_ls.setup(lua_opts)
           end,
+          ruby_lsp = function()
+            require("lspconfig").ruby_lsp.setup({
+              settings = {
+                rubyLsp = {
+                  featuresConfiguration = {
+                    inlayHint = {
+                      enableAll = true
+                    }
+                  }
+                }
+              }
+            })
+          end
         },
       })
 
@@ -247,10 +260,14 @@ return {
   {
     "utilyre/barbecue.nvim",
     name = "barbecue",
+    enabled = false,
     version = "*",
     dependencies = {
       "SmiteshP/nvim-navic",
       "nvim-tree/nvim-web-devicons", -- optional dependency
     },
+    init = function()
+      require("barbecue").setup()
+    end,
   },
 }
