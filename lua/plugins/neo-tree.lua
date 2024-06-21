@@ -1,7 +1,7 @@
 return {
-
   {
     'nvim-neo-tree/neo-tree.nvim',
+    -- enabled = false,
     lazy = false,
     event = "VimEnter",
     branch = "v3.x",
@@ -134,6 +134,7 @@ return {
               local node = state.tree:get_node()
               local path = node:get_id()
               vim.fn.setreg("+", path, "c")
+              vim.notify("Copied path to clipboard: " .. path, "info")
             end,
             desc = "Copy Path to Clipboard",
           },

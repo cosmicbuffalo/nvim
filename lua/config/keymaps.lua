@@ -2,7 +2,7 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 local km = vim.keymap
-km.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
+km.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
 km.set({ "i", "x", "n", "s" }, "<C-s>", "<NOP>", { desc = "which_key_ignore" })
 
 km.set("n", "<Leader>a", "ggVG<c-$>", { desc = "Select All" })
@@ -29,12 +29,12 @@ km.set({ "n", "x", "o" }, "gH", function()
 end, { desc = "Flash Treesitter" })
 
 -- tmux
-km.set({ "n", "i", "x", "o" }, "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left" })
-km.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down" })
-km.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up" })
-km.set({ "n", "i", "x", "o" }, "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right" })
+km.set({ "n", "i", "x", "o" }, "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left", silent = true })
+km.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down", silent = true })
+km.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up", silent = true })
+km.set({ "n", "i", "x", "o" }, "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right", silent = true })
 
-km.set("n", "<leader>nc", ":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer" })
+-- km.set("n", "<leader>nc", ":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer" })
 
 km.set("n", "zh", "zH", { desc = "Half screen to the left" })
 

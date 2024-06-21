@@ -2,7 +2,9 @@ return {
   -- better yank/paste
   {
     "gbprod/yanky.nvim",
+    enabled = true,
     lazy = false,
+    priority = 100,
     dependencies = not LazyVim.is_win() and { "kkharji/sqlite.lua" } or {},
     opts = {
       ring = { storage = LazyVim.is_win() and "shada" or "sqlite" },
@@ -31,6 +33,6 @@ return {
     config = function(opts)
       require("yanky").setup(opts)
       require("telescope").load_extension("yank_history")
-    end
-  }
+    end,
+  },
 }
