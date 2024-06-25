@@ -101,14 +101,14 @@ return {
             ["ib"] = { query = "@block.inner", desc = "Select inside block" },
           },
           selection_modes = {
-            ['@class.outer'] = "V"
-          }
+            ["@class.outer"] = "V",
+          },
         },
         move = {
           enable = true,
-          goto_next_start = { ["]f"] = "@function.outer", ["]c"] = "@class.outer" },
+          goto_next_start = { ["]f"] = "@function.outer", ["]c"] = "@class.outer", ["]a"] = "@parameter.inner" },
           goto_next_end = { ["]F"] = "@function.outer", ["]C"] = "@class.outer" },
-          goto_previous_start = { ["[f"] = "@function.outer", ["[c"] = "@class.outer" },
+          goto_previous_start = { ["[f"] = "@function.outer", ["[c"] = "@class.outer", ["[a"] = "@parameter.inner" },
           goto_previous_end = { ["[F"] = "@function.outer", ["[C"] = "@class.outer" },
         },
       },
@@ -139,7 +139,7 @@ return {
       mode = "cursor",
       max_lines = 6,
       multiline_threshold = 3,
-      trim_scope = "inner"
+      trim_scope = "inner",
     },
     keys = {
       {
@@ -258,6 +258,54 @@ return {
           a = a,
         })
       end)
+    end,
+  },
+
+  -- Split or join treesitter nodes
+  {
+    dependencies = { "nvim-treesitter" },
+    opts = { use_default_keymaps = false },
+    keys = {
+      { "<leader>tt", "<Cmd>TSJToggle<CR>", desc = "Toggle Node Under Cursor" },
+      { "<leader>ts", "<Cmd>TSJSplit<CR>", desc = "Split Node Under Cursor" },
+      { "<leader>tj", "<Cmd>TSJJoin<CR>", desc = "Join Node Under Cursor" },
+    },
+    "Wansmer/treesj",
+  },
+
+  -- Swap sibling treesitter nodes
+  {
+    "Wansmer/sibling-swap.nvim",
+    dependencies = { "nvim-treesitter" },
+    opts = {
+      use_default_keymaps = true,
+      highlight_node_at_cursor = true,
+    },
+    keys = {
+      { "<leader>tl", function() require("sibling-swap").swap_with_left() end, desc = "Swap Sibling with Left" },
+      { "<leader>tr", function() require("sibling-swap").swap_with_right() end, desc = "Swap Sibling with Right" },
+      { "<leader>tL", function() require("sibling-swap").swap_with_left_with_opp() end, desc = "Swap Sibling with Left and Operator", },
+      { "<leader>tR", function() require("sibling-swap").swap_with_right_with_opp() end, desc = "Swap Sibling with Right and Operator", },
+    },
+  },
+
+  -- colorize nested brackets
+  {
+    "HiPhish/rainbow-delimiters.nvim",
+    enabled = false,
+    event = "VeryLazy",
+    config = function()
+      local rainbow_delimiters = require("rainbow-delimiters")
+
+      vim.g.rainbow_delimiters = {
+        strategy = {
+          [""] = rainbow_delimiters.strategy["global"],
+          -- lua = rainbow_delimiters.strategy["local"],
+        },
+        query = {
+          [""] = "rainbow-delimiters",
+        },
+      }
     end,
   },
 }

@@ -7,7 +7,13 @@ return {
     cmd = "Outline",
     opts = {
       outline_window = {
-        auto_close = true,
+        show_numbers = false,
+        show_relative_numbers = false,
+        auto_close = false,
+        auto_jump = true,
+      },
+      outline_items = {
+        show_symbol_lineno = true
       }
     },
   },

@@ -39,6 +39,7 @@ return {
       { "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files (Root Dir)" },
       -- find
       { "<leader>fb", "<cmd>Telescope buffers sort_mru=true sort_lastused=true<cr>", desc = "Buffers" },
+      { "<leader>bf", "<cmd>Telescope buffers sort_mru=true sort_lastused=true<cr>", desc = "Find" },
       -- { "<leader>fc", LazyVim.pick.config_files(), desc = "Find Config File" },
       -- { "<leader>ff", LazyVim.pick("files"), desc = "Find Files (Root Dir)" },
       -- { "<leader>fF", LazyVim.pick("files", { cwd = false }), desc = "Find Files (cwd)" },
@@ -72,12 +73,13 @@ return {
       -- { "<leader>uC", LazyVim.pick("colorscheme", { enable_preview = true }), desc = "Colorscheme with Preview" },
       {
         "<leader>ss",
-        function()
-          require("telescope.builtin").lsp_document_symbols({
-            symbols = require("lazyvim.config").get_kind_filter(),
-          })
-        end,
-        desc = "Goto Symbol",
+        "<cmd>Telescope aerial<cr>",
+        -- function()
+        --   require("telescope.builtin").lsp_document_symbols({
+        --     symbols = require("lazyvim.config").get_kind_filter(),
+        --   })
+        -- end,
+        desc = "Goto Symbol (Aerial)",
       },
       {
         "<leader>sS",

@@ -2,64 +2,70 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 local km = vim.keymap
+local nset = function(...) km.set("n", ...) end
+local vset = function(...) km.set("v", ...) end
+local iset = function(...) km.set("i", ...) end
+local set4 = function(...) km.set({"n", "i", "x", "o" }, ...) end
 km.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
 km.set({ "i", "x", "n", "s" }, "<C-s>", "<NOP>", { desc = "which_key_ignore" })
 
-km.set("n", "<Leader>a", "ggVG<c-$>", { desc = "Select All" })
+nset("<Leader>a", "ggVG<c-$>", { desc = "Select All" })
 
-km.set("v", "y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
+vset("y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
 
-km.set("n", "<leader>bq", ":bufdo bd<CR>", { desc = "Close all open buffers" })
+vset('.', ':norm.<CR>', { desc = "Repeat Normal Mode Command"})
+-- when going to the end of the line in visual mode ignore whitespace characters
+vset('$', 'g_')
 
+nset("<leader>bq", ":bufdo bd<CR>", { desc = "Close all open buffers" })
+
+nset("<leader>bn", ":bnext<CR>", { desc = "Next Buffer", silent = true })
+nset("<leader>bN", ":blast<CR>", { desc = "Last Buffer", silent = true })
+nset("<leader>bp", ":bprev<CR>", { desc = "Previous Buffer", silent = true })
+nset("<leader>bP", ":bfirst<CR>", { desc = "First Buffer", silent = true })
 -- undotree
-km.set("n", "<leader>U", ":UndotreeToggle<CR>", { desc = "Undo Tree" })
+nset("<leader>U", ":UndotreeToggle<CR>", { desc = "Undo Tree" })
 -- vim.api.nvim_set_keymap("n", "<leader>U", ":Telescope undo<cr>", { desc = "Undo Tree" })
-km.set("n", "U", "<C-r>", { desc = "Redo" })
+nset("U", "<C-r>", { desc = "Redo" })
 
-km.set("n", "<leader>uh", function()
-  require("telescope").extensions.notify.notify()
-end, { desc = "Notification History" })
+nset("<leader>uh", function() require("telescope").extensions.notify.notify() end, { desc = "Notification History" })
 
 -- flash
-km.set({ "n", "x", "o" }, "gh", function()
-  require("flash").jump()
-end, { desc = "Flash" })
-km.set({ "n", "x", "o" }, "gH", function()
-  require("flash").treesitter()
-end, { desc = "Flash Treesitter" })
+km.set({ "n", "x", "o" }, "gh", function() require("flash").jump() end, { desc = "Flash" })
+km.set({ "n", "x", "o" }, "gH", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
 
 -- tmux
-km.set({ "n", "i", "x", "o" }, "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left", silent = true })
-km.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down", silent = true })
-km.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up", silent = true })
-km.set({ "n", "i", "x", "o" }, "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right", silent = true })
+set4("<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left", silent = true })
+nset("<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down", silent = true })
+nset("<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up", silent = true })
+set4("<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right", silent = true })
 
--- km.set("n", "<leader>nc", ":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer" })
+-- nset("<leader>nc", ":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer" })
 
-km.set("n", "zh", "zH", { desc = "Half screen to the left" })
+nset("zh", "zH", { desc = "Half screen to the left" })
+nset("zl", "zL", { desc = "Half screen to the right" })
+
 
 -- cursor position hacks
-km.set("n", "J", "mzJ`z", { desc = "Join Lines" })
-km.set("n", "<C-d>", "<C-d>zz^", { desc = "Scroll Down" })
-km.set("n", "<C-u>", "<C-u>zz^", { desc = "Scroll Up" })
-km.set("n", "n", "nzzzv", { desc = "Next Search" })
-km.set("n", "N", "Nzzzv", { desc = "Previous Search" })
+nset("J", "mzJ`z", { desc = "Join Lines" })
+nset("<C-d>", "<C-d>zz^", { desc = "Scroll Down" })
+nset("<C-u>", "<C-u>zz^", { desc = "Scroll Up" })
+nset("n", "nzzzv", { desc = "Next Search" })
+nset("N", "Nzzzv", { desc = "Previous Search" })
 
 --
 -- greatest remap ever
-km.set("x", "<leader>p", [["_dP]], { desc = "Paste over selection" }) -- Use s instead
+-- km.set("x", "<leader>p", [["_dP]], { desc = "Paste over selection" }) -- Use s instead
 
 -- next greatest remap ever : asbjornHaland
-km.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
-km.set("n", "<leader>Y", [["+Y]], { desc = "Yank to clipboard" })
+-- km.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
+-- nset("<leader>Y", [["+Y]], { desc = "Yank to clipboard" })
 
-km.set("n", "<leader>z", "za", { desc = "Toggle Fold" })
-km.set(
-  "n",
-  "<leader>S",
-  [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
-  { desc = "Search + replace under cursor" }
-)
+nset("<leader>z", "za", { desc = "Toggle Fold" })
+
+nset("<leader>S", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Search + replace under cursor" })
+
+nset("<leader>m", [[<cmd>set nomore<bar>40messages<bar>set more<CR>]], { desc = "Show messages" })
 
 function StartFindAndReplaceSelection()
   -- Yank the current selection
@@ -146,12 +152,12 @@ function FormatSelection()
   end
 end
 
-km.set("v", "<leader>cf", function() FormatSelection() end, { desc = "Format selection" })
+vset("<leader>cf", function() FormatSelection() end, { desc = "Format selection" })
 
-km.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
+nset("<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
 
-km.set("n", "<leader>fy", function() CopyRelativePath() end, { desc = "Copy Relative Path" })
-km.set("n", "<leader>fY", function() CopyPath() end, { desc = "Copy Path" })
+nset("<leader>fy", function() CopyRelativePath() end, { desc = "Copy Relative Path" })
+nset("<leader>fY", function() CopyPath() end, { desc = "Copy Path" })
 
 
 function CopyRelativePath()
@@ -197,25 +203,25 @@ function CopyPath()
   vim.notify("Copied path to clipboard: " .. relative_path)
 end
 
-km.set("n", "<C-n>", function()
+nset("<C-n>", function()
   require("illuminate").goto_next_reference()
 end, { desc = "Go to next reference" })
 
-km.set("n", "<C-p>", function()
+nset("<C-p>", function()
   require("illuminate").goto_prev_reference()
 end, { desc = "Go to previous reference" })
 
-km.set("v", "<leader>d", [["_d]], { desc = "Delete selection" })
+vset("<leader>d", [["_d]], { desc = "Delete selection" })
 
 -- alt delete in insert mode deletes words
 vim.api.nvim_set_keymap("i", "<M-BS>", "<C-W>", { noremap = true, silent = true })
 
 
 -- more granular undo break points
-km.set("i", "=", "=<c-g>u")
-km.set("i", "<Space>", "<Space><c-g>u")
-km.set("i", "<CR>", "<c-g>u<CR>")
-km.set("i", ",", ",<c-g>u")
+iset("=", "=<c-g>u")
+iset("<Space>", "<Space><c-g>u")
+iset("<CR>", "<c-g>u<CR>")
+iset(",", ",<c-g>u")
 
 -- Test file navigation
 function GoToUnitTestFile()
@@ -424,49 +430,24 @@ end
 -- 3. Hit cn, type the new word, then go back to Normal mode;
 -- 4. Hit `.` n-1 times, where n is the number of replacements.
 
-km.set("n", "cn", "*``cgn", { desc = "Initiate multiple cursors" })
-km.set(
-  "v",
-  "cn",
-  [[g:mc . "``cgn"]],
-  { desc = "Initiate multiple cursors", expr = true, noremap = true, silent = true }
-)
-km.set("n", "cN", "*``cgN", { desc = "Initiate multiple cursors (in backwards direction)" })
-km.set(
-  "v",
-  "cN",
-  [[g:mc . "``cgN"]],
-  { desc = "Initiate multiple cursors (in backwards direction)", expr = true, noremap = true, silent = true }
-)
+nset("cn", "*``cgn", { desc = "Initiate multiple cursors" })
+vset("cn", [[g:mc . "``cgn"]], { desc = "Initiate multiple cursors", expr = true, noremap = true, silent = true })
+nset("cN", "*``cgN", { desc = "Initiate multiple cursors (in backwards direction)" })
+vset("cN", [[g:mc . "``cgN"]], { desc = "Initiate multiple cursors (in backwards direction)", expr = true, noremap = true, silent = true })
 
 -- 1. Position the cursor over a word; alternatively, make a selection.
 -- 2. Hit cq to start recording the macro.
 -- 3. Once you are done with the macro, go back to normal mode.
 -- 4. Hit Enter to repeat the macro over search matches.
 
-km.set("n", "cq", [[:\<C-u>call v:lua.SetupMultipleCursors()<CR>*``qz]], { desc = "Initiate multiple cursor macro" })
-km.set(
-  "v",
-  "cq",
-  [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . g:mc . "``qz"]],
-  { desc = "Initiate multiple cursor macro", expr = true, noremap = true, silent = true }
-)
-km.set(
-  "n",
-  "cQ",
-  [[:\<C-u>call v:lua.SetupMultipleCursors()<CR>#``qz]],
-  { desc = "Initiate multiple cursor macro (backwards)" }
-)
-km.set(
-  "v",
-  "cQ",
-  [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . substitute(g:mc, '/', '?', 'g') . "``qz"]],
-  { desc = "Initiate multiple cursor macro (backwards)", expr = true, noremap = true, silent = true }
-)
+nset("cq", [[:\<C-u>call v:lua.SetupMultipleCursors()<CR>*``qz]], { desc = "Initiate multiple cursor macro" })
+vset("cq", [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . g:mc . "``qz"]], { desc = "Initiate multiple cursor macro", expr = true, noremap = true, silent = true })
+nset("cQ", [[:\<C-u>call v:lua.SetupMultipleCursors()<CR>#``qz]], { desc = "Initiate multiple cursor macro (backwards)" })
+vset("cQ", [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . substitute(g:mc, '/', '?', 'g') . "``qz"]], { desc = "Initiate multiple cursor macro (backwards)", expr = true, noremap = true, silent = true })
 
-km.set("n", "<leader>cR", "<Cmd>LspRestart<CR>", { desc = "Restart LSP" })
-km.set("n", "<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
--- km.set("n", "<leader>ub", function()
+nset("<leader>cR", "<Cmd>LspRestart<CR>", { desc = "Restart LSP" })
+nset("<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
+-- nset("<leader>ub", function()
 --   require("dropbar.api").pick()
 -- end, { desc = "Dropbar" })
 

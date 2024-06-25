@@ -1,35 +1,30 @@
+local FindFilesRoot = function()
+  local current_file = vim.fn.expand("%:p")
+  -- vim.notify("current_file" .. current_file)
+  require("neo-tree.command").execute({
+    toggle = true,
+    source = "filesystem",
+    dir = LazyVim.root(),
+    reveal = current_file,
+  })
+end
+local FindFilesCWD = function()
+  require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
+end
+
 return {
   {
-    'nvim-neo-tree/neo-tree.nvim',
+    "nvim-neo-tree/neo-tree.nvim",
     -- enabled = false,
     lazy = false,
     event = "VimEnter",
     branch = "v3.x",
     cmd = "Neotree",
     keys = {
-      {
-        "<leader>fe",
-        function()
-          local current_file = vim.fn.expand("%:p")
-          -- vim.notify("current_file" .. current_file)
-          require("neo-tree.command").execute({
-            toggle = true,
-            source = "filesystem",
-            dir = LazyVim.root(),
-            reveal = current_file,
-          })
-        end,
-        desc = "Explorer NeoTree (Root Dir)",
-      },
-      {
-        "<leader>fE",
-        function()
-          require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
-        end,
-        desc = "Explorer NeoTree (cwd)",
-      },
-      { "<leader>e", "<leader>fe", desc = "Explorer NeoTree (Root Dir)", remap = true },
-      { "<leader>E", "<leader>fE", desc = "Explorer NeoTree (cwd)", remap = true },
+      { "<leader>fe", FindFilesRoot, desc = "Explorer NeoTree (Root Dir)", },
+      { "<leader>fE", FindFilesCWD, desc = "Explorer NeoTree (cwd)", },
+      { "<leader>e", FindFilesRoot, desc = "Explorer NeoTree (Root Dir)" },
+      { "<leader>E", FindFilesCWD, desc = "Explorer NeoTree (cwd)" },
       {
         "<leader>ge",
         function()
@@ -61,7 +56,7 @@ return {
           { source = "buffers" },
           { source = "git_status" },
           -- { source = "document_symbols" }
-        }
+        },
       },
       commands = {
         open_in_finder = function(state)
@@ -73,12 +68,12 @@ return {
 
             local path = node:get_id()
             if node.type == "directory" then
-              vim.cmd('silent !open ' .. vim.fn.shellescape(path))
+              vim.cmd("silent !open " .. vim.fn.shellescape(path))
             elseif node.type == "file" then
-              vim.cmd('silent !open -R ' .. vim.fn.shellescape(path))
+              vim.cmd("silent !open -R " .. vim.fn.shellescape(path))
             end
           end
-        end
+        end,
       },
       buffers = {
         commands = {
@@ -92,7 +87,8 @@ return {
               local bufnr = node.extra.bufnr
               local bd = require("mini.bufremove").delete
               if vim.fn.getbufvar(bufnr, "&modified") == 1 then
-                local choice = vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname(bufnr)), "&Yes\n&No\n&Cancel")
+                local choice =
+                  vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname(bufnr)), "&Yes\n&No\n&Cancel")
                 if choice == 1 then -- Yes
                   vim.api.nvim_buf_call(bufnr, function()
                     vim.cmd("write")
@@ -124,7 +120,7 @@ return {
           --     vim.notify("No node found to save", "error")
           --   end
           -- end
-        }
+        },
       },
       window = {
         mappings = {
@@ -139,7 +135,7 @@ return {
             desc = "Copy Path to Clipboard",
           },
           ["O"] = "open_in_finder",
-        }
+        },
       },
       filesystem = {
         bind_to_cwd = false,
@@ -149,7 +145,7 @@ return {
           visible = true,
           hide_dotfiles = false,
           hide_gitignored = false,
-        }
+        },
       },
       default_component_configs = {
         indent = {
@@ -169,7 +165,7 @@ return {
       local events = require("neo-tree.events")
       opts.event_handlers = opts.event_handlers or {}
       vim.list_extend(opts.event_handlers, {
-        { event = events.FILE_MOVED,   handler = on_move },
+        { event = events.FILE_MOVED, handler = on_move },
         { event = events.FILE_RENAMED, handler = on_move },
         -- {
         --   event = events.FILE_OPENED,
@@ -190,5 +186,5 @@ return {
         end,
       })
     end,
-  }
+  },
 }
