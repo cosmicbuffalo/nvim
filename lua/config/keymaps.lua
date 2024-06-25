@@ -6,7 +6,7 @@ local nset = function(...) km.set("n", ...) end
 local vset = function(...) km.set("v", ...) end
 local iset = function(...) km.set("i", ...) end
 local set4 = function(...) km.set({"n", "i", "x", "o" }, ...) end
-km.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
+km.set({ "i", "x", "n", "s" }, "<A-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
 km.set({ "i", "x", "n", "s" }, "<C-s>", "<NOP>", { desc = "which_key_ignore" })
 
 nset("<Leader>a", "ggVG<c-$>", { desc = "Select All" })

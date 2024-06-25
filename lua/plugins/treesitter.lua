@@ -263,6 +263,7 @@ return {
 
   -- Split or join treesitter nodes
   {
+    "Wansmer/treesj",
     dependencies = { "nvim-treesitter" },
     opts = { use_default_keymaps = false },
     keys = {
@@ -270,7 +271,6 @@ return {
       { "<leader>ts", "<Cmd>TSJSplit<CR>", desc = "Split Node Under Cursor" },
       { "<leader>tj", "<Cmd>TSJJoin<CR>", desc = "Join Node Under Cursor" },
     },
-    "Wansmer/treesj",
   },
 
   -- Swap sibling treesitter nodes
