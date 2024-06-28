@@ -7,10 +7,10 @@ return {
     main = "ibl",
     opts = {
       indent = {
-        -- char = "│",
-        -- tab_char = "│",
-        char = "▏",
-        tab_char = "▏",
+        char = "│",
+        tab_char = "│",
+        -- char = "▏",
+        -- tab_char = "▏",
       },
       scope = { enabled = false },
       exclude = {
@@ -49,8 +49,9 @@ return {
     version = false, -- wait till new 0.7.0 release to put it back on semver
     event = "LazyFile",
     opts = {
-      symbol = "▏",
-      -- symbol = "│",
+      -- symbol = "▏",
+      -- symbol = '╎',
+      symbol = "│",
       options = { try_as_border = true },
     },
     init = function()
@@ -74,4 +75,13 @@ return {
       })
     end,
   },
+
+  -- easy column alignment
+  {
+    'junegunn/vim-easy-align',
+    config = function()
+      vim.api.nvim_set_keymap("n", 'ga', '<Plug>(EasyAlign)', { desc = "Align with motion" })
+      vim.api.nvim_set_keymap("x", 'ga', '<Plug>(EasyAlign)', { desc = "Align with motion" })
+    end
+  }
 }

@@ -1,6 +1,7 @@
 return {
   {
     "stevearc/aerial.nvim",
+    enabled = false,
     event = "LazyFile",
     opts = function()
       local icons = vim.deepcopy(LazyVim.config.icons.kinds)

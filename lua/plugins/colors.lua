@@ -1,12 +1,19 @@
 return {
   { "rebelot/kanagawa.nvim" },
-  { "cosmicbuffalo/darkplus.nvim" },
+  { "EdenEast/nightfox.nvim" },
+  -- { "cosmicbuffalo/darkplus.nvim" },
   -- { "cosmicbuffalo/shanghainight.nvim", branch = "wip" },
   {
     "folke/tokyonight.nvim",
     lazy = false,
     priority = 1000,
-    opts = {},
+    opts = {
+      style = "night",
+      light_style="day",
+      dim_inactive=true,
+      -- hide_inactive_statusline=true,
+      lualine_bold=true
+    },
   },
   -- {
   --   dir = "/Users/ndelannoy/.local/share/nvim/lazy/arctic",

@@ -54,7 +54,7 @@ return {
       -- stylua: ignore
       lsp.on_attach(function(client, bufnr)
         local opts = { buffer = bufnr, remap = false }
-        vim.keymap.set("n", "<leader>cl", "<cmd>LspInfo<cr>", { desc = "Lsp Info" })
+        vim.keymap.set("n", "<leader>ci", "<cmd>LspInfo<cr>", { desc = "Lsp Info" })
         vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, vim.tbl_deep_extend("force", opts, { desc = "Goto Definition" }))
         -- { "gd", function() require("telescope.builtin").lsp_definitions({ reuse_win = true }) end, desc = "Goto Definition", has = "definition" },
         vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, vim.tbl_deep_extend("force", opts, { desc = "Goto Declaration" }))
@@ -256,7 +256,6 @@ return {
       })
     end,
   },
-
   {
     "Wansmer/symbol-usage.nvim",
     event = "LspAttach",
@@ -336,7 +335,24 @@ return {
       vim.keymap.set("n", "<leader>uu", function()
         require("symbol-usage").toggle_globally()
         require("symbol-usage").refresh()
-      end, { desc = "Toggle Symbol Usage"})
+      end, { desc = "Toggle Symbol Usage" })
     end,
+  },
+  -- symbol outline viewer
+  {
+    "hedyhli/outline.nvim",
+    keys = { { "<leader>co", "<cmd>Outline<cr>", desc = "Toggle Outline" } },
+    cmd = "Outline",
+    opts = {
+      outline_window = {
+        -- show_numbers = false, -- these don't work
+        -- show_relative_numbers = false, -- these don't work
+        auto_close = false,
+        auto_jump = true,
+      },
+      -- outline_items = {
+      --   show_symbol_lineno = true
+      -- }
+    },
   },
 }

@@ -9,5 +9,13 @@ return {
       { "n", "<leader>ms", ":MarkdownPreviewStop<CR>", { noremap = true, silent = true } },
       { "n", "<leader>mt", ":MarkdownPreviewToggle<CR>", { noremap = true, silent = true } },
     }
+  },
+  {
+    "plasticboy/vim-markdown",
+    config = function()
+      vim.g.vim_markdown_fenced_laguages = {
+        'ruby=rb'
+      }
+    end
   }
 }

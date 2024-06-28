@@ -21,7 +21,6 @@ return {
         local function map(mode, l, r, desc)
           vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc })
         end
-
         -- customize keymaps
         map("n", "]h", gs.next_hunk, "Next Hunk")
         map("n", "<leader>ghn", gs.next_hunk, "Next Hunk")
@@ -41,25 +40,33 @@ return {
       end,
     },
   },
+  -- {
+  --   'akinsho/git-conflict.nvim',
+  --   version = "*",
+  --   config = function()
+  --     require('git-conflict').setup()
+  --
+  --     vim.api.nvim_create_autocmd('User', {
+  --       pattern = 'GitConflictDetected',
+  --       callback = function()
+  --         vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
+  --         vim.keymap.set("n", "<leader>gm", ":GitConflictListQf<CR>", { desc = "Open Merge Conflict QF List" })
+  --       end
+  --     })
+  --     vim.api.nvim_create_autocmd('User', {
+  --       pattern = 'GitConflictResolved',
+  --       callback = function()
+  --         vim.notify('Conflict resolved in ' .. vim.fn.expand('<afile>'))
+  --       end
+  --     })
+  --   end
+  -- },
   {
-    'akinsho/git-conflict.nvim',
-    version = "*",
-    config = function()
-      require('git-conflict').setup()
-
-      vim.api.nvim_create_autocmd('User', {
-        pattern = 'GitConflictDetected',
-        callback = function()
-          vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
-          vim.keymap.set("n", "<leader>gm", ":GitConflictListQf<CR>", { desc = "Open Merge Conflict QF List" })
-        end
-      })
-      vim.api.nvim_create_autocmd('User', {
-        pattern = 'GitConflictResolved',
-        callback = function()
-          vim.notify('Conflict resolved in ' .. vim.fn.expand('<afile>'))
-        end
-      })
-    end
+    -- 'sindrets/diffview.nvim',
+    'cosmicbuffalo/diffview.nvim',
+    cmd = {'DiffviewOpen', 'DiffviewToggle' },
+    keys = {
+      { "<leader>gd", "<cmd>DiffviewToggle<CR>", desc = "Toggle Diff Viewer" },
+    }
   }
 }
