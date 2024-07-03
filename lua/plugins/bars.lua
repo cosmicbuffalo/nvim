@@ -468,7 +468,7 @@ return {
       local SpecialWinbar = {
         condition = function()
           return conditions.buffer_matches({
-            buftype = { "nofile", "prompt", "help", "quickfix", "trouble", "neo-tree" },
+            buftype = { "nofile", "prompt", "help", "quickfix", "trouble", "neo-tree", "oil", "acwrite" },
           })
         end,
       }

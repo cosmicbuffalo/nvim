@@ -588,24 +588,24 @@ function LazygitEdit(original_buffer)
   vim.cmd("e " .. abs_filepath)
 end
 
-local Terminal = require('toggleterm.terminal').Terminal
-local lazygit = Terminal:new({
-  cmd = "lazygit",
-  hidden = true,
-  direction = "float",
-  float_opts = { border = "single"},
-  on_open = function(term)
-    vim.cmd("startinsert!")
-    vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
-    vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<c-e>", string.format([[<cmd>lua LazygitEdit(%d)<CR>]], _G.lazygit_target_buffer), { noremap = true, silent = true})
-  end
-})
-local _lazygit_toggle = function()
-  lazygit:toggle()
-end
 _G.lazygit_target_buffer = nil
 -- Start Lazygit with custom keymaps
 function StartLazygit()
+  local Terminal = require('toggleterm.terminal').Terminal
+  local lazygit = Terminal:new({
+    cmd = "lazygit",
+    hidden = true,
+    direction = "float",
+    float_opts = { border = "single"},
+    on_open = function(term)
+      vim.cmd("startinsert!")
+      vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+      vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<c-e>", string.format([[<cmd>lua LazygitEdit(%d)<CR>]], _G.lazygit_target_buffer), { noremap = true, silent = true})
+    end
+  })
+  local _lazygit_toggle = function()
+    lazygit:toggle()
+  end
   local current_buffer = vim.api.nvim_get_current_buf()
   _G.lazygit_target_buffer = current_buffer
   _lazygit_toggle()
