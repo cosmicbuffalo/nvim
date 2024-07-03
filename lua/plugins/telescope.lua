@@ -71,25 +71,25 @@ return {
       -- { "<leader>sw", LazyVim.pick("grep_string"), mode = "v", desc = "Selection (Root Dir)" },
       -- { "<leader>sW", LazyVim.pick("grep_string", { cwd = false }), mode = "v", desc = "Selection (cwd)" },
       -- { "<leader>uC", LazyVim.pick("colorscheme", { enable_preview = true }), desc = "Colorscheme with Preview" },
-      {
-        "<leader>ss",
-        "<cmd>Telescope aerial<cr>",
-        -- function()
-        --   require("telescope.builtin").lsp_document_symbols({
-        --     symbols = require("lazyvim.config").get_kind_filter(),
-        --   })
-        -- end,
-        desc = "Goto Symbol (Aerial)",
-      },
-      {
-        "<leader>sS",
-        function()
-          require("telescope.builtin").lsp_dynamic_workspace_symbols({
-            symbols = require("lazyvim.config").get_kind_filter(),
-          })
-        end,
-        desc = "Goto Symbol (Workspace)",
-      },
+      -- {
+      --   "<leader>ss",
+      --   "<cmd>Telescope aerial<cr>",
+      --   -- function()
+      --   --   require("telescope.builtin").lsp_document_symbols({
+      --   --     symbols = require("lazyvim.config").get_kind_filter(),
+      --   --   })
+      --   -- end,
+      --   desc = "Goto Symbol (Aerial)",
+      -- },
+      -- {
+      --   "<leader>sS",
+      --   function()
+      --     require("telescope.builtin").lsp_dynamic_workspace_symbols({
+      --       symbols = require("lazyvim.config").get_kind_filter(),
+      --     })
+      --   end,
+      --   desc = "Goto Symbol (Workspace)",
+      -- },
 
       -- add a keymap to browse plugin files
       {

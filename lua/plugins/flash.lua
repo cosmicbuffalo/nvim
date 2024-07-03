@@ -1,7 +1,5 @@
 return {
-  -- Flash enhances the built-in search functionality by showing labels
-  -- at the end of each match, letting you quickly jump to a specific
-  -- location.
+  -- targeted jumping
   {
     "folke/flash.nvim",
     event = "VeryLazy",
@@ -14,9 +12,6 @@ return {
         char = {
           enabled = false,
         }
-        -- treesitter = {
-        --   -- labels = "neiotsrahdcmglpufbjywxzq",
-        -- },
       },
     },
     -- stylua: ignore

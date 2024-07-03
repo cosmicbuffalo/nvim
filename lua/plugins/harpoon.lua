@@ -2,7 +2,7 @@ return {
   -- quick navigation betweeen files
   {
     "ThePrimeagen/harpoon",
-    enabled = true,
+    enabled = false,
     lazy = false,
     config = function(_, opts)
       require("harpoon").setup(opts)

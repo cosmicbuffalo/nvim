@@ -40,27 +40,7 @@ return {
       end,
     },
   },
-  -- {
-  --   'akinsho/git-conflict.nvim',
-  --   version = "*",
-  --   config = function()
-  --     require('git-conflict').setup()
-  --
-  --     vim.api.nvim_create_autocmd('User', {
-  --       pattern = 'GitConflictDetected',
-  --       callback = function()
-  --         vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
-  --         vim.keymap.set("n", "<leader>gm", ":GitConflictListQf<CR>", { desc = "Open Merge Conflict QF List" })
-  --       end
-  --     })
-  --     vim.api.nvim_create_autocmd('User', {
-  --       pattern = 'GitConflictResolved',
-  --       callback = function()
-  --         vim.notify('Conflict resolved in ' .. vim.fn.expand('<afile>'))
-  --       end
-  --     })
-  --   end
-  -- },
+  -- handy diffview in a tab page
   {
     -- 'sindrets/diffview.nvim',
     'cosmicbuffalo/diffview.nvim',
@@ -68,5 +48,38 @@ return {
     keys = {
       { "<leader>gd", "<cmd>DiffviewToggle<CR>", desc = "Toggle Diff Viewer" },
     }
+  },
+  -- shortcuts for github things
+  {
+    "ruifm/gitlinker.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("gitlinker").setup()
+      local mapping = {
+        ["<leader>gy"] = { desc = "Copy GitHub link" },
+      }
+      local wk = require("which-key")
+      wk.register(mapping, { mode = "n" })
+      wk.register(mapping, { mode = "v" })
+      vim.api.nvim_set_keymap(
+        "n",
+        "<leader>go",
+        '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>',
+        { desc = "Open in GitHub", silent = true }
+      )
+      vim.api.nvim_set_keymap(
+        "v",
+        "<leader>go",
+        '<cmd>lua require"gitlinker".get_buf_range_url("v", {action_callback = require"gitlinker.actions".open_in_browser})<cr>',
+        { desc = "Open in GitHub", silent = true }
+      )
+      -- not actually a gitlinker feature but included in here since it's similar
+      vim.keymap.set(
+        "n",
+        "<leader>gp",
+        '<cmd>TermExec cmd="pr" open=0<CR>',
+        { desc = "Create or open PR in GitHub", silent = true }
+      )
+    end,
   },
 }

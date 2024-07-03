@@ -1,7 +1,23 @@
-
 return {
   -- icons
   { "nvim-tree/nvim-web-devicons", lazy = true },
+  -- {
+  --   "echasnovski/mini.icons",
+  --   -- enabled = false,
+  --   opts = {},
+  --   specs = {
+  --     { "nvim-tree/nvim-web-devicons", enabled = false, optional = true },
+  --   },
+  --   init = function()
+  --     package.preload["nvim-web-devicons"] = function()
+  --       -- needed since it will be false when loading and mini will fail
+  --       package.loaded["nvim-web-devicons"] = {}
+  --       require("mini.icons").mock_nvim_web_devicons()
+  --       return package.loaded["nvim-web-devicons"]
+  --     end
+  --   end
+  -- },
+
 
   -- ui components
   { "MunifTanjim/nui.nvim", lazy = true },
@@ -52,7 +68,6 @@ return {
             { action = "Telescope oldfiles",                                       desc = " Recent Files",    icon = " ", key = "r" },
             { action = "Telescope live_grep",                                      desc = " Find Text",       icon = " ", key = "g" },
             -- { action = [[lua LazyVim.pick.telescope.config_files()()]],                 desc = " Config",          icon = " ", key = "c" },
-            { action = "LazyExtras",                                               desc = " Lazy Extras",     icon = " ", key = "x" },
             { action = "Lazy",                                                     desc = " Lazy",            icon = "󰒲 ", key = "l" },
             { action = "qa",                                                       desc = " Quit",            icon = " ", key = "q" },
           },

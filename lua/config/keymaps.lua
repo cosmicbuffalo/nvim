@@ -474,11 +474,11 @@ nset(
   { desc = "Toggle Treesitter Highlight" }
 )
 
-nset(
-  "<leader>ub",
-  function() LazyVim.toggle("background", false, {"light", "dark"}) end,
-  { desc = "Toggle Background" }
-)
+-- nset(
+--   "<leader>ub",
+--   function() LazyVim.toggle("background", false, {"light", "dark"}) end,
+--   { desc = "Toggle Background" }
+-- )
 
 -- "Multiple Cursors"
 -- http://www.kevinli.co/posts/2017-01-19-multiple-cursors-in-500-bytes-of-vimscript/
@@ -518,10 +518,10 @@ nset("<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
 -- end, { desc = "Dropbar" })
 
 
-nset("<leader>uw", function() LazyVim.toggle("wrap") end, { desc = "Toggle Word Wrap" })
-nset("<leader>uL", function() LazyVim.toggle("relativenumber") end, { desc = "Toggle Relative Line Numbers" })
-nset("<leader>ul", function() LazyVim.toggle.number() end, { desc = "Toggle Line Numbers" })
-nset("<leader>ud", function() LazyVim.toggle.diagnostics() end, { desc = "Toggle Diagnostics" })
+-- nset("<leader>uw", function() LazyVim.toggle("wrap") end, { desc = "Toggle Word Wrap" })
+-- nset("<leader>uL", function() LazyVim.toggle("relativenumber") end, { desc = "Toggle Relative Line Numbers" })
+-- nset("<leader>ul", function() LazyVim.toggle.number() end, { desc = "Toggle Line Numbers" })
+-- nset("<leader>ud", function() LazyVim.toggle.diagnostics() end, { desc = "Toggle Diagnostics" })
 
 
 function isValidFilePath(path)
@@ -544,7 +544,6 @@ function isValidFilePath(path)
 end
 
 function LazygitEdit(original_buffer)
-  -- git current terminal channel
   local bufnr = vim.fn.bufnr("%")
   local channel_id = vim.fn.getbufvar(bufnr, "terminal_job_id")
 
@@ -615,17 +614,17 @@ nset("<leader>gg", [[<Cmd>lua StartLazygit()<CR>]], { noremap = true, silent = t
 
 -- nset("<leader>gb", LazyVim.lazygit.blame_line, { desc = "Git Blame Line" })
 -- nset("<leader>gB", LazyVim.lazygit.browse, { desc = "Git Browse" })
-nset("<leader>gf", function()
-  local git_path = vim.api.nvim_buf_get_name(0)
-  LazyVim.lazygit({args = { "-f", vim.trim(git_path) }})
-end, { desc = "Lazygit Current File History" })
-
-nset("<leader>gl", function()
-  LazyVim.lazygit({ args = { "log" }, cwd = LazyVim.root.git() })
-end, { desc = "Lazygit Log" })
-nset("<leader>gL", function()
-  LazyVim.lazygit({ args = { "log" } })
-end, { desc = "Lazygit Log (cwd)" })
+-- nset("<leader>gf", function()
+--   local git_path = vim.api.nvim_buf_get_name(0)
+--   LazyVim.lazygit({args = { "-f", vim.trim(git_path) }})
+-- end, { desc = "Lazygit Current File History" })
+--
+-- nset("<leader>gl", function()
+--   LazyVim.lazygit({ args = { "log" }, cwd = LazyVim.root.git() })
+-- end, { desc = "Lazygit Log" })
+-- nset("<leader>gL", function()
+--   LazyVim.lazygit({ args = { "log" } })
+-- end, { desc = "Lazygit Log (cwd)" })
 
 
 function RemoveQuickfixItem()

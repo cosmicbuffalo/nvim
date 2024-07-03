@@ -3,7 +3,7 @@ return {
   {
     "lukas-reineke/indent-blankline.nvim",
     -- event = "LazyFile",
-    version = 'v3.5.4',
+    version = "v3.5.4",
     main = "ibl",
     opts = {
       indent = {
@@ -78,10 +78,6 @@ return {
 
   -- easy column alignment
   {
-    'junegunn/vim-easy-align',
-    config = function()
-      vim.api.nvim_set_keymap("n", 'ga', '<Plug>(EasyAlign)', { desc = "Align with motion" })
-      vim.api.nvim_set_keymap("x", 'ga', '<Plug>(EasyAlign)', { desc = "Align with motion" })
-    end
-  }
+    { "echasnovski/mini.align", version = "*", config = true },
+  },
 }
