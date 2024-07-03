@@ -5,9 +5,9 @@ return {
     enabled = true,
     lazy = false,
     priority = 100,
-    dependencies = not LazyVim.is_win() and { "kkharji/sqlite.lua" } or {},
+    dependencies ={ "kkharji/sqlite.lua" },
     opts = {
-      ring = { storage = LazyVim.is_win() and "shada" or "sqlite" },
+      ring = { storage = "sqlite" },
     },
     keys = {
       -- stylua: ignore

@@ -1,38 +1,78 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
-local km = vim.keymap
-local nset = function(...) km.set("n", ...) end
-local vset = function(...) km.set("v", ...) end
-local iset = function(...) km.set("i", ...) end
-local set4 = function(...) km.set({"n", "i", "x", "o" }, ...) end
-km.set({ "i", "x", "n", "s" }, "<A-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
-km.set({ "i", "x", "n", "s" }, "<C-s>", "<NOP>", { desc = "which_key_ignore" })
+-- helpers
+local set = vim.keymap.set
+local nset = function(...) set("n", ...) end
+local vset = function(...) set("v", ...) end
+local iset = function(...) set("i", ...) end
+local tset = function(...) set("t", ...) end
+local set4 = function(...) set({"n", "i", "x", "o" }, ...) end
 
+-- save with alt-s
+set({ "i", "x", "n", "s" }, "<A-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
+-- ignore ctrl-s (tmux prefix)
+set({ "i", "x", "n", "s" }, "<C-s>", "<NOP>", { desc = "which_key_ignore" })
+
+-- quit
+nset("<leader>qq", "<cmd>qa<cr>", { desc = "Quit All" })
+-- select all
 nset("<Leader>a", "ggVG<c-$>", { desc = "Select All" })
 
-vset("y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
+-- vset("y", "ygv<Esc>", { desc = "Yank and reposition cursor" })
 
+-- better indenting
+vset("<", "<gv")
+vset(">", ">gv")
+-- make . work for visual mode
 vset('.', ':norm.<CR>', { desc = "Repeat Normal Mode Command"})
 -- when going to the end of the line in visual mode ignore whitespace characters
 vset('$', 'g_')
+-- clear search with <esc>
+set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
+-- Clear search, diff update and redraw
+-- taken from runtime/lua/_editor.lua (via lazyvim)
+-- set( "n", "<leader>ur", "<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>", { desc = "Redraw / Clear hlsearch / Diff Update" })
 
+-- buffers
 nset("<leader>bq", ":bufdo bd<CR>", { desc = "Close all open buffers" })
-
 nset("<leader>bn", ":bnext<CR>", { desc = "Next Buffer", silent = true })
 nset("<leader>bN", ":blast<CR>", { desc = "Last Buffer", silent = true })
 nset("<leader>bp", ":bprev<CR>", { desc = "Previous Buffer", silent = true })
 nset("<leader>bP", ":bfirst<CR>", { desc = "First Buffer", silent = true })
+nset("<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
+nset("<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
+nset("[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
+nset("]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
+nset("<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
+nset("<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
+-- nset("<leader>bd", LazyVim.ui.bufremove, { desc = "Delete Buffer" })
+nset("<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" })
+-- windows
+nset("<leader>ww", "<C-W>p", { desc = "Other Window", remap = true })
+nset("<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
+nset("<leader>w-", "<C-W>s", { desc = "Split Window Below", remap = true })
+nset("<leader>w|", "<C-W>v", { desc = "Split Window Right", remap = true })
+nset("<leader>-", "<C-W>s", { desc = "Split Window Below", remap = true })
+nset("<leader>|", "<C-W>v", { desc = "Split Window Right", remap = true })
+-- nset("<leader>wm", function() LazyVim.toggle.maximize() end, { desc = "Maximize Toggle" })
+
+-- tabs
+nset("<leader><tab>l", "<cmd>tablast<cr>", { desc = "Last Tab" })
+nset("<leader><tab>o", "<cmd>tabonly<cr>", { desc = "Close Other Tabs" })
+nset("<leader><tab>f", "<cmd>tabfirst<cr>", { desc = "First Tab" })
+nset("<leader><tab><tab>", "<cmd>tabnew<cr>", { desc = "New Tab" })
+nset("<leader><tab>]", "<cmd>tabnext<cr>", { desc = "Next Tab" })
+nset("<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
+nset("<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
+
 -- undotree
 nset("<leader>U", ":UndotreeToggle<CR>", { desc = "Undo Tree" })
--- vim.api.nvim_set_keymap("n", "<leader>U", ":Telescope undo<cr>", { desc = "Undo Tree" })
+-- nset("<leader>U", ":Telescope undo<cr>", { desc = "Undo Tree" })
 nset("U", "<C-r>", { desc = "Redo" })
 
 nset("<leader>uh", function() require("telescope").extensions.notify.notify() end, { desc = "Notification History" })
 
 -- flash
-km.set({ "n", "x", "o" }, "gh", function() require("flash").jump() end, { desc = "Flash" })
-km.set({ "n", "x", "o" }, "gH", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
+set({ "n", "x", "o" }, "gh", function() require("flash").jump() end, { desc = "Flash" })
+set({ "n", "x", "o" }, "gH", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
 
 -- tmux
 set4("<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left", silent = true })
@@ -42,30 +82,82 @@ set4("<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right", sile
 
 -- nset("<leader>nc", ":Neorg toggle-concealer<cr>", { desc = "neorg toggle concealer" })
 
+-- viewport moves
 nset("zh", "zH", { desc = "Half screen to the left" })
 nset("zl", "zL", { desc = "Half screen to the right" })
-
+-- Resize window using <ctrl> arrow keys
+nset("<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })
+nset("<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Window Height" })
+nset("<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Window Width" })
+nset("<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Width" })
 
 -- cursor position hacks
 nset("J", "mzJ`z", { desc = "Join Lines" })
 nset("<C-d>", "<C-d>zz^", { desc = "Scroll Down" })
 nset("<C-u>", "<C-u>zz^", { desc = "Scroll Up" })
-nset("n", "nzzzv", { desc = "Next Search" })
-nset("N", "Nzzzv", { desc = "Previous Search" })
+-- nset("n", "nzzzv", { desc = "Next Search" })
+-- nset("N", "Nzzzv", { desc = "Previous Search" })
 
---
--- greatest remap ever
--- km.set("x", "<leader>p", [["_dP]], { desc = "Paste over selection" }) -- Use s instead
+-- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
+nset("n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next Search Result" })
+nset("N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev Search Result" })
+set({"x", "o"}, "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" })
+set({"x", "o"}, "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev Search Result" })
 
--- next greatest remap ever : asbjornHaland
--- km.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
--- nset("<leader>Y", [["+Y]], { desc = "Yank to clipboard" })
+-- better up/down
+set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
+set({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
+set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
+set({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
+-- Move Lines
+nset("<A-j>", "<cmd>m .+1<cr>==", { desc = "Move Down" })
+nset("<A-k>", "<cmd>m .-2<cr>==", { desc = "Move Up" })
+iset("<A-j>", "<esc><cmd>m .+1<cr>==gi", { desc = "Move Down" })
+iset("<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move Up" })
+vset("<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move Down" })
+vset("<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move Up" })
 
 nset("<leader>z", "za", { desc = "Toggle Fold" })
 
 nset("<leader>S", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Search + replace under cursor" })
 
 nset("<leader>m", [[<cmd>set nomore<bar>40messages<bar>set more<CR>]], { desc = "Show messages" })
+
+
+-- lazy
+nset("<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
+-- nset("<leader>L", function() LazyVim.news.changelog() end, { desc = "LazyVim Changelog" })
+
+-- floating terminal
+-- local lazyterm = function() LazyVim.terminal(nil, { cwd = LazyVim.root() }) end
+-- nset("<leader>ft", lazyterm, { desc = "Terminal (Root Dir)" })
+-- nset("<leader>fT", function() LazyVim.terminal() end, { desc = "Terminal (cwd)" })
+-- nset("<c-/>", lazyterm, { desc = "Terminal (Root Dir)" })
+-- nset("<c-_>", lazyterm, { desc = "which_key_ignore" })
+-- Terminal Mappings
+tset("<esc><esc>", "<c-\\><c-n>", { desc = "Enter Normal Mode" })
+tset("<C-h>", "<cmd>wincmd h<cr>", { desc = "Go to Left Window" })
+tset("<C-j>", "<cmd>wincmd j<cr>", { desc = "Go to Lower Window" })
+tset("<C-k>", "<cmd>wincmd k<cr>", { desc = "Go to Upper Window" })
+tset("<C-l>", "<cmd>wincmd l<cr>", { desc = "Go to Right Window" })
+tset("<C-/>", "<cmd>close<cr>", { desc = "Hide Terminal" })
+tset("<c-_>", "<cmd>close<cr>", { desc = "which_key_ignore" })
+
+-- new file
+nset("<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
+
+nset("<leader>xl", "<cmd>lopen<cr>", { desc = "Location List" })
+nset("<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })
+
+nset("[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
+nset("]q", vim.cmd.cnext, { desc = "Next Quickfix" })
+-- commenting
+nset("gco", "o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Below" })
+nset("gcO", "O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Above" })
+
+-- highlights under cursor
+nset("<leader>ui", vim.show_pos, { desc = "Inspect Pos" })
+nset("<leader>uI", "<cmd>InspectTree<cr>", { desc = "Inspect Tree" })
 
 function StartFindAndReplaceSelection()
   -- Yank the current selection
@@ -85,12 +177,8 @@ function StartFindAndReplaceSelection()
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Left><Left><Left>", true, true, true), "n", true)
 end
 
-vim.api.nvim_set_keymap(
-  "v",
-  "<leader>S",
-  [[:lua StartFindAndReplaceSelection()<CR>]],
-  { noremap = true, silent = true, desc = "Search + replace selection" }
-)
+
+vim.api.nvim_set_keymap( "v", "<leader>S", [[:lua StartFindAndReplaceSelection()<CR>]], { noremap = true, silent = true, desc = "Search + replace selection" })
 
 function RunRubocopOnSelection()
   -- Capture the current visual selection
@@ -154,6 +242,11 @@ end
 
 vset("<leader>cf", function() FormatSelection() end, { desc = "Format selection" })
 
+-- formatting
+-- set({ "n", "v" }, "<leader>cf", function()
+--   LazyVim.format({ force = true })
+-- end, { desc = "Format" })
+
 nset("<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
 
 nset("<leader>fy", function() CopyRelativePath() end, { desc = "Copy Relative Path" })
@@ -203,25 +296,39 @@ function CopyPath()
   vim.notify("Copied path to clipboard: " .. relative_path)
 end
 
-nset("<C-n>", function()
-  require("illuminate").goto_next_reference()
-end, { desc = "Go to next reference" })
-
-nset("<C-p>", function()
-  require("illuminate").goto_prev_reference()
-end, { desc = "Go to previous reference" })
+-- illuminate
+nset("<C-n>", function() require("illuminate").goto_next_reference() end, { desc = "Go to next reference" })
+nset("<C-p>", function() require("illuminate").goto_prev_reference() end, { desc = "Go to previous reference" })
 
 vset("<leader>d", [["_d]], { desc = "Delete selection" })
 
 -- alt delete in insert mode deletes words
-vim.api.nvim_set_keymap("i", "<M-BS>", "<C-W>", { noremap = true, silent = true })
+iset("<M-BS>", "<C-W>", { noremap = true, silent = true })
 
+
+-- diagnostic
+local diagnostic_goto = function(next, severity)
+  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+  severity = severity and vim.diagnostic.severity[severity] or nil
+  return function()
+    go({ severity = severity })
+  end
+end
+nset("<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+nset("]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
+nset("[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
+nset("]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
+nset("[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
+nset("]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })
+nset("[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 
 -- more granular undo break points
 iset("=", "=<c-g>u")
-iset("<Space>", "<Space><c-g>u")
-iset("<CR>", "<c-g>u<CR>")
+-- iset("<Space>", "<Space><c-g>u")
+-- iset("<CR>", "<c-g>u<CR>")
 iset(",", ",<c-g>u")
+iset(".", ".<c-g>u")
+iset(";", ";<c-g>u")
 
 -- Test file navigation
 function GoToUnitTestFile()
@@ -328,74 +435,27 @@ function CopyRspecExampleCommand()
 end
 
 function SetSourceFileKeymaps()
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<leader>tu",
-    [[<Cmd> lua GoToUnitTestFile()<CR>]],
-    { desc = "Go to Unit Test File" }
-  )
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<leader>ti",
-    [[<Cmd> lua GoToIntegrationTestFile()<CR>]],
-    { desc = "Go to Integration Test File" }
-  )
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tu", [[<Cmd> lua GoToUnitTestFile()<CR>]], { desc = "Go to Unit Test File" })
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>ti", [[<Cmd> lua GoToIntegrationTestFile()<CR>]], { desc = "Go to Integration Test File" })
 end
 
 function SetUnitTestFileKeymaps()
   vim.api.nvim_buf_set_keymap(0, "n", "<leader>tb", [[<Cmd> lua GoToSourceFile()<CR>]], { desc = "Go to Source File" })
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<leader>ti",
-    [[<Cmd> lua GoToIntegrationTestFile()<CR>]],
-    { desc = "Go to Integration Test File" }
-  )
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>ti", [[<Cmd> lua GoToIntegrationTestFile()<CR>]], { desc = "Go to Integration Test File" })
 end
 
 function SetIntegrationTestFileKeymaps()
   vim.api.nvim_buf_set_keymap(0, "n", "<leader>tb", [[<Cmd> lua GoToSourceFile()<CR>]], { desc = "Go to Source File" })
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<leader>tu",
-    [[<Cmd> lua GoToUnitTestFile()<CR>]],
-    { desc = "Go to Unit Test File" }
-  )
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tu", [[<Cmd> lua GoToUnitTestFile()<CR>]], { desc = "Go to Unit Test File" })
 end
 
 function SetRspecFileKeymaps()
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<leader>tyc",
-    [[<Cmd> lua CopyRspecContextCommand()<CR>]],
-    { desc = "Copy Rspec context command" }
-  )
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<leader>tyd",
-    [[<Cmd> lua CopyRspecDescribeCommand()<CR>]],
-    { desc = "Copy Rspec describe command" }
-  )
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<leader>tyf",
-    [[<Cmd> lua CopyRspecFileCommand()<CR>]],
-    { desc = "Copy Rspec file command" }
-  )
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<leader>tye",
-    [[<Cmd> lua CopyRspecExampleCommand()<CR>]],
-    { desc = "Copy Rspec example command" }
-  )
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tyc", [[<Cmd> lua CopyRspecContextCommand()<CR>]], { desc = "Copy Rspec context command" })
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tyd", [[<Cmd> lua CopyRspecDescribeCommand()<CR>]], { desc = "Copy Rspec describe command" })
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tyf", [[<Cmd> lua CopyRspecFileCommand()<CR>]], { desc = "Copy Rspec file command" })
+  vim.api.nvim_buf_set_keymap(0, "n", "<leader>tye", [[<Cmd> lua CopyRspecExampleCommand()<CR>]], { desc = "Copy Rspec example command" })
 end
+
 
 vim.cmd([[
   augroup TestNavigationKeymaps
@@ -408,6 +468,18 @@ vim.cmd([[
   augroup END
 ]])
 
+nset(
+  "<leader>uT",
+  function() if vim.b.ts_highlight then vim.treesitter.stop() else vim.treesitter.start() end end,
+  { desc = "Toggle Treesitter Highlight" }
+)
+
+nset(
+  "<leader>ub",
+  function() LazyVim.toggle("background", false, {"light", "dark"}) end,
+  { desc = "Toggle Background" }
+)
+
 -- "Multiple Cursors"
 -- http://www.kevinli.co/posts/2017-01-19-multiple-cursors-in-500-bytes-of-vimscript/
 -- https://github.com/akinsho/dotfiles/blob/45c4c17084d0aa572e52cc177ac5b9d6db1585ae/.config/nvim/plugin/mappings.lua#L298
@@ -416,13 +488,7 @@ vim.cmd([[
 vim.g.mc = vim.api.nvim_replace_termcodes([[y/\V<C-r>=escape(@", '/')<CR><CR>]], true, true, true)
 
 function SetupMultipleCursors()
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "<Enter>",
-    [[:nnoremap <lt>Enter> n@z<CR>q:<C-u>let @z=strpart(@z,0,strlen(@z)-1)<CR>n@z]],
-    { silent = true }
-  )
+  vim.api.nvim_buf_set_keymap(0, "n", "<Enter>", [[:nnoremap <lt>Enter> n@z<CR>q:<C-u>let @z=strpart(@z,0,strlen(@z)-1)<CR>n@z]], { silent = true })
 end
 
 -- 1. Position the cursor anywhere in the word you wish to change;
@@ -451,7 +517,12 @@ nset("<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
 --   require("dropbar.api").pick()
 -- end, { desc = "Dropbar" })
 
-local Util = LazyVim
+
+nset("<leader>uw", function() LazyVim.toggle("wrap") end, { desc = "Toggle Word Wrap" })
+nset("<leader>uL", function() LazyVim.toggle("relativenumber") end, { desc = "Toggle Relative Line Numbers" })
+nset("<leader>ul", function() LazyVim.toggle.number() end, { desc = "Toggle Line Numbers" })
+nset("<leader>ud", function() LazyVim.toggle.diagnostics() end, { desc = "Toggle Diagnostics" })
+
 
 function isValidFilePath(path)
   -- Check for characters not allowed in a file path
@@ -499,7 +570,7 @@ function LazygitEdit(original_buffer)
   local rel_filepath = vim.fn.getreg("+")
 
   -- Combine with the current working directory to get the full path
-  local cwd = Util.root.get()
+  local cwd = vim.fn.getcwd()
   local abs_filepath = cwd .. "/" .. rel_filepath
 
   print("Opening " .. abs_filepath)
@@ -517,27 +588,45 @@ function LazygitEdit(original_buffer)
   vim.cmd("e " .. abs_filepath)
 end
 
+local Terminal = require('toggleterm.terminal').Terminal
+local lazygit = Terminal:new({
+  cmd = "lazygit",
+  hidden = true,
+  direction = "float",
+  float_opts = { border = "single"},
+  on_open = function(term)
+    vim.cmd("startinsert!")
+    vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<c-e>", string.format([[<cmd>lua LazygitEdit(%d)<CR>]], _G.lazygit_target_buffer), { noremap = true, silent = true})
+  end
+})
+local _lazygit_toggle = function()
+  lazygit:toggle()
+end
+_G.lazygit_target_buffer = nil
 -- Start Lazygit with custom keymaps
 function StartLazygit()
   local current_buffer = vim.api.nvim_get_current_buf()
-  local float_term = Util.terminal.open({ "lazygit" }, { cwd = Util.root.get(), esc_esc = false, ctrl_hjkl = false })
-  local created_buffer = float_term.buf
-  -- set the custom keymap for "<c-e>" within it
-  vim.api.nvim_buf_set_keymap(
-    created_buffer,
-    "t",
-    "<c-e>",
-    string.format([[<Cmd>lua LazygitEdit(%d)<CR>]], current_buffer),
-    { noremap = true, silent = true }
-  )
+  _G.lazygit_target_buffer = current_buffer
+  _lazygit_toggle()
 end
 
-vim.api.nvim_set_keymap(
-  "n",
-  "<leader>gg",
-  [[<Cmd>lua StartLazygit()<CR>]],
-  { noremap = true, silent = true, desc = "Lazygit (root dir)" }
-)
+nset("<leader>gg", [[<Cmd>lua StartLazygit()<CR>]], { noremap = true, silent = true, desc = "Lazygit (root dir)" })
+
+-- nset("<leader>gb", LazyVim.lazygit.blame_line, { desc = "Git Blame Line" })
+-- nset("<leader>gB", LazyVim.lazygit.browse, { desc = "Git Browse" })
+nset("<leader>gf", function()
+  local git_path = vim.api.nvim_buf_get_name(0)
+  LazyVim.lazygit({args = { "-f", vim.trim(git_path) }})
+end, { desc = "Lazygit Current File History" })
+
+nset("<leader>gl", function()
+  LazyVim.lazygit({ args = { "log" }, cwd = LazyVim.root.git() })
+end, { desc = "Lazygit Log" })
+nset("<leader>gL", function()
+  LazyVim.lazygit({ args = { "log" } })
+end, { desc = "Lazygit Log (cwd)" })
+
 
 function RemoveQuickfixItem()
   local line = vim.api.nvim_win_get_cursor(0)[1]
@@ -562,8 +651,7 @@ end
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "qf",
   callback = function()
-    vim.api.nvim_buf_set_keymap(0, 'n', '<leader>d', '<cmd>lua RemoveQuickfixItem()<CR>',
-      { noremap = true, silent = true, desc = "Remove Quickfix Item" })
+    vim.api.nvim_buf_set_keymap(0, 'n', '<leader>d', '<cmd>lua RemoveQuickfixItem()<CR>', { noremap = true, silent = true, desc = "Remove Quickfix Item" })
   end
 })
 
@@ -616,7 +704,7 @@ _G.magic_key = function()
 end
 
 -- Set up the mapping in insert mode
-vim.api.nvim_set_keymap('i', '/', 'v:lua.magic_key()', { noremap = true, expr = true, silent = true })
+iset('/', 'v:lua.magic_key()', { noremap = true, expr = true, silent = true })
 
 -- Update last_key_time on each keypress
 vim.cmd([[

@@ -4,7 +4,7 @@ return {
   -- hunks in a commit.
   {
     "lewis6991/gitsigns.nvim",
-    event = "LazyFile",
+    -- event = "LazyFile",
     opts = {
       current_line_blame = true,
       signs = {
@@ -68,5 +68,5 @@ return {
     keys = {
       { "<leader>gd", "<cmd>DiffviewToggle<CR>", desc = "Toggle Diff Viewer" },
     }
-  }
+  },
 }

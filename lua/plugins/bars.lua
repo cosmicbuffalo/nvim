@@ -18,9 +18,8 @@ return {
       local lualine_require = require("lualine_require")
       lualine_require.require = require
 
-      local icons = require("lazyvim.config").icons
+      -- local icons = require("lazyvim.config").icons
       vim.o.laststatus = vim.g.lualine_laststatus
-      local Util = LazyVim.ui
 
       local function wordcount()
         return tostring(vim.fn.wordcount().words) .. " words"
@@ -34,12 +33,14 @@ return {
         return vim.bo.filetype == "markdown" or vim.bo.filetype == "asciidoc"
       end
 
-      local colors = {
-        [""] = LazyVim.ui.fg("Special"),
-        ["Normal"] = LazyVim.ui.fg("Special"),
-        ["Warning"] = LazyVim.ui.fg("DiagnosticError"),
-        ["InProgress"] = LazyVim.ui.fg("DiagnosticWarn"),
-      }
+      -- local utils = require("heirline.utils")
+      -- local fg = function(hl_name)
+      --   return utils.get_highlight(hl_name).fg
+      -- end
+      -- local bg = function(hl_name)
+      --   return utils.get_highlight(hl_name).bg
+      -- end
+
 
       return {
         options = {
@@ -52,7 +53,7 @@ return {
           lualine_a = { "mode" },
           lualine_b = { "branch" },
           lualine_c = {
-            LazyVim.lualine.root_dir(),
+            -- LazyVim.lualine.root_dir(),
             -- {
             --   require('auto-session.lib').current_session_name
             -- },
@@ -92,7 +93,7 @@ return {
             -- {
             --   require("noice").api.statusline.mode.get,
             --   cond = require("noice").api.statusline.mode.has,
-            --   color = Util.fg("Statement"),
+            --   color = fg("Statement"),
             -- },
             -- copilot status
             -- {
@@ -128,38 +129,42 @@ return {
               cond = function()
                 return package.loaded["noice"] and require("noice").api.status.command.has()
               end,
-              color = Util.fg("Statement"),
+              -- color = fg("Statement"),
             },
             -- stylua: ignore
             {
               function() return require("noice").api.status.mode.get() end,
               cond = function() return package.loaded["noice"] and require("noice").api.status.mode.has() end,
-              color = Util.fg("Constant"),
+              -- color = fg("Constant"),
             },
             -- stylua: ignore
             {
               function() return "  " .. require("dap").status() end,
               cond = function() return package.loaded["dap"] and require("dap").status() ~= "" end,
-              color = Util.fg("Debug"),
+              -- color = fg("Debug"),
             },
-            { require("lazy.status").updates, cond = require("lazy.status").has_updates, color = Util.fg("Special") },
             {
-              "diagnostics",
-              symbols = {
-                error = icons.diagnostics.Error,
-                warn = icons.diagnostics.Warn,
-                info = icons.diagnostics.Info,
-                hint = icons.diagnostics.Hint,
-              },
-              -- separator = ""
+              require("lazy.status").updates,
+              cond = require("lazy.status").has_updates,
+              -- color = fg("Special"),
             },
+            -- {
+            --   "diagnostics",
+            --   symbols = {
+            --     error = icons.diagnostics.Error,
+            --     warn = icons.diagnostics.Warn,
+            --     info = icons.diagnostics.Info,
+            --     hint = icons.diagnostics.Hint,
+            --   },
+            --   -- separator = ""
+            -- },
             {
               "diff",
-              symbols = {
-                added = icons.git.added,
-                modified = icons.git.modified,
-                removed = icons.git.removed,
-              },
+              -- symbols = {
+              --   added = icons.git.added,
+              --   modified = icons.git.modified,
+              --   removed = icons.git.removed,
+              -- },
               source = function()
                 local gitsigns = vim.b.gitsigns_status_dict
                 if gitsigns then

@@ -50,7 +50,7 @@ return {
       local copilot_cmp = require("copilot_cmp")
       copilot_cmp.setup({})
 
-      LazyVim.format.register(LazyVim.lsp.formatter())
+      -- LazyVim.format.register(LazyVim.lsp.formatter())
       -- stylua: ignore
       lsp.on_attach(function(client, bufnr)
         local opts = { buffer = bufnr, remap = false }
@@ -245,13 +245,13 @@ return {
           },
         },
         formatting = {
-          format = function(_, item)
-            local icons = require("lazyvim.config").icons.kinds
-            if icons[item.kind] then
-              item.kind = icons[item.kind] .. item.kind
-            end
-            return item
-          end,
+          -- format = function(_, item)
+          --   local icons = require("lazyvim.config").icons.kinds
+          --   if icons[item.kind] then
+          --     item.kind = icons[item.kind] .. item.kind
+          --   end
+          --   return item
+          -- end,
         },
       })
     end,

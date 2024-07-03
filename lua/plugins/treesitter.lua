@@ -6,7 +6,7 @@ return {
     "nvim-treesitter/nvim-treesitter",
     version = false, -- last release is way too old and doesn't work on Windows
     build = ":TSUpdate",
-    event = { "LazyFile", "VeryLazy" },
+    event = { "VeryLazy" },
     init = function(plugin)
       -- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
       -- This is needed because a bunch of plugins no longer `require("nvim-treesitter")`, which
@@ -53,7 +53,7 @@ return {
     opts = {
       highlight = {
         enable = true,
-        additional_vim_regex_highlighting = { 'markdown' },
+        additional_vim_regex_highlighting = { "markdown" },
       },
       indent = { enable = false },
       autotag = { enable = true },
@@ -136,7 +136,7 @@ return {
   -- Show context of the current function
   {
     "nvim-treesitter/nvim-treesitter-context",
-    event = "LazyFile",
+    -- event = "LazyFile",
     enabled = true,
     opts = {
       mode = "cursor",
@@ -150,10 +150,10 @@ return {
         function()
           local tsc = require("treesitter-context")
           tsc.toggle()
-          if LazyVim.inject.get_upvalue(tsc.toggle, "enabled") then
-            LazyVim.info("Enabled Treesitter Context", { title = "Option" })
+          if tsc.enabled() then
+            vim.notify("Enabled Treesitter Context", { title = "Option", level = vim.log.levels.INFO })
           else
-            LazyVim.warn("Disabled Treesitter Context", { title = "Option" })
+            vim.notify("Disabled Treesitter Context", { title = "Option", level = vim.log.levels.WARN })
           end
         end,
         desc = "Toggle Treesitter Context",
@@ -213,54 +213,50 @@ return {
     end,
     config = function(_, opts)
       require("mini.ai").setup(opts)
-      -- register all text objects with which-key
-      LazyVim.on_load("which-key.nvim", function()
-        ---@type table<string, string|table>
-        local i = {
-          [" "] = "Whitespace",
-          ['"'] = 'Balanced "',
-          ["'"] = "Balanced '",
-          ["`"] = "Balanced `",
-          ["("] = "Balanced (",
-          [")"] = "Balanced ) including white-space",
-          [">"] = "Balanced > including white-space",
-          ["<lt>"] = "Balanced <",
-          ["]"] = "Balanced ] including white-space",
-          ["["] = "Balanced [",
-          ["}"] = "Balanced } including white-space",
-          ["{"] = "Balanced {",
-          ["?"] = "User Prompt",
-          _ = "Underscore",
-          a = "Argument",
-          b = "Balanced ), ], }",
-          c = "Class",
-          d = "Digit(s)",
-          e = "Word in CamelCase & snake_case",
-          f = "Function",
-          g = "Entire file",
-          o = "Block, conditional, loop",
-          q = "Quote `, \", '",
-          t = "Tag",
-          u = "Use/call function & method",
-          U = "Use/call without dot in name",
-        }
-        local a = vim.deepcopy(i)
-        for k, v in pairs(a) do
-          a[k] = v:gsub(" including.*", "")
-        end
+      local i = {
+        [" "] = "Whitespace",
+        ['"'] = 'Balanced "',
+        ["'"] = "Balanced '",
+        ["`"] = "Balanced `",
+        ["("] = "Balanced (",
+        [")"] = "Balanced ) including white-space",
+        [">"] = "Balanced > including white-space",
+        ["<lt>"] = "Balanced <",
+        ["]"] = "Balanced ] including white-space",
+        ["["] = "Balanced [",
+        ["}"] = "Balanced } including white-space",
+        ["{"] = "Balanced {",
+        ["?"] = "User Prompt",
+        _ = "Underscore",
+        a = "Argument",
+        b = "Balanced ), ], }",
+        c = "Class",
+        d = "Digit(s)",
+        e = "Word in CamelCase & snake_case",
+        f = "Function",
+        g = "Entire file",
+        o = "Block, conditional, loop",
+        q = "Quote `, \", '",
+        t = "Tag",
+        u = "Use/call function & method",
+        U = "Use/call without dot in name",
+      }
+      local a = vim.deepcopy(i)
+      for k, v in pairs(a) do
+        a[k] = v:gsub(" including.*", "")
+      end
 
-        local ic = vim.deepcopy(i)
-        local ac = vim.deepcopy(a)
-        for key, name in pairs({ n = "Next", l = "Last" }) do
-          i[key] = vim.tbl_extend("force", { name = "Inside " .. name .. " textobject" }, ic)
-          a[key] = vim.tbl_extend("force", { name = "Around " .. name .. " textobject" }, ac)
-        end
-        require("which-key").register({
-          mode = { "o", "x" },
-          i = i,
-          a = a,
-        })
-      end)
+      local ic = vim.deepcopy(i)
+      local ac = vim.deepcopy(a)
+      for key, name in pairs({ n = "Next", l = "Last" }) do
+        i[key] = vim.tbl_extend("force", { name = "Inside " .. name .. " textobject" }, ic)
+        a[key] = vim.tbl_extend("force", { name = "Around " .. name .. " textobject" }, ac)
+      end
+      require("which-key").register({
+        mode = { "o", "x" },
+        i = i,
+        a = a,
+      })
     end,
   },
 
@@ -285,10 +281,34 @@ return {
       highlight_node_at_cursor = true,
     },
     keys = {
-      { "<leader>tl", function() require("sibling-swap").swap_with_left() end, desc = "Swap Sibling with Left" },
-      { "<leader>tr", function() require("sibling-swap").swap_with_right() end, desc = "Swap Sibling with Right" },
-      { "<leader>tL", function() require("sibling-swap").swap_with_left_with_opp() end, desc = "Swap Sibling with Left and Operator", },
-      { "<leader>tR", function() require("sibling-swap").swap_with_right_with_opp() end, desc = "Swap Sibling with Right and Operator", },
+      {
+        "<leader>tl",
+        function()
+          require("sibling-swap").swap_with_left()
+        end,
+        desc = "Swap Sibling with Left",
+      },
+      {
+        "<leader>tr",
+        function()
+          require("sibling-swap").swap_with_right()
+        end,
+        desc = "Swap Sibling with Right",
+      },
+      {
+        "<leader>tL",
+        function()
+          require("sibling-swap").swap_with_left_with_opp()
+        end,
+        desc = "Swap Sibling with Left and Operator",
+      },
+      {
+        "<leader>tR",
+        function()
+          require("sibling-swap").swap_with_right_with_opp()
+        end,
+        desc = "Swap Sibling with Right and Operator",
+      },
     },
   },
 

@@ -4,7 +4,8 @@ return {
   -- with the active keybindings of the command you started typing.
   {
     "folke/which-key.nvim",
-    event = "VeryLazy",
+    lazy = false,
+    -- event = "VeryLazy",
     opts = {
       plugins = { spelling = true },
       defaults = {

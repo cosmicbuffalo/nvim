@@ -14,6 +14,9 @@ return {
       -- hide_inactive_statusline=true,
       lualine_bold=true
     },
+    init = function()
+      vim.cmd("colorscheme tokyonight")
+    end
   },
   -- {
   --   dir = "/Users/ndelannoy/.local/share/nvim/lazy/arctic",
@@ -34,12 +37,12 @@ return {
   --     vim.cmd("colorscheme arctic")
   --   end
   -- },
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "tokyonight-night",
-    },
-  },
+  -- {
+  --   "LazyVim/LazyVim",
+  --   opts = {
+  --     colorscheme = "tokyonight-night",
+  --   },
+  -- },
   {
     "norcalli/nvim-colorizer.lua",
     config = function()

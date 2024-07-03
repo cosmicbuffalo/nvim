@@ -25,7 +25,7 @@ return {
   {
     "folke/todo-comments.nvim",
     cmd = { "TodoTrouble", "TodoTelescope" },
-    event = "LazyFile",
+    -- event = "LazyFile",
     config = true,
     -- stylua: ignore
     keys = {
