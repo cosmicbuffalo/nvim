@@ -1,8 +1,6 @@
--- Autocmds are automatically loaded on the VeryLazy event
--- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
--- Add any additional autocmds here
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
+
 -- Remove trailing whitespace on save
 autocmd("BufWritePre", {
   callback = function()
@@ -19,23 +17,6 @@ autocmd("User", {
   pattern = "TelescopePreviewerLoaded",
 })
 
--- tint_group = augroup("dimming", { clear = true })
--- autocmd({ "FocusGained", "VimEnter", "BufEnter" }, {
---   group = tint_group,
---   pattern = "*",
---   callback = function()
---     require("tint").untint(vim.api.nvim_get_current_win())
---   end,
--- })
---
--- autocmd("FocusLost", {
---   group = tint_group,
---   pattern = "*",
---   callback = function()
---     require("tint").tint(vim.api.nvim_get_current_win())
---   end,
--- })
-
 local baleia = require("baleia").setup({})
 autocmd("BufReadPost", {
   pattern = "Trouble",
@@ -47,7 +28,6 @@ autocmd("BufReadPost", {
   end,
 })
 
--- vim.cmd([[autocmd FileType ruby setlocal indentkeys-=.]])
 
 -- Opens non-text files in the default program instead of in Neovim
 local openFile = augroup("openFile", {})
@@ -197,15 +177,6 @@ local function set_lazyvim_autocommands()
     end,
   })
 
-  -- Fix conceallevel for json files
-  -- vim.api.nvim_create_autocmd({ "FileType" }, {
-  --   group = augroup("json_conceal"),
-  --   pattern = { "json", "jsonc", "json5" },
-  --   callback = function()
-  --     vim.opt_local.conceallevel = 0
-  --   end,
-  -- })
-
   -- Auto create dir when saving a file, in case some intermediate directory does not exist
   vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     group = augroup("auto_create_dir"),
@@ -217,48 +188,5 @@ local function set_lazyvim_autocommands()
       vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
     end,
   })
-
-  -- vim.filetype.add({
-  --   pattern = {
-  --     [".*"] = {
-  --       function(path, buf)
-  --         return vim.bo[buf]
-  --             and vim.bo[buf].filetype ~= "bigfile"
-  --             and path
-  --             and vim.fn.getfsize(path) > vim.g.bigfile_size
-  --             and "bigfile"
-  --           or nil
-  --       end,
-  --     },
-  --   },
-  -- })
-  --
-  -- vim.api.nvim_create_autocmd({ "FileType" }, {
-  --   group = augroup("bigfile"),
-  --   pattern = "bigfile",
-  --   callback = function(ev)
-  --     vim.b.minianimate_disable = true
-  --     vim.schedule(function()
-  --       vim.bo[ev.buf].syntax = vim.filetype.match({ buf = ev.buf }) or ""
-  --     end)
-  --   end,
-  -- })
 end
 set_lazyvim_autocommands()
-
-vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
-  pattern = "*_spec.rb",
-  callback = function()
-    require("spec-outline")
-    require("vim-test")
-    -- require("lazy").load({
-    --   plugins = {
-    --     "emilsoman/spec-outline.vim",
-    --     "vim-test/vim-test",
-    --   },
-    -- })
-    vim.keymap.set("n", "<leader>tt", ":TestFile<CR>", { desc = "Run all tests in file" })
-    vim.keymap.set("n", "<leader>tr", ":TestNearest<CR>", { desc = "Run nearest example" })
-    vim.keymap.set("n", "<leader>tT", ":TestSuite<CR>", { desc = "Run test suite" })
-  end,
-})

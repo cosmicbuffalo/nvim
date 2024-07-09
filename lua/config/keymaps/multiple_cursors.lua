@@ -9,7 +9,7 @@ local vset = function(...) set("v", ...) end
 -- -- Functions for multiple cursors
 vim.g.mc = vim.api.nvim_replace_termcodes([[y/\V<C-r>=escape(@", '/')<CR><CR>]], true, true, true)
 
-function SetupMultipleCursors()
+function setup_multiple_cursors()
   vim.api.nvim_buf_set_keymap(
     0,
     "n",
@@ -38,19 +38,19 @@ vset(
 -- 3. Once you are done with the macro, go back to normal mode.
 -- 4. Hit Enter to repeat the macro over search matches.
 
-nset("cq", [[:\<C-u>call v:lua.SetupMultipleCursors()<CR>*``qz]], { desc = "Initiate multiple cursor macro" })
+nset("cq", [[:\<C-u>call v:lua.setup_multiple_cursors()<CR>*``qz]], { desc = "Initiate multiple cursor macro" })
 vset(
   "cq",
-  [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . g:mc . "``qz"]],
+  [[":\<C-u>call v:lua.setup_multiple_cursors()<CR>gv" . g:mc . "``qz"]],
   { desc = "Initiate multiple cursor macro", expr = true, noremap = true, silent = true }
 )
 nset(
   "cQ",
-  [[:\<C-u>call v:lua.SetupMultipleCursors()<CR>#``qz]],
+  [[:\<C-u>call v:lua.setup_multiple_cursors()<CR>#``qz]],
   { desc = "Initiate multiple cursor macro (backwards)" }
 )
 vset(
   "cQ",
-  [[":\<C-u>call v:lua.SetupMultipleCursors()<CR>gv" . substitute(g:mc, '/', '?', 'g') . "``qz"]],
+  [[":\<C-u>call v:lua.setup_multiple_cursors()<CR>gv" . substitute(g:mc, '/', '?', 'g') . "``qz"]],
   { desc = "Initiate multiple cursor macro (backwards)", expr = true, noremap = true, silent = true }
 )

@@ -1,3 +1,5 @@
+-- TODO: I'd like to figure out how to lazy load these and keep the same lazy buffer local keymap behavior
+-- but I haven't found out how to do it yet
 return {
   {
     "emilsoman/spec-outline.vim",

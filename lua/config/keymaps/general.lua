@@ -1,9 +1,17 @@
--- helpers
 local set = vim.keymap.set
-local nset = function(...) set("n", ...) end
-local vset = function(...) set("v", ...) end
-local iset = function(...) set("i", ...) end
-local tset = function(...) set("t", ...) end
+local nset = function(...)
+  set("n", ...)
+end
+local vset = function(...)
+  set("v", ...)
+end
+local iset = function(...)
+  set("i", ...)
+end
+local tset = function(...)
+  set("t", ...)
+end
+local utils = require("config.utils")
 
 -- save with alt-s
 set({ "i", "x", "n", "s" }, "<A-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
@@ -104,7 +112,7 @@ nset("<leader>z", "za", { desc = "Toggle Fold" })
 
 -- find and replace
 nset("<leader>S", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Search + replace under cursor" })
-function StartFindAndReplaceSelection()
+function start_find_and_replace_selection()
   -- Yank the current selection
   vim.cmd([[normal! gvy]])
 
@@ -123,7 +131,7 @@ function StartFindAndReplaceSelection()
 end
 vset(
   "<leader>S",
-  [[:lua StartFindAndReplaceSelection()<CR>]],
+  [[:lua start_find_and_replace_selection()<CR>]],
   { noremap = true, silent = true, desc = "Search + replace selection" }
 )
 
@@ -142,11 +150,6 @@ tset("<c-_>", "<cmd>close<cr>", { desc = "Toggle Terminal" })
 -- new file
 nset("<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
 
--- quickfix navigation
-nset("<leader>xl", "<cmd>lopen<cr>", { desc = "Location List" })
-nset("<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })
-nset("[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
-nset("]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 
 -- comments above and below
 nset("gco", "o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Below" })
@@ -156,186 +159,64 @@ nset("gcO", "O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Ab
 nset("<leader>ui", vim.show_pos, { desc = "Inspect Pos" })
 nset("<leader>uI", "<cmd>InspectTree<cr>", { desc = "Inspect Tree" })
 
--- switch back and forth between color schemes
-local current_colorscheme = vim.g.colors_name
-local previous_colorscheme = nil
-function SwitchColorScheme()
-  if previous_colorscheme then
-    local temp = current_colorscheme
-    current_colorscheme = previous_colorscheme
-    previous_colorscheme = temp
-    vim.notify("Changing color scheme to " .. current_colorscheme)
-    vim.cmd("colorscheme " .. current_colorscheme)
-  else
-    vim.notify("No previous color scheme to switch to")
-  end
-end
--- Function to update colorscheme variables when a new colorscheme is set
-function UpdateColorscheme()
-  local new_colorscheme = vim.g.colors_name
-  if new_colorscheme ~= current_colorscheme then
-    previous_colorscheme = current_colorscheme
-    current_colorscheme = new_colorscheme
-  end
-end
--- Autocommand to detect colorscheme changes
-vim.cmd([[
-  augroup UpdateColorscheme
-    autocmd!
-    autocmd ColorScheme * lua UpdateColorscheme()
-  augroup END
-]])
-nset("<leader>uc", "<cmd>lua SwitchColorScheme()<cr>", { desc = "Last Color Scheme", noremap = true, silent = true })
-
-
--- format selections (more reliable rubocop)
-function RunRubocopOnSelection()
-  -- Capture the current visual selection
-  local old_reg = vim.fn.getreg("") -- Save the current register
-  vim.cmd('normal! "xy') -- Yank the visual selection into register x
-
-  -- Write the yanked text to a temporary file
-  local temp_file = "/tmp/nvim_rubocop_format_temp.rb"
-  local f = io.open(temp_file, "w")
-  f:write(vim.fn.getreg("x")) -- Write the content of register x
-  f:close()
-
-  -- Format the temporary file with RuboCop
-  os.execute("rubocop -a -c ~/Blitz/.rubocop.yml " .. temp_file .. " > /dev/null 2>&1")
-
-  -- Read the formatted content back
-  f = io.open(temp_file, "r")
-  local formatted_content = f:read("*all"):close()
-  local lines = {}
-  for line in formatted_content:gmatch("[^\r\n]+") do
-    table.insert(lines, line)
-  end
-
-  -- Replace the current selection with the formatted content
-  -- - Delete the original selection with _ to avoid changing the default register
-  -- Set a mark 'a' at the start of the original selection to return to it later
-  vim.cmd('normal! gv"_d`<kma')
-  -- vim.api.nvim_exec("'<,'>delete _", false) -- Delete the selection, avoiding the clipboard
-  vim.api.nvim_put(lines, "l", true, true) -- 'l' to insert linewise
-
-  -- Auto-indent the inserted lines
-  -- Move to mark 'a', then visually select to the end of the inserted content and indent
-  vim.cmd("normal! `aV`]=j^")
-
-  -- Restore the previous register
-  vim.fn.setreg("", old_reg)
-
-  -- Clean up: Remove the temporary file
-  -- os.remove(temp_file)
-end
-function FormatSelection()
-  local current_file = vim.fn.expand("%")
-  if string.match(current_file, "%.rb$") then
-    RunRubocopOnSelection()
-  else
-    -- TODO: make this fallback to conform instead of lsp
-    vim.lsp.buf.format({
-      async = true,
-      range = {
-        ["start"] = vim.api.nvim_buf_get_mark(0, "<"),
-        ["end"] = vim.api.nvim_buf_get_mark(0, ">"),
-      },
-    })
-  end
-end
-vset("<leader>cf", FormatSelection, { desc = "Format selection" })
-
 -- create executables
 nset("<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executable" })
 
 -- copy paths
-function CopyRelativePath()
-  local current_dir = vim.fn.expand("%:p:h")
-  vim.fn.chdir(current_dir)
-
-  -- Attempt to get the git root directory
-  local root_dir = vim.fn.system("git rev-parse --show-toplevel"):gsub("\n", "")
-  local file_path = vim.fn.expand("%:p")
-  local relative_path
-
-  if vim.v.shell_error == 0 then
-    -- If inside a git repository
-    relative_path = file_path:sub(#root_dir + 2)
-  else
-    -- If not inside a git repository, make path relative to home directory
-    local home_dir = os.getenv("HOME")
-    if file_path:find(home_dir) == 1 then
-      relative_path = "~" .. file_path:sub(#home_dir + 1)
-    else
-      relative_path = file_path -- Use absolute path as a fallback
-    end
-  end
-
-  os.execute("echo '" .. relative_path .. "\\c' | pbcopy")
-  vim.notify("Copied relative path to clipboard: " .. relative_path)
+function copy_relative_path()
+  local path = utils.relative_path()
+  os.execute("echo '" .. path .. "\\c' | pbcopy")
+  vim.notify("Copied relative path to clipboard: " .. path)
 end
-function CopyPath()
-  local current_dir = vim.fn.expand("%:p:h")
-  vim.fn.chdir(current_dir)
-
-  local file_path = vim.fn.expand("%:p")
-  local relative_path
-
-  local home_dir = os.getenv("HOME")
-  if file_path:find(home_dir) == 1 then
-    relative_path = "~" .. file_path:sub(#home_dir + 1)
-  else
-    relative_path = file_path -- Use absolute path as a fallback
-  end
-  os.execute("echo '" .. relative_path .. "\\c' | pbcopy")
-  vim.notify("Copied path to clipboard: " .. relative_path)
+function copy_path()
+  local path = utils.path()
+  os.execute("echo '" .. path .. "\\c' | pbcopy")
+  vim.notify("Copied path to clipboard: " .. path)
 end
-nset("<leader>fy", CopyRelativePath, { desc = "Copy Relative Path" })
-nset("<leader>fY", CopyPath, { desc = "Copy Path" })
+nset("<leader>fy", copy_relative_path, { desc = "Copy Relative Path" })
+nset("<leader>fY", copy_path, { desc = "Copy Path" })
+
+-- Keymap to toggle case
+local function toggle_case()
+  local word = vim.fn.expand("<cword>")
+  local new_word
+  -- set mark to return to
+  vim.cmd("normal mx")
+  if word:match("_") then
+    -- Convert snake_case to CamelCase
+    new_word = word:gsub("_(%a)", function(c) return c:upper() end)
+    new_word = new_word:gsub("^%l", string.upper)
+  else
+    -- Convert CamelCase to snake_case
+    new_word = word:gsub("%u", function(c) return "_" .. c:lower() end)
+    new_word = new_word:gsub("^_", "")
+  end
+  -- Perform substitution for the whole buffer
+  local cmd = string.format("%%s/\\<%s\\>/%s/g", word, new_word)
+  vim.cmd(cmd)
+  -- jump back to beginning of the original word
+  vim.cmd("normal `x")
+end
+nset("<A-~>", toggle_case, { noremap = true, silent = true, desc = "Toggle snake_case/CamelCase" })
 
 -- illuminate
 nset("<C-n>", require("illuminate").goto_next_reference, { desc = "Go to next reference" })
 nset("<C-p>", require("illuminate").goto_prev_reference, { desc = "Go to previous reference" })
 
-
 -- alt delete in insert mode deletes words
 iset("<M-BS>", "<C-W>", { noremap = true, silent = true })
 
 -- diagnostic
-local diagnostic_goto = function(next, severity)
-  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
-  severity = severity and vim.diagnostic.severity[severity] or nil
-  return function()
-    go({ severity = severity })
-  end
-end
 nset("<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
-nset("]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
-nset("[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
-nset("]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
-nset("[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
-nset("]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })
-nset("[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
-local function toggleDiagnostics()
-  local enabled = nil
-  if vim.diagnostic.is_enabled then
-    enabled = vim.diagnostic.is_enabled()
-  elseif vim.diagnostic.is_disabled then
-    enabled = not vim.diagnostic.is_disabled()
-  end
-  enabled = not enabled
+nset("]d", utils.next_diagnostic(), { desc = "Next Diagnostic" })
+nset("[d", utils.prev_diagnostic(), { desc = "Prev Diagnostic" })
+nset("]e", utils.next_diagnostic("ERROR"), { desc = "Next Error" })
+nset("[e", utils.prev_diagnostic("ERROR"), { desc = "Prev Error" })
+nset("]w", utils.next_diagnostic("WARN"), { desc = "Next Warning" })
+nset("[w", utils.prev_diagnostic("WARN"), { desc = "Prev Warning" })
+nset("<leader>ud", utils.toggle_diagnostics, { desc = "Toggle Diagnostics" })
 
-  if enabled then
-    vim.diagnostic.enable()
-    vim.notify("Enabled diagnostics", { title = "Diagnostics", level = vim.log.levels.INFO })
-  else
-    vim.diagnostic.disable()
-    vim.notify("Disabled diagnostics", { title = "Diagnostics", level = vim.log.levels.WARN })
-  end
-end
-nset("<leader>ud", toggleDiagnostics, { desc = "Toggle Diagnostics" })
-
--- treesitter highlights
+-- toggle treesitter highlights
 nset("<leader>uT", function()
   if vim.b.ts_highlight then
     vim.treesitter.stop()
@@ -346,26 +227,17 @@ nset("<leader>uT", function()
   end
 end, { desc = "Toggle Treesitter Highlight" })
 
-local function toggleOption(option, values)
-  if values then
-    if vim.opt_local[option]:get() == values[1] then
-      vim.opt_local[option] = values[2]
-    else
-      vim.opt_local[option] = values[1]
-    end
-    return vim.notify("Set " .. option .. " to " .. vim.opt_local[option]:get(), { title = "Option", level = vim.log.levels.INFO })
-  end
-  vim.opt_local[option] = not vim.opt_local[option]:get()
-  if vim.opt_local[option]:get() then
-    vim.notify("Enabled " .. option, { title = "Option", level = vim.log.levels.INFO })
-  else
-    vim.notify("Disabled " .. option, { title = "Option", level = vim.log.levels.WARN })
-  end
-end
-nset("<leader>uw", function() toggleOption("wrap") end, { desc = "Toggle Word Wrap" })
-nset("<leader>ub", function() toggleOption("background", { "light", "dark"}) end, { desc = "Toggle Background" })
+-- toggle options
+nset("<leader>uw", function() utils.toggle_option("wrap") end, { desc = "Toggle Word Wrap" })
+nset("<leader>ub", function() utils.toggle_option("background", { "light", "dark" }) end, { desc = "Toggle Background" })
 
-function RemoveQuickfixItem()
+-- quickfix navigation
+nset("<leader>xl", "<cmd>lopen<cr>", { desc = "Location List" })
+nset("<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })
+nset("[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
+nset("]q", vim.cmd.cnext, { desc = "Next Quickfix" })
+-- delete quickfix items
+function remove_quickfix_item()
   local line = vim.api.nvim_win_get_cursor(0)[1]
   local qf_list = vim.fn.getqflist()
   if #qf_list > 0 then
@@ -384,7 +256,6 @@ function RemoveQuickfixItem()
     end
   end
 end
-
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "qf",
   callback = function()
@@ -392,10 +263,8 @@ vim.api.nvim_create_autocmd("FileType", {
       0,
       "n",
       "<leader>d",
-      "<cmd>lua RemoveQuickfixItem()<CR>",
+      "<cmd>lua remove_quickfix_item()<CR>",
       { noremap = true, silent = true, desc = "Remove Quickfix Item" }
     )
   end,
 })
-
-
