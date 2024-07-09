@@ -245,3 +245,20 @@ local function set_lazyvim_autocommands()
   -- })
 end
 set_lazyvim_autocommands()
+
+vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+  pattern = "*_spec.rb",
+  callback = function()
+    require("spec-outline")
+    require("vim-test")
+    -- require("lazy").load({
+    --   plugins = {
+    --     "emilsoman/spec-outline.vim",
+    --     "vim-test/vim-test",
+    --   },
+    -- })
+    vim.keymap.set("n", "<leader>tt", ":TestFile<CR>", { desc = "Run all tests in file" })
+    vim.keymap.set("n", "<leader>tr", ":TestNearest<CR>", { desc = "Run nearest example" })
+    vim.keymap.set("n", "<leader>tT", ":TestSuite<CR>", { desc = "Run test suite" })
+  end,
+})

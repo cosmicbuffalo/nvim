@@ -1,10 +1,12 @@
 return {
   {
     "refractalize/oil-git-status.nvim",
+    event = "VimEnter",
     dependencies = {
       "stevearc/oil.nvim",
       dependencies = { "nvim-tree/nvim-web-devicons" },
       tag = "v2.10.0",
+      event = "VimEnter",
       config = function()
         require("oil").setup({
           -- columns = { "icon" },
@@ -40,13 +42,17 @@ return {
             end,
           },
           win_options = {
-            signcolumn = "yes:2"
-          }
+            signcolumn = "yes:2",
+          },
         })
 
-        vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
-        vim.keymap.set("n", "<leader>o", "<cmd>Oil<cr>", { desc = "Open parent directory" })
+        -- vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
+        -- vim.keymap.set("n", "<leader>o", "<cmd>Oil<cr>", { desc = "Open parent directory" })
       end,
+      keys = {
+        { "-", "<cmd>Oil<cr>", desc = "Open parent directory" },
+        { "<leader>o", "<cmd>Oil<cr>", desc = "Open parent directory" },
+      },
     },
     config = true,
   },

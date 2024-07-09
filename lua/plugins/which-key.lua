@@ -1,5 +1,4 @@
 return {
-
   -- which-key helps you remember key bindings by showing a popup
   -- with the active keybindings of the command you started typing.
   {
@@ -7,7 +6,6 @@ return {
     lazy = false,
     -- event = "VeryLazy",
     opts = {
-      plugins = { spelling = true },
       defaults = {
         mode = { "n", "v" },
         ["g"] = { name = "+goto" },
@@ -28,7 +26,7 @@ return {
         ["<leader>w"] = { name = "+windows" },
         ["<leader>x"] = { name = "+diagnostics/quickfix" },
         ["<leader>sn"] = { name = "+noice" },
-        ["<leader>m"] = { name = "+markdown" }
+        ["<leader>m"] = { name = "+markdown" },
       },
     },
     config = function(_, opts)

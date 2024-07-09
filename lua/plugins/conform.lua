@@ -9,7 +9,8 @@ return {
         "<leader>cf",
         function()
           require("conform").format()
-        end
+        end,
+        desc = "Format File"
       },
       {
         "<leader>cF",

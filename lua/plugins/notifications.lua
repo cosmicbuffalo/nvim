@@ -15,6 +15,13 @@ return {
             end,
             desc = "Dismiss All Notifications",
           },
+          {
+            "<leader>uh",
+            function()
+              require("telescope").extensions.notify.notify()
+            end,
+            desc = "Notification History",
+          },
         },
         opts = {
           stages = "static",
@@ -29,18 +36,23 @@ return {
             vim.api.nvim_win_set_config(win, { zindex = 100 })
           end,
         },
-        -- init = function()
-        --   -- when noice is not enabled, install notify on VeryLazy
-        --   if not LazyVim.has("noice.nvim") then
-        --     LazyVim.on_very_lazy(function()
-        --       vim.notify = require("notify")
-        --     end)
-        --   end
-        -- end,
       },
     },
     event = "VeryLazy",
     opts = {
+      commands = {
+        history = {
+          -- filter = {
+          --   any = {
+          --     { event = "notify" },
+          --     { error = true },
+          --     { warning = true },
+          --     { event = "msg_show" },
+          --     { event = "lsp", kind = "message" },
+          --   },
+          -- },
+        },
+      },
       views = {
         split = {
           enter = true,
@@ -61,6 +73,14 @@ return {
           filter = {
             event = "msg_show",
             kind = "echo",
+            find = "Treesitter",
+          },
+          view = "notify",
+        },
+        {
+          filter = {
+            event = "msg_show",
+            kind = "echo",
           },
           view = "mini",
         },
@@ -73,26 +93,9 @@ return {
               { find = "; after #%d+" },
               { find = "; before #%d+" },
             },
-            -- ["not"] = {
-            --   any = {
-            --     { has = true },
-            --     { cleared = true },
-            --   }
-            -- }
           },
           view = "mini",
         },
-        -- {
-        --   filter = {
-        --     event = "msg_show",
-        --     ["not"] = { find = "[w]" },
-        --     any = {
-        --       { has = true },
-        --       { cleared = true },
-        --     },
-        --   },
-        --   opts = { skip = true },
-        -- },
       },
       presets = {
         bottom_search = false,
@@ -104,13 +107,31 @@ return {
     },
     -- stylua: ignore
     keys = {
-      { "<S-Enter>",   function() require("noice").redirect(vim.fn.getcmdline()) end,                 mode = "c",                 desc = "Redirect Cmdline" },
-      { "<leader>snl", function() require("noice").cmd("last") end,                                   desc = "Noice Last Message" },
-      { "<leader>snh", function() require("noice").cmd("history") end,                                desc = "Noice History" },
-      { "<leader>sna", function() require("noice").cmd("all") end,                                    desc = "Noice All" },
-      { "<leader>snd", function() require("noice").cmd("dismiss") end,                                desc = "Dismiss All" },
-      { "<c-f>",       function() if not require("noice.lsp").scroll(4) then return "<c-f>" end end,  silent = true,              expr = true,              desc = "Scroll Forward",  mode = { "i", "n", "s" } },
-      { "<c-b>",       function() if not require("noice.lsp").scroll(-4) then return "<c-b>" end end, silent = true,              expr = true,              desc = "Scroll Backward", mode = { "i", "n", "s" } },
+      { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
+      { "<leader>snl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
+      { "<leader>snh", function() require("noice").cmd("history") end, desc = "Noice History" },
+      { "<leader>sna", function() require("noice").cmd("all") end, desc = "Noice All" },
+      { "<leader>snd", function() require("noice").cmd("dismiss") end, desc = "Dismiss All" },
+      {
+        "<c-f>",
+        function()
+          if not require("noice.lsp").scroll(4) then return "<c-f>" end
+        end,
+        silent = true,
+        expr = true,
+        desc = "Scroll Forward",
+        mode = { "i", "n", "s" },
+      },
+      {
+        "<c-b>",
+        function()
+          if not require("noice.lsp").scroll(-4) then return "<c-b>" end
+        end,
+        silent = true,
+        expr = true,
+        desc = "Scroll Backward",
+        mode = { "i", "n", "s" },
+      },
     },
   },
 }

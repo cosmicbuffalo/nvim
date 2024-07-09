@@ -3,11 +3,13 @@ return {
     "luukvbaal/statuscol.nvim",
     -- enabled = false,
     -- event = "BufReadPost",
+    lazy = false,
     config = function() local builtin = require("statuscol.builtin")
       -- require("statuscol").setup()
       require("statuscol").setup({
         relculright = true,
         segments = {
+
           -- {
           --   sign = { name = { "Diagnostic" }, maxwidth = 2, auto = true },
           --   click = "v:lua.ScSa",
@@ -31,6 +33,7 @@ return {
     dependencies = {
       "kevinhwang91/promise-async",
     },
+    lazy = false,
     -- event = "BufReadPost",
     opts = {
       open_fold_hl_timeout = 400,
@@ -89,12 +92,16 @@ return {
       require("ufo").setup(opts)
       vim.keymap.set("n", "zR", require("ufo").openAllFolds)
       vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
-      vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
+      -- vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
     end,
   },
   {
-    "anuvyklack/fold-preview.nvim",
-    dependencies = { 'anuvyklack/keymap-amend.nvim' },
+    "cosmicbuffalo/fold-preview.nvim",
+    branch = "fix-eventignore",
+    dependencies = {
+      'cosmicbuffalo/keymap-amend.nvim',
+      "folke/which-key.nvim",
+    },
     config = function()
       require('fold-preview').setup({
         default_keybindings = false,
@@ -103,16 +110,15 @@ return {
       local keymap = vim.keymap
       keymap.amend = require('keymap-amend')
 
-      keymap.amend('n', "<right>", map.show_close_preview_open_fold)
-      keymap.amend('n', "<left>", map.close_preview)
-      keymap.amend('n', 'za', map.close_preview)
-      keymap.amend('n', 'zo', map.close_preview)
-      keymap.amend('n', 'zO', map.close_preview)
-      keymap.amend('n', 'zR', map.close_preview)
-      keymap.amend('n', 'zc', map.close_preview_without_defer)
-      keymap.amend('n', 'zC', map.close_preview_without_defer)
-      keymap.amend('n', 'zM', map.close_preview_without_defer)
-
+      keymap.amend('n', "<right>", map.show_close_preview_open_fold, { desc = "Preview/open fold"})
+      keymap.amend('n', "<left>", map.close_preview, { desc = "Close fold preview"})
+      keymap.amend('n', 'za', map.close_preview, { desc = "Toggle fold under cursor"})
+      keymap.amend('n', 'zo', map.close_preview, { desc = "Open fold under cursor"})
+      keymap.amend('n', 'zO', map.close_preview, { desc = "Open all folds under cursor"})
+      keymap.amend('n', 'zR', map.close_preview, { desc = "Open all folds"})
+      keymap.amend('n', 'zc', map.close_preview_without_defer, { desc = "Close fold under cursor"})
+      keymap.amend('n', 'zC', map.close_preview_without_defer, { desc = "Close all folds under cursor"})
+      keymap.amend('n', 'zM', map.close_preview_without_defer, { desc = "Close all folds"})
     end
   }
 }

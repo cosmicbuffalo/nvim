@@ -1,0 +1,5 @@
+require("config.keymaps.general")
+require("config.keymaps.git")
+require("config.keymaps.test_navigation")
+require("config.keymaps.multiple_cursors")
+require("config.keymaps.magic_keys")

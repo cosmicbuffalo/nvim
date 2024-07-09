@@ -5,11 +5,12 @@ return {
     config = true,
     opts = {
       check_ts = true,
-    }
+    },
   },
   -- jump between more complex pairs with %
   -- also does highlighting of destination pairs
   {
-    'andymass/vim-matchup'
-  }
+    "andymass/vim-matchup",
+    lazy = false,
+  },
 }

@@ -2,7 +2,7 @@ return {
   -- statusline
   {
     "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
+    event = "VimEnter",
     init = function()
       vim.g.lualine_laststatus = vim.o.laststatus
       if vim.fn.argc(-1) > 0 then
@@ -40,7 +40,6 @@ return {
       -- local bg = function(hl_name)
       --   return utils.get_highlight(hl_name).bg
       -- end
-
 
       return {
         options = {
@@ -196,6 +195,7 @@ return {
   -- winbars
   {
     "rebelot/heirline.nvim",
+    event = "BufReadPre",
     dependencies = {
       "nvim-lualine/lualine.nvim",
       {
@@ -203,7 +203,28 @@ return {
         dependencies = { "nvim-telescope/telescope-fzf-native.nvim" },
         opts = {
           general = {
-            enable = false,
+            enable = false, -- turn off the automatic attachment behavior since it'll be handled by the component in heirline
+          },
+          icons = {
+            ui = {
+              bar = {
+                separator = "  ",
+                extends = "…",
+              },
+              menu = {
+                separator = " ",
+                indicator = " ",
+              },
+            },
+          },
+        },
+        keys = {
+          {
+            "<leader>bo",
+            function()
+              require("dropbar.api").pick()
+            end,
+            desc = "Dropbar Picker",
           },
         },
       },
@@ -211,8 +232,6 @@ return {
     config = function()
       local conditions = require("heirline.conditions")
       local utils = require("heirline.utils")
-
-      local colors = require("tokyonight.colors").setup()
 
       local function get_dropbar_winbar_content()
         return "%{%v:lua.dropbar.get_dropbar_str()%}"
@@ -254,27 +273,31 @@ return {
         end,
       }
 
+      local function h(name)
+        return utils.get_highlight(name)
+      end
+
       local FileFlags = {
         {
           condition = function()
             return vim.bo.modified
           end,
           provider = " [+]",
-          hl = { fg = colors.orange, bold = true },
+          hl = { fg = h("CursorLineNr").fg, bold = true },
         },
         -- {
         --   condtion = function()
         --     return (not vim.bo.modifiable) or vim.bo.readonly
         --   end,
         --   provider = " ",
-        --   hl = { fg = "orange" },
+        --   hl = { fg = h("CursorLineNr").fg },
         -- },
       }
 
       local FileNameModifier = {
         hl = function()
           if vim.bo.modified then
-            return { fg = colors.orange, bold = true, force = true }
+            return { fg = h("CursorLineNr").fg, bold = true, force = true }
           end
         end,
       }
@@ -292,7 +315,6 @@ return {
         {
           -- Align,
           Space,
-
           FileNameBlock,
           Align,
         },
@@ -337,20 +359,53 @@ return {
         ["!"] = "!",
         t = "TERMINAL",
       }
+
+      local function setup_colors()
+        return {
+          bright_bg = utils.get_highlight("Folded").bg,
+          bright_fg = utils.get_highlight("Folded").fg,
+          red = utils.get_highlight("DiagnosticError").fg,
+          dark_red = utils.get_highlight("DiffDelete").bg,
+          green = utils.get_highlight("String").fg,
+          blue = utils.get_highlight("Function").fg,
+          gray = utils.get_highlight("NonText").fg,
+          orange = utils.get_highlight("Constant").fg,
+          yellow = utils.get_highlight("Todo").bg,
+          purple = utils.get_highlight("Statement").fg,
+          cyan = utils.get_highlight("Special").fg,
+          diag_warn = utils.get_highlight("DiagnosticWarn").fg,
+          diag_error = utils.get_highlight("DiagnosticError").fg,
+          diag_hint = utils.get_highlight("DiagnosticHint").fg,
+          diag_info = utils.get_highlight("DiagnosticInfo").fg,
+          git_del = utils.get_highlight("diffDeleted").fg,
+          git_add = utils.get_highlight("diffAdded").fg,
+          git_change = utils.get_highlight("diffChanged").fg,
+        }
+      end
+      require("heirline").load_colors(setup_colors)
+
+      vim.api.nvim_create_augroup("Heirline", { clear = true })
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        callback = function()
+          utils.on_colorscheme(setup_colors)
+        end,
+        group = "Heirline",
+      })
+
       local mode_colors = {
-        n = colors.blue,
-        i = colors.green,
-        v = colors.magenta,
-        V = colors.magenta,
-        ["\22"] = colors.magenta,
-        c = colors.yellow,
-        s = colors.teal,
-        S = colors.teal,
-        ["\19"] = colors.teal,
-        R = colors.red,
-        r = colors.red,
-        ["!"] = colors.yellow,
-        t = colors.bg_highlight,
+        n = "blue",
+        i = "green",
+        v = "purple",
+        V = "purple",
+        ["\22"] = "purple",
+        c = "yellow",
+        s = "orange",
+        S = "orange",
+        ["\19"] = "orange",
+        R = "red",
+        r = "red",
+        ["!"] = "gray",
+        t = "gray",
       }
 
       local ModeWrapStart = {

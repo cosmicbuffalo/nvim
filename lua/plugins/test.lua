@@ -6,13 +6,7 @@ return {
       vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
         pattern = "*_spec.rb",
         callback = function()
-          vim.api.nvim_buf_set_keymap(
-            0,
-            "n",
-            "<leader>cs",
-            ":SpecOutlineToggle<CR>",
-            { noremap = true, silent = true, desc = "Toggle Outline (Spec)" }
-          )
+          vim.api.nvim_buf_set_keymap(0, "n", "<leader>cs", ":SpecOutlineToggle<CR>", { noremap = true, silent = true, desc = "Toggle Outline (Spec)" })
         end,
       })
     end,

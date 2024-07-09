@@ -16,10 +16,9 @@ return {
   {
     "nvim-neo-tree/neo-tree.nvim",
     -- enabled = false,
-    lazy = false,
-    event = "VimEnter",
+    -- lazy = false,
+    -- event = "VimEnter",
     branch = "v3.x",
-    cmd = "Neotree",
     keys = {
       { "<leader>fe", FindFilesRoot, desc = "Explorer NeoTree (Root Dir)", },
       { "<leader>fE", FindFilesCWD, desc = "Explorer NeoTree (cwd)", },
@@ -40,10 +39,11 @@ return {
         desc = "Buffer Explorer",
       },
     },
-    deactivate = function()
-      vim.cmd([[Neotree close]])
-    end,
+    -- deactivate = function()
+    --   vim.cmd([[Neotree close]])
+    -- end,
     opts = {
+      close_if_last_window = true,
       sources = { "filesystem", "buffers", "git_status" },
       auto_clean_after_session_restore = true, -- Automatically clean up broken neo-tree buffers saved in sessions
       -- hide_root_node = true,

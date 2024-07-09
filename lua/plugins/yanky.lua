@@ -3,7 +3,6 @@ return {
   {
     "gbprod/yanky.nvim",
     enabled = true,
-    lazy = false,
     priority = 100,
     dependencies ={ "kkharji/sqlite.lua" },
     opts = {
