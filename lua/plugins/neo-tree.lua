@@ -1,4 +1,4 @@
-local FindFilesRoot = function()
+local open_root = function()
   local current_file = vim.fn.expand("%:p")
   -- vim.notify("current_file" .. current_file)
   require("neo-tree.command").execute({
@@ -8,7 +8,8 @@ local FindFilesRoot = function()
     reveal = current_file,
   })
 end
-local FindFilesCWD = function()
+
+local open_cwd = function()
   require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
 end
 
@@ -16,14 +17,14 @@ return {
   {
     "nvim-neo-tree/neo-tree.nvim",
     -- enabled = false,
-    -- lazy = false,
+    lazy = true,
     -- event = "VimEnter",
     branch = "v3.x",
     keys = {
-      { "<leader>fe", FindFilesRoot, desc = "Explorer NeoTree (Root Dir)", },
-      { "<leader>fE", FindFilesCWD, desc = "Explorer NeoTree (cwd)", },
-      { "<leader>e", FindFilesRoot, desc = "Explorer NeoTree (Root Dir)" },
-      { "<leader>E", FindFilesCWD, desc = "Explorer NeoTree (cwd)" },
+      { "<leader>fe", open_root, desc = "Explorer NeoTree (Root Dir)", },
+      { "<leader>fE", open_cwd, desc = "Explorer NeoTree (cwd)", },
+      { "<leader>e", open_root, desc = "Explorer NeoTree (Root Dir)" },
+      { "<leader>E", open_cwd, desc = "Explorer NeoTree (cwd)" },
       {
         "<leader>ge",
         function()

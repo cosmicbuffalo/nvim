@@ -231,6 +231,26 @@ end, { desc = "Toggle Treesitter Highlight" })
 nset("<leader>uw", function() utils.toggle_option("wrap") end, { desc = "Toggle Word Wrap" })
 nset("<leader>ub", function() utils.toggle_option("background", { "light", "dark" }) end, { desc = "Toggle Background" })
 
+-- quickfix diagnostics
+function set_diagnostics_in_quickfix()
+    local diagnostics = vim.diagnostic.get()
+    local qf_entries = {}
+    for _, diagnostic in ipairs(diagnostics) do
+        local bufnr = diagnostic.bufnr
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        table.insert(qf_entries, {
+            bufnr = bufnr,
+            lnum = diagnostic.lnum + 1,
+            col = diagnostic.col + 1,
+            text = diagnostic.message,
+            filename = bufname,
+        })
+    end
+    vim.fn.setqflist(qf_entries, 'r')
+    vim.cmd('copen')
+end
+
+vim.api.nvim_set_keymap('n', '<leader>xD', ':lua set_diagnostics_in_quickfix()<CR>', { noremap = true, silent = true })
 -- quickfix navigation
 nset("<leader>xl", "<cmd>lopen<cr>", { desc = "Location List" })
 nset("<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })

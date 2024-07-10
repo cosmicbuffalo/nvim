@@ -312,6 +312,14 @@ return {
     },
   },
 
+  -- use treesitter to smarten up commentstring
+  -- {
+  --   "JoosepAlviste/nvim-ts-context-commentstring",
+  --   lazy = true,
+  --   opts = {
+  --     enable_autocmd = false,
+  --   },
+  -- },
   -- colorize nested brackets
   {
     "HiPhish/rainbow-delimiters.nvim",

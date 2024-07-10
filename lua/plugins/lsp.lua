@@ -1,4 +1,5 @@
 return {
+  -- lsp setup
   {
     "VonHeikemen/lsp-zero.nvim",
     lazy = false,
@@ -257,6 +258,7 @@ return {
       })
     end,
   },
+  -- displays usage in virtual text next to functions
   {
     "Wansmer/symbol-usage.nvim",
     event = { "LspAttach", "ColorScheme" },
