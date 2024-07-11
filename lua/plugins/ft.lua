@@ -12,9 +12,9 @@ return {
       vim.fn["mkdp#util#install"]()
     end,
     keys = {
-      { "<leader>mp", ":MarkdownPreview<CR>", { noremap = true, silent = true } },
-      { "<leader>ms", ":MarkdownPreviewStop<CR>", { noremap = true, silent = true } },
-      { "<leader>mt", ":MarkdownPreviewToggle<CR>", { noremap = true, silent = true } },
+      { "<leader>mp", ":MarkdownPreview<CR>", { noremap = true, silent = true, desc = "Start Markdown Preview" } },
+      { "<leader>ms", ":MarkdownPreviewStop<CR>", { noremap = true, silent = true , desc = "Stop Markdown Preview"} },
+      { "<leader>mt", ":MarkdownPreviewToggle<CR>", { noremap = true, silent = true , desc = "Toggle Markdown Preview"} },
     },
   },
   -- supposedly enables syntax highlighting in markdown codeblocks, hard to tell if it's working tho

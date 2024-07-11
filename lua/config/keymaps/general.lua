@@ -97,6 +97,12 @@ set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true
 set({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 set({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
+-- remap using norm! in insert mode
+function _G.wrapped_line_movement(mapping)
+  vim.api.nvim_command("norm! " .. mapping)
+end
+iset("<Down>", '<cmd> lua wrapped_line_movement("gj")<cr>', { desc = "Down", noremap = true, silent = true })
+iset("<Up>", '<cmd> lua wrapped_line_movement("gk")<cr>', { desc = "Up", noremap = true, silent = true })
 -- Move Lines
 nset("<A-j>", "<cmd>m .+1<cr>==", { desc = "Move Down" })
 nset("<A-k>", "<cmd>m .-2<cr>==", { desc = "Move Up" })
@@ -136,7 +142,7 @@ vset(
 )
 
 -- messages
-nset("<leader>m", [[<cmd>set nomore<bar>40messages<bar>set more<CR>]], { desc = "Show messages" })
+nset("<leader>xm", [[<cmd>set nomore<bar>40messages<bar>set more<CR>]], { desc = "Show messages" })
 
 -- Terminal Mappings
 tset("<esc><esc>", "<c-\\><c-n>", { desc = "Enter Normal Mode" })
@@ -149,7 +155,6 @@ tset("<c-_>", "<cmd>close<cr>", { desc = "Toggle Terminal" })
 
 -- new file
 nset("<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
-
 
 -- comments above and below
 nset("gco", "o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Below" })
@@ -184,11 +189,15 @@ local function toggle_case()
   vim.cmd("normal mx")
   if word:match("_") then
     -- Convert snake_case to CamelCase
-    new_word = word:gsub("_(%a)", function(c) return c:upper() end)
+    new_word = word:gsub("_(%a)", function(c)
+      return c:upper()
+    end)
     new_word = new_word:gsub("^%l", string.upper)
   else
     -- Convert CamelCase to snake_case
-    new_word = word:gsub("%u", function(c) return "_" .. c:lower() end)
+    new_word = word:gsub("%u", function(c)
+      return "_" .. c:lower()
+    end)
     new_word = new_word:gsub("^_", "")
   end
   -- Perform substitution for the whole buffer
@@ -233,24 +242,24 @@ nset("<leader>ub", function() utils.toggle_option("background", { "light", "dark
 
 -- quickfix diagnostics
 function set_diagnostics_in_quickfix()
-    local diagnostics = vim.diagnostic.get()
-    local qf_entries = {}
-    for _, diagnostic in ipairs(diagnostics) do
-        local bufnr = diagnostic.bufnr
-        local bufname = vim.api.nvim_buf_get_name(bufnr)
-        table.insert(qf_entries, {
-            bufnr = bufnr,
-            lnum = diagnostic.lnum + 1,
-            col = diagnostic.col + 1,
-            text = diagnostic.message,
-            filename = bufname,
-        })
-    end
-    vim.fn.setqflist(qf_entries, 'r')
-    vim.cmd('copen')
+  local diagnostics = vim.diagnostic.get()
+  local qf_entries = {}
+  for _, diagnostic in ipairs(diagnostics) do
+    local bufnr = diagnostic.bufnr
+    local bufname = vim.api.nvim_buf_get_name(bufnr)
+    table.insert(qf_entries, {
+      bufnr = bufnr,
+      lnum = diagnostic.lnum + 1,
+      col = diagnostic.col + 1,
+      text = diagnostic.message,
+      filename = bufname,
+    })
+  end
+  vim.fn.setqflist(qf_entries, "r")
+  vim.cmd("copen")
 end
 
-vim.api.nvim_set_keymap('n', '<leader>xD', ':lua set_diagnostics_in_quickfix()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>xD", ":lua set_diagnostics_in_quickfix()<CR>", { noremap = true, silent = true, desc = "Diagnostics to Quickfix list" })
 -- quickfix navigation
 nset("<leader>xl", "<cmd>lopen<cr>", { desc = "Location List" })
 nset("<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })

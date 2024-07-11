@@ -26,6 +26,7 @@ return {
   -- jump through edit history across buffers
   {
     "bloznelis/before.nvim",
+    lazy = false,
     opts = {
       history_size = 30,
       telescope_for_preview = true,
@@ -93,13 +94,15 @@ return {
   -- instances.
   {
     "RRethy/vim-illuminate",
-    -- event = "LazyFile",
     opts = {
       delay = 200,
       large_file_cutoff = 2000,
       large_file_overrides = {
         providers = { "lsp" },
       },
+      filetypes_denylist = {
+        "markdown"
+      }
     },
     config = function(_, opts)
       require("illuminate").configure(opts)

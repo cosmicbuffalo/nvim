@@ -299,6 +299,8 @@ return {
           if vim.bo.modified then
             return { fg = h("CursorLineNr").fg, bold = true, force = true }
           end
+
+          return { fg = h("Comment").fg }
         end,
       }
 
