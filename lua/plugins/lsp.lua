@@ -101,6 +101,12 @@ return {
         end
       end)
 
+      local signs = { Error = " ", Warn  = " ", Hint  = " ", Info  = " " }
+      for type, icon in pairs(signs) do
+        local hl = "DiagnosticSign" .. type
+        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+      end
+
       require("mason").setup({})
       local mr = require("mason-registry")
       mr:on("package:install:success", function()
@@ -247,13 +253,53 @@ return {
           },
         },
         formatting = {
-          -- format = function(_, item)
-          --   local icons = require("lazyvim.config").icons.kinds
-          --   if icons[item.kind] then
-          --     item.kind = icons[item.kind] .. item.kind
-          --   end
-          --   return item
-          -- end,
+          format = function(_, item)
+            local icons = {
+              Array = " ",
+              Boolean = "󰨙 ",
+              Class = " ",
+              Codeium = "󰘦 ",
+              Color = " ",
+              Control = " ",
+              Collapsed = " ",
+              Constant = "󰏿 ",
+              Constructor = " ",
+              Copilot = " ",
+              Enum = " ",
+              EnumMember = " ",
+              Event = " ",
+              Field = " ",
+              File = " ",
+              Folder = " ",
+              Function = "󰊕 ",
+              Interface = " ",
+              Key = " ",
+              Keyword = " ",
+              Method = "󰊕 ",
+              Module = " ",
+              Namespace = "󰦮 ",
+              Null = " ",
+              Number = "󰎠 ",
+              Object = " ",
+              Operator = " ",
+              Package = " ",
+              Property = " ",
+              Reference = " ",
+              Snippet = " ",
+              String = " ",
+              Struct = "󰆼 ",
+              TabNine = "󰏚 ",
+              Text = " ",
+              TypeParameter = " ",
+              Unit = " ",
+              Value = " ",
+              Variable = "󰀫 ",
+            }
+            if icons[item.kind] then
+              item.kind = icons[item.kind] .. item.kind
+            end
+            return item
+          end,
         },
       })
     end,
@@ -346,7 +392,7 @@ return {
 
       vim.api.nvim_create_autocmd("ColorScheme", {
         pattern = "*",
-        callback = reset_highlights
+        callback = reset_highlights,
       })
     end,
   },

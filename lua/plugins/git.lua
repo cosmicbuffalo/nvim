@@ -43,11 +43,11 @@ return {
   -- handy diffview in a tab page
   {
     -- 'sindrets/diffview.nvim',
-    'cosmicbuffalo/diffview.nvim',
-    cmd = {'DiffviewOpen', 'DiffviewToggle' },
+    "cosmicbuffalo/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewToggle" },
     keys = {
       { "<leader>gd", "<cmd>DiffviewToggle<CR>", desc = "Toggle Diff Viewer" },
-    }
+    },
   },
   -- shortcuts for github things
   {
@@ -79,6 +79,37 @@ return {
         "<leader>gp",
         '<cmd>TermExec cmd="pr" open=0<CR>',
         { desc = "Create or open PR in GitHub", silent = true }
+      )
+      -- Function to open PR that merged the current line in GitHub
+      function open_merged_pr()
+        -- Get the current file and line number
+        local file = vim.fn.expand("%")
+        local line = vim.fn.line(".")
+
+        -- Get the commit SHA for the current line using git blame
+        local sha = vim.fn.systemlist("git blame -L " .. vim.fn.line(".") .. "," .. vim.fn.line(".") .. " " .. vim.fn.expand("%") .. ' --porcelain | cut -d " " -f 1')[1]
+
+        if sha and sha ~= "" then
+          -- Get the PR number associated with the commit SHA using gh
+          local pr_number = vim.fn.systemlist('gh pr list --search "' .. sha .. '" --state "merged" --json number --jq ".[0].number"')[1]
+          if pr_number and pr_number ~= "" then
+            -- Open the PR in the default web browser
+            vim.notify("Opening PR #" .. pr_number)
+            vim.fn.system("gh pr view " .. pr_number .. " --web")
+          else
+            print("No PR found for this commit.")
+          end
+        else
+          print("No commit found for this line.")
+        end
+      end
+
+      -- Set the keymap
+      vim.api.nvim_set_keymap(
+        "n",
+        "<leader>gP",
+        ":lua open_merged_pr()<CR>",
+        { noremap = true, silent = true, desc = "Open PR that merged current line" }
       )
     end,
   },

@@ -18,11 +18,16 @@ return {
     "nvim-neo-tree/neo-tree.nvim",
     -- enabled = false,
     lazy = true,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      "MunifTanjim/nui.nvim",
+    },
     -- event = "VimEnter",
     branch = "v3.x",
     keys = {
-      { "<leader>fe", open_root, desc = "Explorer NeoTree (Root Dir)", },
-      { "<leader>fE", open_cwd, desc = "Explorer NeoTree (cwd)", },
+      { "<leader>fe", open_root, desc = "Explorer NeoTree (Root Dir)" },
+      { "<leader>fE", open_cwd, desc = "Explorer NeoTree (cwd)" },
       { "<leader>e", open_root, desc = "Explorer NeoTree (Root Dir)" },
       { "<leader>E", open_cwd, desc = "Explorer NeoTree (cwd)" },
       {
@@ -155,15 +160,39 @@ return {
           expander_expanded = "",
           expander_highlight = "NeoTreeExpander",
         },
+        git_status = {
+          symbols = {
+            modified = "",
+          },
+        },
+        diagnostics = {
+          symbols = {
+            error = " ",
+            warn = " ",
+            hint = " ",
+            info = " ",
+          },
+        },
       },
     },
     config = function(_, opts)
+      local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+
+      for type, icon in pairs(signs) do
+        local hl = "Diagnostic" .. type
+        vim.fn.sign_define(hl, { text = icon, texthl = hl })
+
+      end
+      vim.fn.sign_define("DiagnosticSignError", { text = signs.Error, texthl = "DiagnosticSignError" })
+      vim.fn.sign_define("DiagnosticSignWarn", { text = signs.Warn, texthl = "DiagnosticSignWarn" })
+      vim.fn.sign_define("DiagnosticSignInfo", { text = signs.Info, texthl = "DiagnosticSignInfo" })
+      vim.fn.sign_define("DiagnosticSignHint", { text = signs.Hint, texthl = "DiagnosticSignHint" })
       -- vim.notify("calling neo-tree config")
       -- local function on_move(data)
       --   LazyVim.lsp.on_rename(data.source, data.destination)
       -- end
 
-      local events = require("neo-tree.events")
+      -- local events = require("neo-tree.events")
       opts.event_handlers = opts.event_handlers or {}
       vim.list_extend(opts.event_handlers, {
         -- { event = events.FILE_MOVED, handler = on_move },
