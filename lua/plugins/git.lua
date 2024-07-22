@@ -35,7 +35,9 @@ return {
         -- map("n", "<leader>ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
         map("n", "<leader>gB", gs.toggle_current_line_blame, "Toggle Line Blame")
         map("n", "<leader>ghd", gs.diffthis, "Diff This")
-        map("n", "<leader>ghD", function() gs.diffthis("~") end, "Diff This ~")
+        map("n", "<leader>ghD", function()
+          gs.diffthis("~")
+        end, "Diff This ~")
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
       end,
     },
@@ -55,12 +57,7 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       require("gitlinker").setup()
-      local mapping = {
-        ["<leader>gy"] = { desc = "Copy GitHub link" },
-      }
-      local wk = require("which-key")
-      wk.register(mapping, { mode = "n" })
-      wk.register(mapping, { mode = "v" })
+      require("which-key").add({ "<leader>gy", desc = "Copy GitHub link", mode = { "n", "v" } })
       vim.api.nvim_set_keymap(
         "n",
         "<leader>go",
@@ -87,11 +84,21 @@ return {
         local line = vim.fn.line(".")
 
         -- Get the commit SHA for the current line using git blame
-        local sha = vim.fn.systemlist("git blame -L " .. vim.fn.line(".") .. "," .. vim.fn.line(".") .. " " .. vim.fn.expand("%") .. ' --porcelain | cut -d " " -f 1')[1]
+        local sha = vim.fn.systemlist(
+          "git blame -L "
+            .. vim.fn.line(".")
+            .. ","
+            .. vim.fn.line(".")
+            .. " "
+            .. vim.fn.expand("%")
+            .. ' --porcelain | cut -d " " -f 1'
+        )[1]
 
         if sha and sha ~= "" then
           -- Get the PR number associated with the commit SHA using gh
-          local pr_number = vim.fn.systemlist('gh pr list --search "' .. sha .. '" --state "merged" --json number --jq ".[0].number"')[1]
+          local pr_number = vim.fn.systemlist(
+            'gh pr list --search "' .. sha .. '" --state "merged" --json number --jq ".[0].number"'
+          )[1]
           if pr_number and pr_number ~= "" then
             -- Open the PR in the default web browser
             vim.notify("Opening PR #" .. pr_number)

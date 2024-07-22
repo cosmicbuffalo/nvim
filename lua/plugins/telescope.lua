@@ -7,7 +7,7 @@ return {
     "nvim-telescope/telescope.nvim",
     enabled = true,
     cmd = "Telescope",
-    tag = '0.1.8',
+    tag = "0.1.8",
     lazy = false,
     -- priority = 500,
     -- version = false, -- telescope did only one release, so use HEAD for now
@@ -18,6 +18,11 @@ return {
       "nvim-telescope/telescope-ui-select.nvim",
       "debugloop/telescope-undo.nvim",
       "jemag/telescope-diff.nvim",
+      {
+        "nvim-telescope/telescope-file-browser.nvim",
+        dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+      },
+
       -- {
       --   "nvim-telescope/telescope-frecency.nvim",
       --   config = function()
@@ -261,6 +266,34 @@ return {
       --   local line = action_state.get_current_line()
       --   LazyVim.pick("find_files", { hidden = true, default_text = line })()
       -- end
+
+      local select_dir_for_grep = function(prompt_bufnr)
+        local action_state = require("telescope.actions.state")
+        local fb = require("telescope").extensions.file_browser
+        local lga = require("telescope").extensions.live_grep_args
+        local current_line = action_state.get_current_line()
+
+        fb.file_browser({
+          files = false,
+          depth = false,
+          attach_mappings = function(prompt_bufnr)
+            require("telescope.actions").select_default:replace(function()
+              local entry_path = action_state.get_selected_entry().Path
+              local dir = entry_path:is_dir() and entry_path or entry_path:parent()
+              local relative = dir:make_relative(vim.fn.getcwd())
+              local absolute = dir:absolute()
+
+              lga.live_grep_args({
+                results_title = relative .. "/",
+                cwd = absolute,
+                default_text = current_line,
+              })
+            end)
+
+            return true
+          end,
+        })
+      end
       require("telescope").setup({
         defaults = {
           prompt_prefix = " ",
@@ -347,7 +380,7 @@ return {
         extensions = {
           fzf = {
             fuzzy = true,
-            case_mode = "smart_case"
+            case_mode = "smart_case",
           },
           ["ui-select"] = {
             require("telescope.themes").get_dropdown({}),
@@ -359,12 +392,14 @@ return {
               i = {
                 ["<C-k>"] = lga_actions.quote_prompt(),
                 ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+                ["<C-t>"] = select_dir_for_grep,
               },
             },
           },
         },
       })
       require("telescope").load_extension("fzf")
+      require("telescope").load_extension("file_browser")
       require("telescope").load_extension("live_grep_args")
       require("telescope").load_extension("diff")
       require("telescope").load_extension("undo")
