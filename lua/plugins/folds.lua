@@ -4,7 +4,8 @@ return {
     -- enabled = false,
     -- event = "BufReadPost",
     lazy = false,
-    config = function() local builtin = require("statuscol.builtin")
+    config = function()
+      local builtin = require("statuscol.builtin")
       -- require("statuscol").setup()
       require("statuscol").setup({
         relculright = true,
@@ -51,8 +52,8 @@ return {
         },
       },
       provider_selector = function(bufnr, filetype, buftype)
-        return { 'treesitter', 'indent' }
-      end
+        return { "treesitter", "indent" }
+      end,
     },
     config = function(_, opts)
       local handler = function(virtText, lnum, endLnum, width, truncate)
@@ -89,36 +90,64 @@ return {
       end
 
       opts["fold_virt_text_handler"] = handler
-      require("ufo").setup(opts)
-      vim.keymap.set("n", "zR", require("ufo").openAllFolds)
-      vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
-      -- vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
+      local ufo = require("ufo")
+      ufo.setup(opts)
+
+      vim.keymap.set("n", "zr", require("ufo").openAllFolds, { desc = "Open all Folds" })
+      vim.keymap.set("n", "zm", require("ufo").closeAllFolds, { desc = "Close all Folds" })
+
+      function fold_at_indent_level()
+        local bufnr = vim.api.nvim_get_current_buf()
+        local current_line = vim.fn.line(".")
+        local current_indent = vim.fn.indent(current_line)
+        local fold_ranges = ufo.getFolds(bufnr, "treesitter")
+        local fold_closed = vim.fn.foldclosed(current_line) ~= -1
+
+        for _, range in pairs(fold_ranges) do
+          if range.startLine then
+            local start_line = range.startLine + 1
+            local start_indent = vim.fn.indent(start_line)
+
+            if start_indent == current_indent then
+              if fold_closed then
+                vim.api.nvim_command(start_line .. "foldopen")
+              else
+                vim.api.nvim_command(start_line .. "foldclose")
+              end
+            end
+          else
+            print("Invalid range detected: ", vim.inspect(range))
+          end
+        end
+      end
+
+      vim.keymap.set("n", "<leader>Z", fold_at_indent_level, { desc = "Toggle folds at current indentation" })
     end,
   },
   {
     "cosmicbuffalo/fold-preview.nvim",
     branch = "fix-eventignore",
     dependencies = {
-      'cosmicbuffalo/keymap-amend.nvim',
+      "cosmicbuffalo/keymap-amend.nvim",
       "folke/which-key.nvim",
     },
     config = function()
-      require('fold-preview').setup({
+      require("fold-preview").setup({
         default_keybindings = false,
       })
-      local map = require('fold-preview').mapping
+      local map = require("fold-preview").mapping
       local keymap = vim.keymap
-      keymap.amend = require('keymap-amend')
+      keymap.amend = require("keymap-amend")
 
-      keymap.amend('n', "<right>", map.show_close_preview_open_fold, { desc = "Preview/open fold"})
-      keymap.amend('n', "<left>", map.close_preview, { desc = "Close fold preview"})
-      keymap.amend('n', 'za', map.close_preview, { desc = "Toggle fold under cursor"})
-      keymap.amend('n', 'zo', map.close_preview, { desc = "Open fold under cursor"})
-      keymap.amend('n', 'zO', map.close_preview, { desc = "Open all folds under cursor"})
-      keymap.amend('n', 'zR', map.close_preview, { desc = "Open all folds"})
-      keymap.amend('n', 'zc', map.close_preview_without_defer, { desc = "Close fold under cursor"})
-      keymap.amend('n', 'zC', map.close_preview_without_defer, { desc = "Close all folds under cursor"})
-      keymap.amend('n', 'zM', map.close_preview_without_defer, { desc = "Close all folds"})
-    end
-  }
+      keymap.amend("n", "<right>", map.show_close_preview_open_fold, { desc = "Preview/open fold" })
+      keymap.amend("n", "<left>", map.close_preview, { desc = "Close fold preview" })
+      keymap.amend("n", "za", map.close_preview, { desc = "Toggle fold under cursor" })
+      keymap.amend("n", "zo", map.close_preview, { desc = "Open fold under cursor" })
+      keymap.amend("n", "zO", map.close_preview, { desc = "Open all folds under cursor" })
+      keymap.amend("n", "zR", map.close_preview, { desc = "Open all folds" })
+      keymap.amend("n", "zc", map.close_preview_without_defer, { desc = "Close fold under cursor" })
+      keymap.amend("n", "zC", map.close_preview_without_defer, { desc = "Close all folds under cursor" })
+      keymap.amend("n", "zM", map.close_preview_without_defer, { desc = "Close all folds" })
+    end,
+  },
 }
