@@ -28,26 +28,36 @@ autocmd("BufReadPost", {
   end,
 })
 
-
--- Opens non-text files in the default program instead of in Neovim
-local openFile = augroup("openFile", {})
+-- set conceallevel to 2 for obsidian files
+local obsidianGroup = augroup("Obsidian", {})
 autocmd("BufReadPost", {
-  pattern = {
-    "*.jpeg",
-    "*.jpg",
-    "*.pdf",
-    "*.png",
-  },
+  pattern = vim.fn.expand("~") .. "/Obsidian/**.md",
   callback = function()
-    vim.fn.jobstart('open "' .. vim.fn.expand("%") .. '"', {
-      detach = true,
-    })
-    local bd = require("mini.bufremove").delete
-    bd(0)
-    -- vim.api.nvim_buf_delete(0, {})
-  end,
-  group = openFile,
+    vim.opt_local.conceallevel = 2
+  end
 })
+
+
+-- TODO: tweak this so that I can still open buffers of files
+-- Opens non-text files in the default program instead of in Neovim
+-- local openFile = augroup("openFile", {})
+-- autocmd("BufReadPost", {
+--   pattern = {
+--     "*.jpeg",
+--     "*.jpg",
+--     "*.pdf",
+--     "*.png",
+--   },
+--   callback = function()
+--     vim.fn.jobstart('open "' .. vim.fn.expand("%") .. '"', {
+--       detach = true,
+--     })
+--     local bd = require("mini.bufremove").delete
+--     bd(0)
+--     -- vim.api.nvim_buf_delete(0, {})
+--   end,
+--   group = openFile,
+-- })
 
 -- Array of file names indicating root directory. Modify to your liking.
 local root_names = { ".git", "Gemfile" }

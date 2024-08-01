@@ -60,6 +60,7 @@ function start_lazygit()
     on_open = function(term)
       vim.cmd("startinsert!")
       vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+      vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<esc>", "<esc>", { noremap = true, silent = true })
       -- I wanted to overwrite the built in e command in lazygit with this keymap, but since the keymap attaches
       -- to the buffer, it also affects the behavior of "e" while typing commit messages, which I want to avoid
       -- so instead of overwriting the built in "e" command, I'm using <c-e> to open the file under the cursor in

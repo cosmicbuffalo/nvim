@@ -83,7 +83,7 @@ return {
     opts = { open_cmd = "noswapfile vnew" },
     -- stylua: ignore
     keys = {
-      { "<leader>sr", function() require("spectre").open() end, desc = "Replace in Files (Spectre)" },
+      { "<leader>sR", function() require("spectre").open() end, desc = "Replace in Files (Spectre)" },
     },
   },
   -- toggle terminals with <c-_> or <c-/>
