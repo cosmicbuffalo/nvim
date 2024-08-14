@@ -146,7 +146,7 @@ return {
   -- Show context of the current function
   {
     "nvim-treesitter/nvim-treesitter-context",
-    -- event = "LazyFile",
+    event = "BufReadPost",
     enabled = true,
     opts = {
       mode = "cursor",
