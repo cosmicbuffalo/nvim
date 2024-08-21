@@ -22,6 +22,8 @@ set({ "i", "x", "n", "s" }, "<C-s>", "<NOP>", { desc = "which_key_ignore" })
 nset("<leader>qq", "<cmd>qa<cr>", { desc = "Quit All" })
 -- select all
 nset("<Leader>va", "ggVG<c-$>", { desc = "Select All" })
+-- select last paste
+nset("<leader>vp", "`[v`]", { desc = "Select Pasted Text"})
 
 -- lazy
 nset("<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
@@ -182,6 +184,9 @@ function copy_path()
 end
 nset("<leader>fy", copy_relative_path, { desc = "Copy Relative Path" })
 nset("<leader>fY", copy_path, { desc = "Copy Path" })
+
+-- show file in finder
+nset("<leader>fo", "<cmd>silent !open -R %<CR>", { desc = "Show in Finder", silent = true, noremap = true })
 
 -- Keymap to toggle case
 local function toggle_case()
