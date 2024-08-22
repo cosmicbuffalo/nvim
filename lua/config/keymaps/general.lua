@@ -215,10 +215,6 @@ local function toggle_case()
 end
 nset("<A-~>", toggle_case, { noremap = true, silent = true, desc = "Toggle snake_case/CamelCase" })
 
--- illuminate
--- nset("<C-n>", require("illuminate").goto_next_reference, { desc = "Go to next reference" })
--- nset("<C-p>", require("illuminate").goto_prev_reference, { desc = "Go to previous reference" })
-
 -- alt delete in insert mode deletes words
 iset("<M-BS>", "<C-W>", { noremap = true, silent = true })
 
