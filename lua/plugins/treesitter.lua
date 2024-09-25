@@ -55,10 +55,14 @@ return {
         enable = true,
         additional_vim_regex_highlighting = { "markdown" },
       },
-      indent = { enable = false },
+      indent = {
+        enable = true,
+        -- disable = { "ruby" },
+      },
       autotag = { enable = true },
       ensure_installed = {
         "ruby",
+        "fennel",
         "embedded_template",
         "bash",
         "diff",

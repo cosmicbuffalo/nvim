@@ -68,7 +68,7 @@ return {
             ["<leader>|"] = { "actions.select", opts = { vertical = true }, desc = "Open in vertical split" },
 
             -- oily things
-            ["<leader><leader>"] = { "actions.preview", desc = "Open/Close Preview" },
+            ["<leader>p"] = { "actions.preview", desc = "Open/Close Preview" },
             ["<leader>r"] = { "actions.refresh", desc = "refresh current directory" },
             ["<leader>y"] = { "actions.yank_entry", desc = "Yank path" },
           },

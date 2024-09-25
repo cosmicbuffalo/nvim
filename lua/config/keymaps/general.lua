@@ -70,6 +70,7 @@ iset("=", "=<c-g>u")
 iset(",", ",<c-g>u")
 iset(".", ".<c-g>u")
 iset(";", ";<c-g>u")
+iset(":", ":<c-g>u")
 nset("U", "<C-r>", { desc = "Redo" })
 
 -- viewport moves
@@ -96,6 +97,8 @@ vset("$", "g_")
 -- better indenting
 vset("<", "<gv")
 vset(">", ">gv")
+-- indent whole file
+nset("<leader>=", "gg=G<C-o>zz", { desc = "Indent Whole File", silent = true })
 -- better up/down
 set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 set({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })

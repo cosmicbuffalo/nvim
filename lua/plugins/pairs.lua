@@ -30,6 +30,7 @@ return {
   },
   -- similar to nvim-surround, haven't decided which I like better yet
   {
+    enabled = false,
     "echasnovski/mini.surround",
     keys = function(_, keys)
       -- Populate the keys based on the user's options

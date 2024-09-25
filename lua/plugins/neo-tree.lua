@@ -16,7 +16,7 @@ end
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
-    -- enabled = false,
+    enabled = false,
     lazy = true,
     dependencies = {
       "nvim-lua/plenary.nvim",
