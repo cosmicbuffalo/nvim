@@ -57,11 +57,11 @@ return {
       lsp.on_attach(function(client, bufnr)
         local opts = { buffer = bufnr, remap = false }
         vim.keymap.set("n", "<leader>ci", "<cmd>LspInfo<cr>", { desc = "Lsp Info" })
-        vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, vim.tbl_deep_extend("force", opts, { desc = "Goto Definition" }))
-        -- { "gd", function() require("telescope.builtin").lsp_definitions({ reuse_win = true }) end, desc = "Goto Definition", has = "definition" },
+        -- vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, vim.tbl_deep_extend("force", opts, { desc = "Goto Definition" }))
+        vim.keymap.set("n", "gd", function() require("telescope.builtin").lsp_definitions({ reuse_win = true }) end, vim.tbl_deep_extend("force", opts, { desc = "Goto Definition" }))
         vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, vim.tbl_deep_extend("force", opts, { desc = "Goto Declaration" }))
-        vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, vim.tbl_deep_extend("force", opts, { desc = "Goto Reference" }))
-        -- { "gr", "<cmd>Telescope lsp_references<cr>", desc = "References" },
+        -- vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, vim.tbl_deep_extend("force", opts, { desc = "Goto Reference" }))
+        vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", vim.tbl_deep_extend("force", opts, { desc = "Goto Reference" }))
         vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, vim.tbl_deep_extend("force", opts, { desc = "LSP Hover" }))
         vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, vim.tbl_deep_extend("force", opts, { desc = "LSP Signature Help" }))
         -- { "<c-k>", vim.lsp.buf.signature_help, mode = "i", desc = "Signature Help", has = "signatureHelp" },
@@ -120,7 +120,7 @@ return {
       end)
       require("mason-lspconfig").setup({
         ensure_installed = {
-          "tsserver",
+          -- "ts_ls",
           "eslint",
           "lua_ls",
           "jsonls",

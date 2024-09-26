@@ -118,6 +118,59 @@ return {
         ":lua open_merged_pr()<CR>",
         { noremap = true, silent = true, desc = "Open PR that merged current line" }
       )
+
+      function quickfix_to_github_links()
+        local qflist = vim.fn.getqflist()
+        local links = {}
+        local gitlinker = require("gitlinker")
+        local current_buf = vim.api.nvim_get_current_buf()
+        for _, entry in ipairs(qflist) do
+          local filename = entry.filename or vim.api.nvim_buf_get_name(entry.bufnr)
+          if filename == "" then
+            vim.notify("Entry has no associated file", vim.log.levels.ERROR)
+          else
+            vim.cmd("edit " .. filename)
+            vim.api.nvim_win_set_cursor(0, { entry.lnum, 0 })
+
+            gitlinker.get_buf_range_url("n", {
+              action_callback = function(url)
+                table.insert(links, url)
+              end,
+              print_url = false,
+            })
+          end
+        end
+        vim.api.nvim_set_current_buf(current_buf)
+        local all_links = table.concat(links, "\n")
+        vim.fn.setreg("+", all_links)
+        vim.notify("GitHub links copied to clipboard")
+      end
+
+      vim.keymap.set(
+        "n",
+        "<leader>gq",
+        ":lua quickfix_to_github_links()<CR>",
+        { noremap = true, silent = true, desc = "Copy quickfix GitHub links" }
+      )
+    end,
+  },
+
+  {
+    "ldelossa/gh.nvim",
+    enabled = false,
+    dependencies = {
+      {
+        "ldelossa/litee.nvim",
+        config = function()
+          require("litee.lib").setup()
+        end,
+      },
+    },
+    config = function()
+      require("litee.gh").setup({
+        debug_logging = true,
+        icon_set = "codicons",
+      })
     end,
   },
 }

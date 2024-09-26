@@ -86,6 +86,17 @@ return {
       { "<leader>sR", function() require("spectre").open() end, desc = "Replace in Files (Spectre)" },
     },
   },
+  -- newer search/replace as a buffer
+  {
+    'MagicDuck/grug-far.nvim',
+    enabled = false,
+    config = function()
+      require('grug-far').setup({
+        -- TODO
+      });
+    end,
+    -- TODO: setup keymaps
+  },
   -- toggle terminals with <c-_> or <c-/>
   {
     "akinsho/toggleterm.nvim",
