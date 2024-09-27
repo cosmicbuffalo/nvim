@@ -52,7 +52,6 @@ return {
       local copilot_cmp = require("copilot_cmp")
       copilot_cmp.setup({})
 
-      -- LazyVim.format.register(LazyVim.lsp.formatter())
       -- stylua: ignore
       lsp.on_attach(function(client, bufnr)
         local opts = { buffer = bufnr, remap = false }

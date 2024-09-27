@@ -17,17 +17,6 @@ autocmd("User", {
   pattern = "TelescopePreviewerLoaded",
 })
 
-local baleia = require("baleia").setup({})
-autocmd("BufReadPost", {
-  pattern = "Trouble",
-  callback = function()
-    local bufnr = vim.api.nvim_get_current_buf()
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
-    baleia.once(bufnr)
-    vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
-  end,
-})
-
 -- set conceallevel to 2 for obsidian files
 local obsidianGroup = augroup("Obsidian", {})
 autocmd("BufReadPost", {
@@ -200,3 +189,24 @@ local function set_lazyvim_autocommands()
   })
 end
 set_lazyvim_autocommands()
+
+-- -- Function to disable Tree-sitter indentation
+-- local function disable_treesitter_indent()
+--   vim.api.nvim_command('setlocal indentexpr=')
+-- end
+--
+-- -- Function to enable Tree-sitter indentation
+-- local function enable_treesitter_indent()
+--   vim.api.nvim_command('setlocal indentexpr=nvim_treesitter#indent()')
+-- end
+--
+-- -- Create autocommands to toggle Tree-sitter indentation
+-- autocmd("InsertEnter", {
+--   pattern = "*.rb",
+--   callback = disable_treesitter_indent,
+-- })
+--
+-- autocmd("InsertLeave", {
+--   pattern = "*.rb",
+--   callback = enable_treesitter_indent,
+-- })

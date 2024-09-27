@@ -18,7 +18,6 @@ return {
       local lualine_require = require("lualine_require")
       lualine_require.require = require
 
-      -- local icons = require("lazyvim.config").icons
       vim.o.laststatus = vim.g.lualine_laststatus
 
       local function wordcount()
@@ -52,19 +51,12 @@ return {
           lualine_a = { "mode" },
           lualine_b = { "branch" },
           lualine_c = {
-            -- LazyVim.lualine.root_dir(),
             -- {
             --   require('auto-session.lib').current_session_name
             -- },
             { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
             -- { "filename", path = 1, symbols = { modified = "  ", readonly = "", unnamed = "" } },
             { "filename", path = 4 },
-            -- { LazyVim.lualine.pretty_path() },
-            -- stylua: ignore
-            -- {
-            --   function() return require("nvim-navic").get_location() end,
-            --   cond = function() return package.loaded["nvim-navic"] and require("nvim-navic").is_available() end,
-            -- },
             -- {
             --   "aerial",
             --   sep = " ", -- separator between symbols
@@ -88,39 +80,6 @@ return {
             -- }
           },
           lualine_x = {
-            -- stylua: ignore
-            -- {
-            --   require("noice").api.statusline.mode.get,
-            --   cond = require("noice").api.statusline.mode.has,
-            --   color = fg("Statement"),
-            -- },
-            -- copilot status
-            -- {
-            --   function()
-            --     local icon = require("lazyvim.config").icons.kinds.Copilot
-            --
-            --     local status = require("copilot.api").status.data
-            --
-            --     return icon .. (status.message or "")
-            --   end,
-            --   cond = function()
-            --     if not package.loaded["copilot"] then
-            --       return
-            --     end
-            --     local ok, clients = pcall(LazyVim.lsp.get_clients, { name = "copilot", bufnr = 0 })
-            --     if not ok then
-            --       return false
-            --     end
-            --     return ok and #clients > 0
-            --   end,
-            --   color = function()
-            --     if not package.loaded["copilot"] then
-            --       return
-            --     end
-            --     local status = require("copilot.api").status.data
-            --     return colors[status.status] or colors[""]
-            --   end,
-            -- },
             {
               function()
                 return require("noice").api.status.command.get()

@@ -1,4 +1,5 @@
-# 💤 LazyVim
+# COSMICVIM
 
-A starter template for [LazyVim](https://github.com/LazyVim/LazyVim).
-Refer to the [documentation](https://lazyvim.github.io/installation) to get started.
+cosmicbuffalo's custom neovim config - always a work in progress
+
+This neovim config was heavily inspired by [LazyVim](https://github.com/LazyVim/LazyVim).

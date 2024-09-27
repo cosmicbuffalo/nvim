@@ -1,5 +1,6 @@
 return {
   {
+    enabled = false,
     "jay-babu/mason-nvim-dap.nvim",
     dependencies = "mason.nvim",
     cmd = { "DapInstall", "DapUninstall" },
@@ -8,6 +9,7 @@ return {
   },
   {
     "mfussenegger/nvim-dap",
+    enabled = false,
     dependencies = {
       {
         "rcarriga/nvim-dap-ui",

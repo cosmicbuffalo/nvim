@@ -101,15 +101,3 @@ end
 
 nset("<leader>gb", blame_line, { desc = "Git Blame Line" })
 
--- nset("<leader>gB", LazyVim.lazygit.browse, { desc = "Git Browse" })
--- nset("<leader>gf", function()
---   local git_path = vim.api.nvim_buf_get_name(0)
---   LazyVim.lazygit({args = { "-f", vim.trim(git_path) }})
--- end, { desc = "Lazygit Current File History" })
---
--- nset("<leader>gl", function()
---   LazyVim.lazygit({ args = { "log" }, cwd = LazyVim.root.git() })
--- end, { desc = "Lazygit Log" })
--- nset("<leader>gL", function()
---   LazyVim.lazygit({ args = { "log" } })
--- end, { desc = "Lazygit Log (cwd)" })

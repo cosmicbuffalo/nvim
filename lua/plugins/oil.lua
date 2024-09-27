@@ -1,6 +1,6 @@
 return {
   {
-    "refractalize/oil-git-status.nvim",
+    "cosmicbuffalo/oil-git-status.nvim",
     event = "VimEnter",
     opts = {
       symbols = {

@@ -23,7 +23,7 @@ nset("<leader>qq", "<cmd>qa<cr>", { desc = "Quit All" })
 -- select all
 nset("<Leader>va", "ggVG<c-$>", { desc = "Select All" })
 -- select last paste
-nset("<leader>vp", "`[v`]", { desc = "Select Pasted Text"})
+nset("<leader>vp", "`[v`]", { desc = "Select Pasted Text" })
 
 -- lazy
 nset("<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
@@ -61,7 +61,7 @@ nset("<leader><tab>f", "<cmd>tabfirst<cr>", { desc = "First Tab" })
 nset("<leader><tab>n", "<cmd>tabnew<cr>", { desc = "New Tab" })
 nset("<leader><tab>]", "<cmd>tabnext<cr>", { desc = "Next Tab" })
 -- nset("<leader><tab><tab>", "g<tab>", { desc = "Next Tab" })
-require('which-key').add({ "g<tab>", desc = "Switch to Other Tab"})
+require("which-key").add({ "g<tab>", desc = "Switch to Other Tab" })
 nset("<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
 nset("<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 
@@ -243,8 +243,12 @@ nset("<leader>uT", function()
 end, { desc = "Toggle Treesitter Highlight" })
 
 -- toggle options
-nset("<leader>uw", function() utils.toggle_option("wrap") end, { desc = "Toggle Word Wrap" })
-nset("<leader>ub", function() utils.toggle_option("background", { "light", "dark" }) end, { desc = "Toggle Background" })
+nset("<leader>uw", function()
+  utils.toggle_option("wrap")
+end, { desc = "Toggle Word Wrap" })
+nset("<leader>ub", function()
+  utils.toggle_option("background", { "light", "dark" })
+end, { desc = "Toggle Background" })
 
 -- quickfix diagnostics
 function set_diagnostics_in_quickfix()
@@ -265,7 +269,12 @@ function set_diagnostics_in_quickfix()
   vim.cmd("copen")
 end
 
-vim.api.nvim_set_keymap("n", "<leader>xD", ":lua set_diagnostics_in_quickfix()<CR>", { noremap = true, silent = true, desc = "Diagnostics to Quickfix list" })
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>xD",
+  ":lua set_diagnostics_in_quickfix()<CR>",
+  { noremap = true, silent = true, desc = "Diagnostics to Quickfix list" }
+)
 -- quickfix navigation
 nset("<leader>xl", "<cmd>lopen<cr>", { desc = "Location List" })
 nset("<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })
@@ -303,3 +312,4 @@ vim.api.nvim_create_autocmd("FileType", {
     )
   end,
 })
+require("which-key").add({ "&", desc = "Repeat last substitute command" })
