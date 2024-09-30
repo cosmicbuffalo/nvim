@@ -43,7 +43,11 @@ return {
       { "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files (Root Dir)" },
       -- find
       { "<leader>bf", "<cmd>Telescope buffers sort_mru=true sort_lastused=true<cr>", desc = "Find" },
-      { "<leader>fc", [[lua require('telescope.builtin').find_files({ cwd = vim.fn.stdpath("config")})]], desc = "Config files"},
+      {
+        "<leader>fc",
+        [[lua require('telescope.builtin').find_files({ cwd = vim.fn.stdpath("config")})]],
+        desc = "Config files",
+      },
       { "<leader>fg", "<cmd>Telescope git_files<cr>", desc = "Find Files (git-files)" },
       { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent" },
       -- git
@@ -277,8 +281,16 @@ return {
             },
           },
           path_display = function(opts, path)
-            local file = require("telescope.utils").path_tail(path)
-            local path_without_file = path:gsub(file .. "$", ""):gsub("^/Users/[^/]+/", "~/")
+            local function url_decode(str)
+              str = str:gsub("%%(%x%x)", function(hex)
+                return string.char(tonumber(hex, 16))
+              end)
+              return str
+            end
+            local decoded_path = url_decode(path)
+            local file = require("telescope.utils").path_tail(decoded_path)
+
+            local path_without_file = decoded_path:gsub(file .. "$", ""):gsub("^/Users/[^/]+/", "~/")
             -- if string.find(path_without_file, "^app/") or string.find(path_without_file, "^config/") then
             --   return string.format("%s (%s)", file, path_without_file:gsub("/$", ""))
             -- else
@@ -289,11 +301,11 @@ return {
 
             -- local git_dir = vim.fn.finddir(".git", ".;")
             -- if git_dir and #git_dir > 0 then
-            --   local rel_path = path:sub(#git_dir):gsub(dir .. "/" .. file .. "$", "")
+            --   local rel_path = decoded_path:sub(#git_dir):gsub(dir .. "/" .. file .. "$", "")
             --   return string.format("%s/%s (.%s)", dir, file, rel_path)
             -- end
 
-            -- local rel_path = path:sub(#cwd):gsub(dir .. "/" .. file .. "$", "")
+            -- local rel_path = decoded_path:sub(#cwd):gsub(dir .. "/" .. file .. "$", "")
             local rel_path = path_without_file:gsub(dir .. "/$", "")
             if rel_path == "" then
               return string.format("%s/%s", dir, file)
@@ -316,8 +328,8 @@ return {
           end,
           mappings = {
             i = {
-              ["<c-t>"] = open_with_trouble,
-              ["<a-t>"] = open_selected_with_trouble,
+              -- ["<c-t>"] = open_with_trouble,
+              -- ["<a-t>"] = open_selected_with_trouble,
               -- ["<a-i>"] = find_files_no_ignore,
               -- ["<a-h>"] = find_files_with_hidden,
               ["<C-Down>"] = actions.cycle_history_next,

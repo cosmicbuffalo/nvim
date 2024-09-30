@@ -64,7 +64,7 @@ return {
   },
   -- highlight jump points on f/F/t/T
   {
-    "cosmicbuffalo/eyeliner.nvim",
+    "jinh0/eyeliner.nvim",
     keys = { "f", "F", "t", "T" },
     config = function()
       require("eyeliner").setup({
