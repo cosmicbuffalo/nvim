@@ -48,8 +48,6 @@ return {
       { "<c-space>", desc = "Increment Selection" },
       { "<bs>", desc = "Decrement Selection", mode = "x" },
     },
-    ---@type TSConfig
-    ---@diagnostic disable-next-line: missing-fields
     opts = {
       highlight = {
         enable = true,
@@ -121,7 +119,6 @@ return {
         },
       },
     },
-    ---@param opts TSConfig
     config = function(_, opts)
       if type(opts.ensure_installed) == "table" then
         ---@type table<string, boolean>
@@ -165,9 +162,9 @@ return {
           local tsc = require("treesitter-context")
           tsc.toggle()
           if tsc.enabled() then
-            vim.notify("Enabled Treesitter Context", { title = "Option", level = vim.log.levels.INFO })
+            vim.notify("Enabled Treesitter Context", vim.log.levels.INFO)
           else
-            vim.notify("Disabled Treesitter Context", { title = "Option", level = vim.log.levels.WARN })
+            vim.notify("Disabled Treesitter Context", vim.log.levels.WARN)
           end
         end,
         desc = "Toggle Treesitter Context",

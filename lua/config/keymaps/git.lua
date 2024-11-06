@@ -7,43 +7,38 @@ function lazygit_edit(original_buffer)
   local channel_id = vim.fn.getbufvar(bufnr, "terminal_job_id")
 
   if channel_id == nil then
-    print("No terminal job ID found.")
+    vim.notify("No terminal job ID found.", vim.log.levels.ERROR)
     return
   end
 
   -- Use <c-o> to copy the relative file path to the system clipboard in Lazygit
   vim.fn.chansend(channel_id, "\15") -- \15 is <c-o>
   -- Give some time for the copy operation to complete
-  vim.cmd("sleep 200m")
+  vim.cmd("sleep 50m")
 
-  if not utils.is_valid_path(vim.fn.getreg("+")) then
-    print("Invalid file path copied to clipboard")
+  -- Get the copied relative file path from the system clipboard
+  local rel_filepath = vim.fn.getreg("+")
+
+  if not utils.is_valid_path(rel_filepath) then
+    vim.notify("Invalid file path copied to clipboard", vim.log.levels.ERROR)
     return
   end
 
   -- Close Lazygit
   vim.cmd("close")
 
-  -- Get the copied relative file path from the system clipboard
-  local rel_filepath = vim.fn.getreg("+")
-
-  -- Combine with the current working directory to get the full path
-  local cwd = vim.fn.getcwd()
-  local abs_filepath = cwd .. "/" .. rel_filepath
-
-  print("Opening " .. abs_filepath)
-
   -- focus on the original window
   local winid = vim.fn.bufwinid(original_buffer)
-  if winid ~= -1 then
-    vim.fn.win_gotoid(winid)
-  else
-    print("Could not find the original window")
+
+  if winid == -1 then
+    vim.notify("Could not find the original window", vim.log.levels.ERROR)
     return
   end
 
+  vim.notify("Opening " .. rel_filepath, vim.log.levels.INFO)
+  vim.fn.win_gotoid(winid)
   -- Open the file in a new buffer
-  vim.cmd("e " .. abs_filepath)
+  vim.cmd("e " .. rel_filepath)
 end
 
 -- this will store the buffer that was active when lazygit was started so that files can be opened in that buffer's window
