@@ -1,4 +1,17 @@
+local LazyUtil = require("lazy.core.util")
+
 local M = {}
+
+setmetatable(M, {
+  __index = function(t, k)
+    if LazyUtil[k] then
+      return LazyUtil[k]
+    end
+
+    t[k] = require("config.utils." .. k)
+    return t[k]
+  end,
+})
 
 function M.toggle_option(option, values)
   if values then
@@ -53,7 +66,6 @@ function M.prev_diagnostic(severity)
 end
 
 function M.relative_path()
-
   local current_dir = vim.fn.expand("%:p:h")
   vim.fn.chdir(current_dir)
 
@@ -111,6 +123,37 @@ function M.is_valid_path(path)
   end
 
   return false
+end
+
+-- stolen from lazyvim
+function M.get_plugin(name)
+  return require("lazy.core.config").spec.plugins[name]
+end
+
+-- stolen from lazyvim
+function M.opts(name)
+  local plugin = M.get_plugin(name)
+  if not plugin then
+    return {}
+  end
+  local Plugin = require("lazy.core.plugin")
+  return Plugin.values(plugin, "opts", false)
+end
+
+function M.on_very_lazy(fn)
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "VeryLazy",
+    callback = function()
+      fn()
+    end,
+  })
+end
+
+M.CREATE_UNDO = vim.api.nvim_replace_termcodes("<c-G>u", true, true, true)
+function M.create_undo()
+  if vim.api.nvim_get_mode().mode == "i" then
+    vim.api.nvim_feedkeys(M.CREATE_UNDO, "n", false)
+  end
 end
 
 return M

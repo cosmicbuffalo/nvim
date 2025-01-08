@@ -20,6 +20,7 @@ return {
   -- supposedly enables syntax highlighting in markdown codeblocks, hard to tell if it's working tho
   {
     "plasticboy/vim-markdown",
+    enabled = false,
     config = function()
       vim.g.vim_markdown_fenced_laguages = {
         "ruby=rb",
