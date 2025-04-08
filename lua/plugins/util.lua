@@ -131,7 +131,7 @@ return {
     end,
   },
   -- track coding time
-  { "wakatime/vim-wakatime", lazy = false },
+  -- { "wakatime/vim-wakatime", lazy = false },
   -- better yank/paste
   {
     "gbprod/yanky.nvim",

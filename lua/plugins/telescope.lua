@@ -268,7 +268,8 @@ return {
           borderchars = { "▄", "▌", "▀", "▐", "▗", "▖", "▘", "▝" },
           -- borderchars =    { "▄", "",  "",  "▐",  "▗", "▖", "",  "" },
           -- borderchars = { "", "", "", "", "", "", "", "" },
-          layout_strategy = "vertical",
+          layout_strategy = "horizontal",
+          sorting_strategy = "ascending",
           layout_config = {
             height = 0.95,
             width = 0.95,
@@ -277,7 +278,8 @@ return {
               preview_width = 0.6,
             },
             vertical = {
-              mirror = false,
+              prompt_position = "top",
+              mirror = true,
             },
           },
           path_display = function(opts, path)

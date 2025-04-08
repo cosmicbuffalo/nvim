@@ -1,7 +1,7 @@
 local opt = vim.opt
 local vg = vim.g
 
-vim.diagnostic.disable() -- disable diagnostics by default
+vim.diagnostic.enable(false) -- disable diagnostics by default
 opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
 
 opt.shell = "/bin/zsh"

@@ -46,7 +46,7 @@ function M.toggle_diagnostics()
     vim.diagnostic.enable()
     vim.notify("Enabled diagnostics", { title = "Diagnostics", level = vim.log.levels.INFO })
   else
-    vim.diagnostic.disable()
+    vim.diagnostic.enable(false)
     vim.notify("Disabled diagnostics", { title = "Diagnostics", level = vim.log.levels.WARN })
   end
 end
