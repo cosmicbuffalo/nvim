@@ -1,4 +1,12 @@
+local LazyFileEvents = require("config.utils.lazy_utils").LazyFileEvents
+
 return {
+  {
+    "numToStr/Comment.nvim",
+    event = LazyFileEvents,
+    opts = {},
+  },
+
   -- seamless navigation between vim and tmux panes
   {
     "christoomey/vim-tmux-navigator",
@@ -88,7 +96,7 @@ return {
   -- },
   -- newer search/replace as a buffer
   {
-    'MagicDuck/grug-far.nvim',
+    "MagicDuck/grug-far.nvim",
     -- enabled = false,
     opts = { headerMaxWidth = 80 },
     cmd = "GrugFar",
@@ -101,14 +109,14 @@ return {
           grug.open({
             transient = true,
             prefills = {
-              filesFilter = ext and ext ~= "" and "*." ..ext or nil,
-            }
+              filesFilter = ext and ext ~= "" and "*." .. ext or nil,
+            },
           })
         end,
         mode = { "n", "v" },
-        desc = "Search and Replace (GrugFar)"
-      }
-    }
+        desc = "Search and Replace (GrugFar)",
+      },
+    },
   },
   -- toggle terminals with <c-_> or <c-/>
   {
@@ -167,6 +175,14 @@ return {
       require("telescope").load_extension("yank_history")
     end,
   },
+  -- {
+  --   'ojroques/vim-oscyank',
+  --   keys = {
+  --     { "y", "<Plug>OSCYankOperator", mode = { "n", "x"}, desc = "Yank Text" },
+  --     { "y", "<Plug>OSCYankVisual", mode = { "v" }, desc = "Yank Text" },
+  --   }
+  --
+  -- },
   -- indent guides for Neovim
   {
     "lukas-reineke/indent-blankline.nvim",
@@ -278,7 +294,7 @@ return {
       keymap.set("n", "S", substitute.eol, { desc = "Substitute to end of line", noremap = true })
       keymap.set("x", "s", substitute.visual, { desc = "Substitute in visual mode", noremap = true })
 
-      local exchange = require('substitute.exchange')
+      local exchange = require("substitute.exchange")
       keymap.set("n", "sx", exchange.operator, { desc = "Exchange with motion", noremap = true })
       keymap.set("n", "sxx", exchange.line, { desc = "Exchange line", noremap = true })
       keymap.set("x", "X", exchange.visual, { desc = "Exchange visual selection", noremap = true })

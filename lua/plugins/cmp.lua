@@ -11,6 +11,8 @@ return {
       "sources.default",
     },
     dependencies = {
+      "mgalliou/blink-cmp-tmux",
+      "disrupted/blink-cmp-conventional-commits",
       "rafamadriz/friendly-snippets",
       -- add blink.compat to dependencies
       {
@@ -70,7 +72,7 @@ return {
         -- with blink.compat
         compat = {},
         -- default = { "copilot", "lsp", "path", "snippets", "buffer" },
-        default = {  "lsp", "path", "snippets", "buffer" },
+        default = { "conventional_commits", "lsp", "path", "snippets", "buffer", "tmux" },
         -- cmdline = {},
         providers = {
           -- copilot = {
@@ -80,14 +82,57 @@ return {
           --   score_offset = 100,
           --   async = true
           -- }
-        }
+          tmux = {
+            module = "blink-cmp-tmux",
+            name = "tmux",
+            -- default options
+            opts = {
+              all_panes = false,
+              capture_history = false,
+              -- only suggest completions from `tmux` if the `trigger_chars` are
+              -- used
+              triggered_only = false,
+              trigger_chars = { "." },
+            },
+          },
+          conventional_commits = {
+            name = "Conventional Commits",
+            module = "blink-cmp-conventional-commits",
+            enabled = function()
+              return vim.bo.filetype == "gitcommit"
+            end,
+          },
+        },
       },
       keymap = {
         preset = "none",
-        ['<M-n>'] = { 'select_next' },
-        ['<M-e>'] = { 'select_prev' },
-        ['<M-i>'] = { 'select_and_accept'},
-        ['<M-o>'] = { 'cancel' }
+        -- Colemak mappings
+        ["<M-n>"] = { "select_next" },
+        ["<M-e>"] = { "select_prev" },
+        ["<M-i>"] = { "select_and_accept" },
+        ["<M-o>"] = { "cancel" },
+        -- BT mappings
+        ["<C-n>"] = { "select_next" },
+        ["<C-p>"] = { "select_prev" },
+        ["<C-b>"] = { "scroll_documentation_up" },
+        ["<C-f>"] = { "scroll_documentation_down" },
+        ["<C-Space>"] = { "accept" },
+        ["<C-e>"] = { "cancel" },
+        ["<CR>"] = { "select_and_accept", "fallback" },
+        ["<S-CR>"] = { "select_and_accept" },
+        ["<C-CR>"] = { "cancel", "fallback" },
+        ["<Tab>"] = {
+          function(cmp)
+            if cmp.snippet_active() then
+              return cmp.accept()
+            else
+              return cmp.select_and_accept()
+            end
+          end,
+          "snippet_forward",
+          "fallback",
+        },
+        ["<S-Tab>"] = { "snippet_backward", "fallback" },
       },
     },
     ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
@@ -106,20 +151,20 @@ return {
       end
 
       -- add ai_accept to <Tab> key
-      if not opts.keymap["<Tab>"] then
-        if opts.keymap.preset == "super-tab" then -- super-tab
-          opts.keymap["<Tab>"] = {
-            require("blink.cmp.keymap.presets")["super-tab"]["<Tab>"][1],
-            Utils.cmp.map({ "snippet_forward", "ai_accept" }),
-            "fallback",
-          }
-        else -- other presets
-          opts.keymap["<Tab>"] = {
-            Utils.cmp.map({ "snippet_forward", "ai_accept" }),
-            "fallback",
-          }
-        end
-      end
+      -- if not opts.keymap["<Tab>"] then
+      --   if opts.keymap.preset == "super-tab" then -- super-tab
+      --     opts.keymap["<Tab>"] = {
+      --       require("blink.cmp.keymap.presets")["super-tab"]["<Tab>"][1],
+      --       Utils.cmp.map({ "snippet_forward", "ai_accept" }),
+      --       "fallback",
+      --     }
+      --   else -- other presets
+      --     opts.keymap["<Tab>"] = {
+      --       Utils.cmp.map({ "snippet_forward", "ai_accept" }),
+      --       "fallback",
+      --     }
+      --   end
+      -- end
 
       -- Unset custom prop to pass blink.cmp validation
       opts.sources.compat = nil

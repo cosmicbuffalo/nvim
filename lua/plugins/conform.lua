@@ -33,6 +33,15 @@ return {
       --   desc = "Format File (conform)",
       -- },
       {
+				-- Customize or remove this keymap to your liking
+				"<leader>F",
+				function()
+					require("conform").format({ async = true, lsp_fallback = false })
+				end,
+				mode = "",
+				desc = "Format buffer",
+			},
+      {
         "<leader>cF",
         function()
           require("conform").format({ formatters = { "injected" }, timeout_ms = 3000 })
@@ -42,22 +51,22 @@ return {
       },
     },
     init = function()
-        Utils.format.register({
-          name = "conform.nvim",
-          priority = 100,
-          primary = true,
-          format = function(buf)
-            require("conform").format({ bufnr = buf })
-          end,
-          sources = function(buf)
-            local ret = require("conform").list_formatters(buf)
-            ---@param v conform.FormatterInfo
-            return vim.tbl_map(function(v)
-              return v.name
-            end, ret)
-          end,
-        })
-    -- Utils.on_very_lazy(function()
+      Utils.format.register({
+        name = "conform.nvim",
+        priority = 100,
+        primary = true,
+        format = function(buf)
+          require("conform").format({ bufnr = buf })
+        end,
+        sources = function(buf)
+          local ret = require("conform").list_formatters(buf)
+          ---@param v conform.FormatterInfo
+          return vim.tbl_map(function(v)
+            return v.name
+          end, ret)
+        end,
+      })
+      -- Utils.on_very_lazy(function()
       -- end)
     end,
     opts = function()
@@ -71,6 +80,7 @@ return {
       end
       ---@type conform.setupOpts
       local opts = {
+        log_level = vim.log.levels.INFO,
         default_format_opts = {
           timeout_ms = 3000,
           async = false, -- not recommended to change
@@ -82,10 +92,14 @@ return {
           sh = { "shfmt" },
           javascript = { "prettierd", "prettier", stop_after_first = true },
           ruby = { "rubocop" },
-          eruby = { "erb_format" }
+          eruby = { "erb_format" },
+          sql = { "sqlfluff" },
         },
         formatters = {
           injected = { options = { ignore_errors = true } },
+          sqlfluff = {
+            args = { "fix", "--force", "-" }
+          }
         },
       }
       return opts

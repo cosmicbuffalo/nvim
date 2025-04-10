@@ -19,7 +19,6 @@ opt.tabstop = 2
 opt.softtabstop = 2
 opt.autoindent = true
 opt.timeoutlen = 300 -- Lower than default (1000) to quickly trigger which-key
--- opt.smartindent = false
 -- opt.swapfile = false
 opt.backup = false
 opt.undodir = os.getenv("HOME") .. "/.vim/undodir"

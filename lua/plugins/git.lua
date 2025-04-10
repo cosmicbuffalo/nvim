@@ -5,6 +5,7 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     -- event = "LazyFile",
+    event = { "BufReadPost", "BufNewFile", "BufWritePre" },
     opts = {
       current_line_blame = true,
       signs = {
@@ -34,6 +35,7 @@ return {
         map("n", "<leader>ghp", gs.preview_hunk, "Preview Hunk")
         -- map("n", "<leader>ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
         map("n", "<leader>gB", gs.toggle_current_line_blame, "Toggle Line Blame")
+        map("n", "<leader>bl", gs.toggle_current_line_blame, "Toggle Line Blame")
         map("n", "<leader>ghd", gs.diffthis, "Diff This")
         map("n", "<leader>ghD", function()
           gs.diffthis("~")

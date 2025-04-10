@@ -31,7 +31,6 @@ return {
         return vim.bo.filetype == "markdown" or vim.bo.filetype == "asciidoc"
       end
 
-
       return {
         options = {
           theme = "auto",
@@ -125,11 +124,12 @@ return {
   -- winbars
   {
     "rebelot/heirline.nvim",
-    event = "BufReadPre",
+    lazy=false,
     dependencies = {
       "nvim-lualine/lualine.nvim",
       {
         "Bekaboo/dropbar.nvim",
+        lazy = false,
         dependencies = { "nvim-telescope/telescope-fzf-native.nvim" },
         opts = {
           bar = {

@@ -27,7 +27,7 @@ nset("<leader>vp", "`[v`]", { desc = "Select Pasted Text" })
 
 -- lazy
 nset("<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
-
+nset('<Leader>nh', '<cmd>nohls<cr>', { desc = "Removes text searching highlight" })
 -- lsp
 nset("<leader>cR", "<Cmd>LspRestart<CR>", { desc = "Restart LSP" })
 nset("<leader>cL", "<Cmd>LspLog<CR>", { desc = "Open LSP Logs" })
@@ -166,6 +166,9 @@ nset("<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
 -- comments above and below
 nset("gco", "o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Below" })
 nset("gcO", "O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Above" })
+set({'n', 'v'}, '<Leader>cc', '<cmd>normal gcc<cr>', { desc = "Comments the current or highlighted lines" })
+
+
 
 -- highlight inspection
 nset("<leader>ui", vim.show_pos, { desc = "Inspect Pos" })

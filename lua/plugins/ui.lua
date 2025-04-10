@@ -116,6 +116,8 @@ return {
       spec = {
         {
           mode = { "n", "v" },
+          { "<leader>A", group = "Alternate" },
+          { "<leader>a", group = "AI" },
           { "<leader><tab>", group = "tabs" },
           {
             "<leader>b",
@@ -129,12 +131,15 @@ return {
           { "<leader>g", group = "git" },
           { "<leader>gh", group = "hunks" },
           { "<leader>m", group = "markdown" },
+          { "<leader>n", group = "Neotree" },
           { "<leader>q", group = "quit/session" },
+          { "<leader>r", group = "Run tests" },
           { "<leader>s", group = "search" },
           { "<leader>sn", group = "noice" },
+
           { "<leader>t", group = "treesitter/test" },
-          { "<leader>u", group = "ui", icon = { icon = "󰙵 ", color = "cyan" } },
-          { "<leader>v", group = "visual" },
+          { "<leader>u", group = "UI", icon = { icon = "󰙵 ", color = "cyan" } },
+          { "<leader>v", group = "Vimux/visual" },
           {
             "<leader>w",
             group = "windows",
