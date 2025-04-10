@@ -43,7 +43,7 @@
   "mini.surround": { "branch": "main", "commit": "d8913ed23be0a1a4585ae34414821cc343a46174" },
   "monokai-nightasty.nvim": { "branch": "main", "commit": "b99a16fb84b711d8a2dda0d48f26fe4d892160b9" },
   "nightfox.nvim": { "branch": "main", "commit": "7557f26defd093c4e9bc17f28b08403f706f5a44" },
-  "noice.nvim": { "branch": "main", "commit": "c1ba80ccf6b3bd8c7fc88fe2e61085131d44ad65" },
+  "noice.nvim": { "branch": "main", "commit": "0427460c2d7f673ad60eb02b35f5e9926cf67c59" },
   "nui.nvim": { "branch": "main", "commit": "b58e2bfda5cea347c9d58b7f11cf3012c7b3953f" },
   "numb.nvim": { "branch": "master", "commit": "3f7d4a74bd456e747a1278ea1672b26116e0824d" },
   "nvim-autopairs": { "branch": "master", "commit": "f158dcb865c36f72c92358f87787dab2c272eaf3" },
