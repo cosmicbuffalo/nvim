@@ -13,6 +13,10 @@ local tset = function(...)
 end
 local utils = require("config.utils")
 
+set({"n", "v"}, "y", '"+y', { noremap = true, silent = true })
+nset("yy", '"+yy', { noremap = true, silent = true })
+set({"n", "v"}, "Y", '"+Y', { noremap = true, silent = true })
+
 -- save with alt-s
 set({ "i", "x", "n", "s" }, "<A-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
 -- ignore ctrl-s (tmux prefix)
@@ -180,12 +184,12 @@ nset("<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executa
 -- copy paths
 function copy_relative_path()
   local path = utils.relative_path()
-  os.execute("~/copy.sh " .. path)
+  vim.fn.setreg("+", path)
   vim.notify("Copied relative path to clipboard: " .. path)
 end
 function copy_path()
   local path = utils.path()
-  os.execute("~/copy.sh " .. path)
+  vim.fn.setreg("+", path)
   vim.notify("Copied path to clipboard: " .. path)
 end
 nset("<leader>fy", copy_relative_path, { desc = "Copy Relative Path" })

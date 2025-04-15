@@ -50,14 +50,21 @@ return {
   { "nvim-lua/plenary.nvim", lazy = true },
   -- open url under cursor in the browser
   {
-    "chrishrb/gx.nvim",
+    "cosmicbuffalo/gx.nvim",
     keys = { { "gx", "<cmd>Browse<cr>", mode = { "n", "x" } } },
     cmd = { "Browse" },
     init = function()
       vim.g.netrw_nogx = 1 -- disable netrw gx
     end,
     dependencies = { "nvim-lua/plenary.nvim" },
-    config = true, -- default settings
+    -- config = true, -- default settings
+    config = function()
+      require('gx').setup({
+        open_callback = function(url)
+          vim.fn.setreg("+", url)
+        end
+      })
+    end,
     submodules = false, -- not needed, submodules are required only for tests
   },
   -- unix shell commands from vim
