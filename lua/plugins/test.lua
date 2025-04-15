@@ -19,20 +19,21 @@ return {
       })
     end,
   },
-  {
-    "vim-test/vim-test",
-    dependencies = {
-      "preservim/vimux",
-    },
-    config = function()
-      vim.cmd("let test#strategy = 'vimux'")
-      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-        pattern = "*_spec.rb",
-        callback = function()
-          vim.api.nvim_buf_set_keymap(0, "n", "<leader>t<space>", ":TestFile<CR>", { desc = "Run all tests in file" })
-          vim.api.nvim_buf_set_keymap(0, "n", "<leader>te", ":TestNearest<CR>", { desc = "Run nearest example" })
-        end,
-      })
-    end,
-  },
+  -- replaced by bt configs
+  -- {
+  --   "vim-test/vim-test",
+  --   dependencies = {
+  --     "preservim/vimux",
+  --   },
+  --   config = function()
+  --     vim.cmd("let test#strategy = 'vimux'")
+  --     vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  --       pattern = "*_spec.rb",
+  --       callback = function()
+  --         vim.api.nvim_buf_set_keymap(0, "n", "<leader>t<space>", ":TestFile<CR>", { desc = "Run all tests in file" })
+  --         vim.api.nvim_buf_set_keymap(0, "n", "<leader>te", ":TestNearest<CR>", { desc = "Run nearest example" })
+  --       end,
+  --     })
+  --   end,
+  -- },
 }

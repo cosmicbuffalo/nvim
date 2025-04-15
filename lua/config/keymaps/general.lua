@@ -180,12 +180,12 @@ nset("<leader>fx", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make executa
 -- copy paths
 function copy_relative_path()
   local path = utils.relative_path()
-  os.execute("echo '" .. path .. "\\c' | pbcopy")
+  os.execute("~/copy.sh " .. path)
   vim.notify("Copied relative path to clipboard: " .. path)
 end
 function copy_path()
   local path = utils.path()
-  os.execute("echo '" .. path .. "\\c' | pbcopy")
+  os.execute("~/copy.sh " .. path)
   vim.notify("Copied path to clipboard: " .. path)
 end
 nset("<leader>fy", copy_relative_path, { desc = "Copy Relative Path" })

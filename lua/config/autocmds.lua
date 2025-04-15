@@ -211,13 +211,13 @@ set_lazyvim_autocommands()
 --   callback = enable_treesitter_indent,
 -- })
 
-vim.api.nvim_create_autocmd("TextYankPost", {
-  callback = function()
-    local yanked_text = table.concat(vim.fn.getreg('"', 1, true), "\\n")
-    vim.notify("yanked_text: " .. yanked_text)
-    vim.fn.jobstart({"/bin/bash", vim.fn.expand("~/copy.sh"), yanked_text}, {
-      detach = true
-    })
-  end,
-})
+-- vim.api.nvim_create_autocmd("TextYankPost", {
+--   callback = function()
+--     local yanked_text = table.concat(vim.fn.getreg('"', 1, true), "\\n")
+--     vim.notify("yanked_text: " .. yanked_text)
+--     vim.fn.jobstart({"/bin/bash", vim.fn.expand("~/copy.sh"), yanked_text}, {
+--       detach = true
+--     })
+--   end,
+-- })
 
