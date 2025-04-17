@@ -4,7 +4,10 @@ local autocmd = vim.api.nvim_create_autocmd
 -- Remove trailing whitespace on save
 autocmd("BufWritePre", {
   callback = function()
-    vim.cmd([[%s/\s\+$//e]])
+    local file = vim.api.nvim_buf_get_name(0)
+    if not file:match("%.txt$") then
+      vim.cmd([[%s/\s\+$//e]])
+    end
   end,
   pattern = "*",
 })

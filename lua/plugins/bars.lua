@@ -463,7 +463,7 @@ return {
       require("heirline").setup({
         winbar = {
           fallthrough = false,
-          SpecialWinbar, -- TODO: add special bars for oil, neo-tree, trouble
+          SpecialWinbar, -- TODO: add special bars for oil, trouble
           DefaultWinbar,
         },
         opts = {
