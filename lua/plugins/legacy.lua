@@ -26,11 +26,17 @@ return {
 					{ "<Leader>vs", 'vip "vy :call VimuxRunCommand(@v)<CR>', desc = "Run contiguous lines" },
 				},
 				init = function()
+          vim.g["no_turbux_mappings"] = true
 					vim.g["test#strategy"] = "vimux"
 				end,
 			},
 		},
 		keys = {
+			{ "<Leader>t<space>", "<cmd>wa<CR> <cmd>TestFile<CR>", desc = "Run file" },
+			{ "<Leader>te", "<cmd>wa<CR> <cmd>TestNearest<CR>", desc = "Run example (focused)" },
+			{ "<Leader>ta", "<cmd>wa<CR> <cmd>TestLast<CR>", desc = "Run again" },
+
+      -- BT mappings
 			{ "<Leader>rb", "<cmd>wa<CR> <cmd>TestFile<CR>", desc = "Run buffer" },
 			{ "<Leader>rf", "<cmd>wa<CR> <cmd>TestNearest<CR>", desc = "Run focused" },
 			{ "<Leader>rl", "<cmd>wa<CR> <cmd>TestLast<CR>", desc = "Run last test again" },

@@ -2,6 +2,25 @@ local LazyFileEvents = require("config.utils.lazy_utils").LazyFileEvents
 
 return {
   {
+    "folke/snacks.nvim",
+    opts = {
+      lazygit = {
+        config = {
+          os = {
+            edit = '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}})',
+            editAtLine = '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" &&  nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")',
+            editAtLineAndWait = 'nvim +{{line}} {{filename}}',
+            openDirInEditor = '[ -z "$NVIM" ] && (nvim -- {{dir}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{dir}})',
+          }
+        }
+      }
+    },
+    keys = {
+      { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
+      { "<leader>gb", function() Snacks.git.blame_line() end, desc = "Blame Line"}
+    }
+  },
+  {
     "numToStr/Comment.nvim",
     event = LazyFileEvents,
     opts = {},
@@ -28,6 +47,10 @@ return {
         silent = true,
       },
     },
+  },
+  {
+    "dewyze/vim-ruby-block-helpers",
+    -- TODO: add annotations for which-key for included keymaps
   },
   -- visualize and restore branching undo history
   {
