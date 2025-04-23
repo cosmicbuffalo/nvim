@@ -21,7 +21,7 @@ return {
 
         opts = {},
       },
-      -- "giuxtaposition/blink-cmp-copilot"
+      "giuxtaposition/blink-cmp-copilot"
     },
     event = "InsertEnter",
 
@@ -72,16 +72,16 @@ return {
         -- with blink.compat
         compat = {},
         -- default = { "copilot", "lsp", "path", "snippets", "buffer" },
-        default = { "conventional_commits", "lsp", "path", "snippets", "buffer", "tmux" },
+        default = { "copilot", "conventional_commits", "lsp", "path", "snippets", "buffer", "tmux" },
         -- cmdline = {},
         providers = {
-          -- copilot = {
-          --   name = "copilot",
-          --   module = "blink-cmp-copilot",
-          --   kind = "Copilot",
-          --   score_offset = 100,
-          --   async = true
-          -- }
+          copilot = {
+            name = "copilot",
+            module = "blink-cmp-copilot",
+            kind = "Copilot",
+            score_offset = 100,
+            async = true
+          },
           tmux = {
             module = "blink-cmp-tmux",
             name = "tmux",
