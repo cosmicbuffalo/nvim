@@ -118,7 +118,6 @@ return {
         ["<C-f>"] = { "scroll_documentation_down" },
         ["<C-Space>"] = { "accept" },
         ["<C-e>"] = { "cancel" },
-        ["<CR>"] = { "select_and_accept", "fallback" },
         ["<S-CR>"] = { "select_and_accept" },
         ["<C-CR>"] = { "cancel", "fallback" },
         ["<Tab>"] = {

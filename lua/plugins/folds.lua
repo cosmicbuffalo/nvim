@@ -1,25 +1,13 @@
 return {
   {
     "luukvbaal/statuscol.nvim",
-    -- enabled = false,
-    -- event = "BufReadPost",
     lazy = false,
     config = function()
       local builtin = require("statuscol.builtin")
-      -- require("statuscol").setup()
       require("statuscol").setup({
         relculright = true,
         segments = {
-
-          -- {
-          --   sign = { name = { "Diagnostic" }, maxwidth = 2, auto = true },
-          --   click = "v:lua.ScSa",
-          -- },
           { text = { builtin.lnumfunc }, click = "v:lua.ScLa" },
-          -- {
-          --   sign = { name = { ".*" }, maxwidth = 2, colwidth = 1, auto = true, wrap = true },
-          --   click = "v:lua.ScSa",
-          -- },
           { text = { " " } },
           { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
           { text = { " " } },
@@ -30,12 +18,10 @@ return {
   },
   {
     "cosmicbuffalo/nvim-ufo",
-    -- enabled = false,
     dependencies = {
       "kevinhwang91/promise-async",
     },
     lazy = false,
-    -- event = "BufReadPost",
     opts = {
       open_fold_hl_timeout = 400,
       enable_get_fold_virt_text = true,
@@ -82,9 +68,9 @@ return {
         local lastLineText = vim.fn.getline(endLnum)
         local lastLineVirtText = require('ufo.main').getVirtTextForLine(endLnum)
         if foldedLines - blankLineCount > 2 then
-          lastLineVirtText[1][1] = lastLineVirtText[1][1]:gsub("^%s+", " ... ")
+          lastLineVirtText[1][1] = lastLineVirtText[1][1]:gsub("^%s*", " ... ")
         else
-          lastLineVirtText[1][1] = lastLineVirtText[1][1]:gsub("^%s+", " ")
+          lastLineVirtText[1][1] = lastLineVirtText[1][1]:gsub("^%s*", " ")
         end
         vim.list_extend(virtText, lastLineVirtText)
 

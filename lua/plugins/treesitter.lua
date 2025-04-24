@@ -325,7 +325,21 @@ return {
         desc = "Swap Sibling with Left",
       },
       {
+        "<leader>g<",
+        function()
+          require("sibling-swap").swap_with_left()
+        end,
+        desc = "Swap Sibling with Left",
+      },
+      {
         "<leader>tr",
+        function()
+          require("sibling-swap").swap_with_right()
+        end,
+        desc = "Swap Sibling with Right",
+      },
+      {
+        "g>",
         function()
           require("sibling-swap").swap_with_right()
         end,
