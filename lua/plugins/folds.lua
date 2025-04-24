@@ -29,7 +29,7 @@ return {
     end,
   },
   {
-    "kevinhwang91/nvim-ufo",
+    "cosmicbuffalo/nvim-ufo",
     -- enabled = false,
     dependencies = {
       "kevinhwang91/promise-async",
@@ -38,6 +38,7 @@ return {
     -- event = "BufReadPost",
     opts = {
       open_fold_hl_timeout = 400,
+      enable_get_fold_virt_text = true,
       preview = {
         win_config = {
           border = { "", "─", "", "", "", "─", "", "" },
@@ -58,9 +59,35 @@ return {
     config = function(_, opts)
       local handler = function(virtText, lnum, endLnum, width, truncate)
         local newVirtText = {}
-
         local totalLines = vim.api.nvim_buf_line_count(0)
         local foldedLines = endLnum - lnum
+        local startLineText = vim.fn.getline(lnum)
+        local curlyMatch = startLineText:match("^%s*{%s*$")
+        local isOnlyCurlyBrace = curlyMatch ~= nil
+        local nextLineLnum = lnum + 1
+        local nextLineText = vim.fn.getline(nextLineLnum)
+        local blankLineCount = 0
+        while (nextLineText:match("^%s*$") ~= nil and nextLineLnum <= endLnum - 1) do
+          blankLineCount = blankLineCount + 1
+          nextLineLnum = nextLineLnum + 1
+          nextLineText = vim.fn.getline(nextLineLnum)
+        end
+        local showNextLine = isOnlyCurlyBrace or (foldedLines - blankLineCount) <= 2
+        if showNextLine and nextLineText then
+          local nextLineVirtText = require('ufo.main').getVirtTextForLine(nextLineLnum)
+          nextLineVirtText[1][1] = nextLineVirtText[1][1]:gsub("^%s+", " ")
+          vim.list_extend(virtText, nextLineVirtText)
+        end
+
+        local lastLineText = vim.fn.getline(endLnum)
+        local lastLineVirtText = require('ufo.main').getVirtTextForLine(endLnum)
+        if foldedLines - blankLineCount > 2 then
+          lastLineVirtText[1][1] = lastLineVirtText[1][1]:gsub("^%s+", " ... ")
+        else
+          lastLineVirtText[1][1] = lastLineVirtText[1][1]:gsub("^%s+", " ")
+        end
+        vim.list_extend(virtText, lastLineVirtText)
+
         local suffix = (" 󰁂 %d %d%%"):format(foldedLines, foldedLines / totalLines * 100)
         local sufWidth = vim.fn.strdisplaywidth(suffix)
         local targetWidth = width - sufWidth
