@@ -17,7 +17,7 @@ return {
     end,
   },
   {
-    "cosmicbuffalo/nvim-ufo",
+    "kevinhwang91/nvim-ufo",
     dependencies = {
       "kevinhwang91/promise-async",
     },
@@ -43,7 +43,7 @@ return {
       end,
     },
     config = function(_, opts)
-      local handler = function(virtText, lnum, endLnum, width, truncate)
+      local handler = function(virtText, lnum, endLnum, width, truncate, ctx)
         local newVirtText = {}
         local totalLines = vim.api.nvim_buf_line_count(0)
         local foldedLines = endLnum - lnum
@@ -60,13 +60,13 @@ return {
         end
         local showNextLine = isOnlyCurlyBrace or (foldedLines - blankLineCount) <= 2
         if showNextLine and nextLineText then
-          local nextLineVirtText = require('ufo.main').getVirtTextForLine(nextLineLnum)
+          local nextLineVirtText = ctx.get_fold_virt_text(nextLineLnum)
           nextLineVirtText[1][1] = nextLineVirtText[1][1]:gsub("^%s+", " ")
           vim.list_extend(virtText, nextLineVirtText)
         end
 
         local lastLineText = vim.fn.getline(endLnum)
-        local lastLineVirtText = require('ufo.main').getVirtTextForLine(endLnum)
+        local lastLineVirtText = ctx.get_fold_virt_text(endLnum)
         if foldedLines - blankLineCount > 2 then
           lastLineVirtText[1][1] = lastLineVirtText[1][1]:gsub("^%s*", " ... ")
         else
