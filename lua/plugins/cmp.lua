@@ -72,7 +72,7 @@ return {
         -- with blink.compat
         compat = {},
         -- default = { "copilot", "lsp", "path", "snippets", "buffer" },
-        default = { "copilot", "conventional_commits", "lsp", "path", "snippets", "buffer", "tmux" },
+        default = { "copilot", "lazydev", "conventional_commits", "lsp", "path", "snippets", "buffer", "tmux" },
         -- cmdline = {},
         providers = {
           copilot = {
@@ -82,6 +82,11 @@ return {
             score_offset = 100,
             async = true
           },
+					lazydev = {
+						name = "LazyDev",
+						module = "lazydev.integrations.blink",
+						score_offset = 100, -- show at a higher priority than lsp
+					},
           tmux = {
             module = "blink-cmp-tmux",
             name = "tmux",
@@ -109,7 +114,7 @@ return {
         -- Colemak mappings
         ["<M-n>"] = { "select_next" },
         ["<M-e>"] = { "select_prev" },
-        ["<M-i>"] = { "select_and_accept" },
+        ["<M-i>"] = { "select_and_accept", Utils.cmp.map({ "ai_accept" }) },
         ["<M-o>"] = { "cancel" },
         -- BT mappings
         ["<C-n>"] = { "select_next" },
@@ -122,13 +127,14 @@ return {
         ["<C-CR>"] = { "cancel", "fallback" },
         ["<Tab>"] = {
           function(cmp)
+            Utils.create_undo()
             if cmp.snippet_active() then
               return cmp.accept()
             else
               return cmp.select_and_accept()
             end
           end,
-          "snippet_forward",
+          Utils.cmp.map({ "snippet_forward", "ai_accept" }),
           "fallback",
         },
         ["<S-Tab>"] = { "snippet_backward", "fallback" },
@@ -149,21 +155,10 @@ return {
         end
       end
 
-      -- add ai_accept to <Tab> key
-      -- if not opts.keymap["<Tab>"] then
-      --   if opts.keymap.preset == "super-tab" then -- super-tab
-      --     opts.keymap["<Tab>"] = {
-      --       require("blink.cmp.keymap.presets")["super-tab"]["<Tab>"][1],
-      --       Utils.cmp.map({ "snippet_forward", "ai_accept" }),
-      --       "fallback",
-      --     }
-      --   else -- other presets
-      --     opts.keymap["<Tab>"] = {
-      --       Utils.cmp.map({ "snippet_forward", "ai_accept" }),
-      --       "fallback",
-      --     }
-      --   end
-      -- end
+      -- setup default sources
+      if type(opts.sources.default) == "string" then
+        opts.sources.default = { opts.sources.default }
+      end
 
       -- Unset custom prop to pass blink.cmp validation
       opts.sources.compat = nil
@@ -199,41 +194,4 @@ return {
       require("blink.cmp").setup(opts)
     end,
   },
-
-  -- add icons
-  -- {
-  --   "saghen/blink.cmp",
-  --   opts = function(_, opts)
-  --     opts.appearance = opts.appearance or {}
-  --     -- opts.appearance.kind_icons = vim.tbl_extend("keep", {
-  --     --   Color = "██", -- Use block instead of icon for color items to make swatches more usable
-  --     -- }, Utils.config.icons.kinds)
-  --   end,
-  -- },
-
-  -- lazydev
-  -- {
-  --   "saghen/blink.cmp",
-  --   opts = {
-  --     sources = {
-  --       -- add lazydev to your completion providers
-  --       default = { "lazydev" },
-  --       providers = {
-  --         lazydev = {
-  --           name = "LazyDev",
-  --           module = "lazydev.integrations.blink",
-  --           score_offset = 100, -- show at a higher priority than lsp
-  --         },
-  --       },
-  --     },
-  --   },
-  -- },
-  -- catppuccin support
-  -- {
-  --   "catppuccin",
-  --   optional = true,
-  --   opts = {
-  --     integrations = { blink_cmp = true },
-  --   },
-  -- },
 }

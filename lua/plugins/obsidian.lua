@@ -9,7 +9,7 @@ return {
   dependencies = {
     -- Required.
     "nvim-lua/plenary.nvim",
-    "hrsh7th/nvim-cmp",
+    -- "hrsh7th/nvim-cmp", -- TODO: add blink support to obsidian.nvim
     "nvim-telescope/telescope.nvim",
   },
   opts = {
