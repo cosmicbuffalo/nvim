@@ -9,16 +9,28 @@ return {
           os = {
             edit = '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{filename}})',
             editAtLine = '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "q" &&  nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")',
-            editAtLineAndWait = 'nvim +{{line}} {{filename}}',
+            editAtLineAndWait = "nvim +{{line}} {{filename}}",
             openDirInEditor = '[ -z "$NVIM" ] && (nvim -- {{dir}}) || (nvim --server "$NVIM" --remote-send "q" && nvim --server "$NVIM" --remote {{dir}})',
-          }
-        }
-      }
+          },
+        },
+      },
     },
     keys = {
-      { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
-      { "<leader>gb", function() Snacks.git.blame_line() end, desc = "Blame Line"}
-    }
+      {
+        "<leader>gg",
+        function()
+          Snacks.lazygit()
+        end,
+        desc = "Lazygit",
+      },
+      {
+        "<leader>gb",
+        function()
+          Snacks.git.blame_line()
+        end,
+        desc = "Blame Line",
+      },
+    },
   },
   {
     "numToStr/Comment.nvim",
@@ -80,12 +92,11 @@ return {
       vim.g.netrw_nogx = 1 -- disable netrw gx
     end,
     dependencies = { "nvim-lua/plenary.nvim" },
-    -- config = true, -- default settings
     config = function()
-      require('gx').setup({
+      require("gx").setup({
         open_callback = function(url)
           vim.fn.setreg("+", url)
-        end
+        end,
       })
     end,
     submodules = false, -- not needed, submodules are required only for tests

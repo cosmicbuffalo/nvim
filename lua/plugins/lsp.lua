@@ -1,4 +1,3 @@
-
 local Utils = require("config.utils")
 
 return {
@@ -42,10 +41,10 @@ return {
           end)
         end,
       },
-      { "williamboman/mason-lspconfig.nvim", config = function() end },
+      { "williamboman/mason-lspconfig.nvim" },
     },
     opts = function()
-      local signs = { Error = " ", Warn  = " ", Hint  = " ", Info  = " " }
+      local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
       local ret = {
         diagnostics = {
           underline = true,
@@ -129,13 +128,13 @@ return {
             },
           },
           ruby_lsp = {
-            enabled = true
+            enabled = true,
           },
           solargraph = {
-            enabled = false
+            enabled = false,
           },
           rubocop = {
-            enabled = true
+            enabled = true,
           },
         },
         -- you can do any additional lsp server setup here
@@ -293,6 +292,15 @@ return {
         end)
       end
     end,
+  },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {
+      library = {
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
   },
   -- {
   --   "VonHeikemen/lsp-zero.nvim",

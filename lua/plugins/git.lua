@@ -63,13 +63,13 @@ return {
       vim.api.nvim_set_keymap(
         "n",
         "<leader>go",
-        '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>',
+        '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".copy_to_clipboard})<cr>',
         { desc = "Open in GitHub", silent = true }
       )
       vim.api.nvim_set_keymap(
         "v",
         "<leader>go",
-        '<cmd>lua require"gitlinker".get_buf_range_url("v", {action_callback = require"gitlinker.actions".open_in_browser})<cr>',
+        '<cmd>lua require"gitlinker".get_buf_range_url("v", {action_callback = require"gitlinker.actions".copy_to_clipboard})<cr>',
         { desc = "Open in GitHub", silent = true }
       )
       -- not actually a gitlinker feature but included in here since it's similar

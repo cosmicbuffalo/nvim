@@ -7,16 +7,16 @@ local M = setmetatable({}, {
   end,
 })
 
----@class LazyFormatter
+---@class Formatter
 ---@field name string
 ---@field primary? boolean
 ---@field format fun(bufnr:number)
 ---@field sources fun(bufnr:number):string[]
 ---@field priority number
 
-M.formatters = {} ---@type LazyFormatter[]
+M.formatters = {} ---@type Formatter[]
 
----@param formatter LazyFormatter
+---@param formatter Formatter
 function M.register(formatter)
   M.formatters[#M.formatters + 1] = formatter
   table.sort(M.formatters, function(a, b)
@@ -32,11 +32,11 @@ function M.formatexpr()
 end
 
 ---@param buf? number
----@return (LazyFormatter|{active:boolean,resolved:string[]})[]
+---@return (Formatter|{active:boolean,resolved:string[]})[]
 function M.resolve(buf)
   buf = buf or vim.api.nvim_get_current_buf()
   local have_primary = false
-  ---@param formatter LazyFormatter
+  ---@param formatter Formatter
   return vim.tbl_map(function(formatter)
     local sources = formatter.sources(buf)
     local active = #sources > 0 and (not formatter.primary or not have_primary)
@@ -77,7 +77,7 @@ function M.info(buf)
   end
   Utils[enabled and "info" or "warn"](
     table.concat(lines, "\n"),
-    { title = "LazyFormat (" .. (enabled and "enabled" or "disabled") .. ")" }
+    { title = "Auto-Format (" .. (enabled and "enabled" or "disabled") .. ")" }
   )
 end
 
@@ -143,38 +143,22 @@ end
 
 function M.setup()
   -- Autoformat autocmd
-  vim.api.nvim_create_autocmd("BufWritePre", {
-    group = vim.api.nvim_create_augroup("LazyFormat", {}),
+    vim.api.nvim_create_autocmd("BufWritePre", {
+    group = vim.api.nvim_create_augroup("AutoFormat", {}),
     callback = function(event)
       M.format({ buf = event.buf })
     end,
   })
 
   -- Manual format
-  vim.api.nvim_create_user_command("LazyFormat", function()
+  vim.api.nvim_create_user_command("FormatBuffer", function()
     M.format({ force = true })
   end, { desc = "Format selection or buffer" })
 
   -- Format info
-  vim.api.nvim_create_user_command("LazyFormatInfo", function()
+  vim.api.nvim_create_user_command("FormatterInfo", function()
     M.info()
   end, { desc = "Show info about the formatters for the current buffer" })
 end
-
----@param buf? boolean
--- function M.snacks_toggle(buf)
---   return Snacks.toggle({
---     name = "Auto Format (" .. (buf and "Buffer" or "Global") .. ")",
---     get = function()
---       if not buf then
---         return vim.g.autoformat == nil or vim.g.autoformat
---       end
---       return Utils.format.enabled()
---     end,
---     set = function(state)
---       Utils.format.enable(state, buf)
---     end,
---   })
--- end
 
 return M

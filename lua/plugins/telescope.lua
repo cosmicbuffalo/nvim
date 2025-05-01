@@ -7,7 +7,7 @@ return {
     "nvim-telescope/telescope.nvim",
     enabled = true,
     cmd = "Telescope",
-    tag = "0.1.8",
+    -- tag = "0.1.8",
     lazy = false,
     -- priority = 500,
     -- version = false, -- telescope did only one release, so use HEAD for now
@@ -50,6 +50,7 @@ return {
       },
       { "<leader>fg", "<cmd>Telescope git_files<cr>", desc = "Find Files (git-files)" },
       { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent" },
+      { "<leader>fm", "<cmd>Telescope marks<cr>", desc = "Jump to Mark" },
       -- git
       { "<leader>gc", "<cmd>Telescope git_commits<CR>", desc = "Commits" },
       { "<leader>gs", "<cmd>Telescope git_status<CR>", desc = "Status" },
@@ -66,7 +67,6 @@ return {
       { "<leader>sH", "<cmd>Telescope highlights<cr>", desc = "Search Highlight Groups" },
       { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Key Maps" },
       { "<leader>sM", "<cmd>Telescope man_pages<cr>", desc = "Man Pages" },
-      { "<leader>sm", "<cmd>Telescope marks<cr>", desc = "Jump to Mark" },
       { "<leader>so", "<cmd>Telescope vim_options<cr>", desc = "Options" },
       { "<leader>sr", "<cmd>Telescope resume<cr>", desc = "Resume" },
       -- colorscheme picker
@@ -207,19 +207,19 @@ return {
     config = function(opts)
       function ShortenDirStrings(str)
         return str
-          :gsub("integration", "int")
-          :gsub("implementation", "impl")
-          :gsub("features", "feat")
-          :gsub("platform", "plat")
-          :gsub("servicing", "serv")
-          :gsub("application_lifecycle", "life")
-          :gsub("application_workflows", "wkfl")
-          :gsub("underwriter_external_communication", "uwcom")
-          :gsub("cannabis", "cann")
-          :gsub("lessors_risk_only", "lro")
-          :gsub("commercial_lessors_risk", "clr")
-          :gsub("artisan_contractors", "arc")
-          :gsub("builders_risk", "bldr")
+          -- :gsub("integration", "int")
+          -- :gsub("implementation", "impl")
+          -- :gsub("features", "feat")
+          -- :gsub("platform", "plat")
+          -- :gsub("servicing", "serv")
+          -- :gsub("application_lifecycle", "life")
+          -- :gsub("application_workflows", "wkfl")
+          -- :gsub("underwriter_external_communication", "uwcom")
+          -- :gsub("cannabis", "cann")
+          -- :gsub("lessors_risk_only", "lro")
+          -- :gsub("commercial_lessors_risk", "clr")
+          -- :gsub("artisan_contractors", "arc")
+          -- :gsub("builders_risk", "bldr")
       end
       local lga_actions = require("telescope-live-grep-args.actions")
 
@@ -232,23 +232,25 @@ return {
         return require("trouble.providers.telescope").open_selected_with_trouble(...)
       end
 
-      local select_dir_for_grep = function(prompt_bufnr)
+      local scope_to_dir = function(prompt_bufnr, picker)
         local action_state = require("telescope.actions.state")
         local fb = require("telescope").extensions.file_browser
-        local lga = require("telescope").extensions.live_grep_args
         local current_line = action_state.get_current_line()
 
         fb.file_browser({
           files = false,
           depth = false,
+          preview = {
+            ls_short = true
+          },
           attach_mappings = function(prompt_bufnr)
-            require("telescope.actions").select_default:replace(function()
+            actions.select_default:replace(function()
               local entry_path = action_state.get_selected_entry().Path
               local dir = entry_path:is_dir() and entry_path or entry_path:parent()
               local relative = dir:make_relative(vim.fn.getcwd())
               local absolute = dir:absolute()
 
-              lga.live_grep_args({
+              picker({
                 results_title = relative .. "/",
                 cwd = absolute,
                 default_text = current_line,
@@ -259,6 +261,7 @@ return {
           end,
         })
       end
+
       require("telescope").setup({
         defaults = {
           prompt_prefix = " ",
@@ -270,6 +273,9 @@ return {
           -- borderchars = { "", "", "", "", "", "", "", "" },
           layout_strategy = "horizontal",
           sorting_strategy = "ascending",
+          preview = {
+            ls_short = true,
+          },
           layout_config = {
             height = 0.95,
             width = 0.95,
@@ -352,7 +358,36 @@ return {
             },
           },
         },
+        pickers = {
+          git_files = {
+            mappings = {
+              i = {
+                ["<C-t>"] = function(prompt_bufnr) scope_to_dir(prompt_bufnr, require("telescope.builtin").find_files) end
+              }
+            }
+          },
+          find_files = {
+            mappings = {
+              i = {
+                ["<C-t>"] = function(prompt_bufnr) scope_to_dir(prompt_bufnr, require("telescope.builtin").find_files) end
+              }
+            }
+          },
+          live_grep = {
+            mappings = {
+              i = {
+                ["<C-t>"] = function(prompt_bufnr) scope_to_dir(prompt_bufnr, require("telescope.builtin").live_grep) end
+              }
+            }
+          }
+        },
         extensions = {
+          file_browser = {
+            display_stat = false,
+            preview = {
+              ls_short = true,
+            }
+          },
           fzf = {
             fuzzy = true,
             case_mode = "smart_case",
@@ -367,7 +402,7 @@ return {
               i = {
                 ["<C-k>"] = lga_actions.quote_prompt(),
                 ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
-                ["<C-t>"] = select_dir_for_grep,
+                ["<C-t>"] = function(prompt_bufnr) scope_to_dir(prompt_bufnr, require("telescope").extensions.live_grep_args.live_grep_args) end,
               },
             },
           },
