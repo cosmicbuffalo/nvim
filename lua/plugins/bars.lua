@@ -2,6 +2,7 @@ return {
   -- statusline
   {
     "nvim-lualine/lualine.nvim",
+    dependencies = { "folke/snacks.nvim" },
     event = "VimEnter",
     init = function()
       vim.g.lualine_laststatus = vim.o.laststatus
@@ -14,6 +15,7 @@ return {
       end
     end,
     opts = function()
+      local Snacks = require("snacks")
       local lualine_require = require("lualine_require")
       lualine_require.require = require
 
@@ -57,24 +59,25 @@ return {
               cond = function()
                 return package.loaded["noice"] and require("noice").api.status.command.has()
               end,
-              -- color = fg("Statement"),
+              color = function() return { fg = Snacks.util.color("Statement") } end,
+              -- color = { fg = get_highlight("Statement").fg },
             },
             -- stylua: ignore
             {
               function() return require("noice").api.status.mode.get() end,
               cond = function() return package.loaded["noice"] and require("noice").api.status.mode.has() end,
-              -- color = fg("Constant"),
+              color = function() return { fg = Snacks.util.color("Constant") } end,
             },
             -- stylua: ignore
             {
               function() return "  " .. require("dap").status() end,
               cond = function() return package.loaded["dap"] and require("dap").status() ~= "" end,
-              -- color = fg("Debug"),
+              color = function() return { fg = Snacks.util.color("Debug") } end,
             },
             {
               require("lazy.status").updates,
               cond = require("lazy.status").has_updates,
-              -- color = fg("Special"),
+              color = function() return { fg = Snacks.util.color("Special") } end,
             },
             -- {
             --   "diagnostics",
@@ -111,9 +114,6 @@ return {
             { readingtime, cond = is_markdown },
           },
           lualine_z = {
-            -- function()
-            --   return " " .. os.date("%R")
-            -- end,
             { "location", padding = { left = 1, right = 1 } },
           },
         },

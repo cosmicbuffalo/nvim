@@ -21,18 +21,13 @@ return {
 
         opts = {},
       },
-      "giuxtaposition/blink-cmp-copilot"
+      "giuxtaposition/blink-cmp-copilot",
     },
     event = "InsertEnter",
 
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
-      snippets = {
-        expand = function(snippet, _)
-          return Utils.cmp.expand(snippet)
-        end,
-      },
       appearance = {
         -- sets the fallback highlight groups to nvim-cmp's highlight groups
         -- useful for when your theme doesn't support blink.cmp
@@ -71,7 +66,6 @@ return {
         -- adding any nvim-cmp sources here will enable them
         -- with blink.compat
         compat = {},
-        -- default = { "copilot", "lsp", "path", "snippets", "buffer" },
         default = { "copilot", "lazydev", "conventional_commits", "lsp", "path", "snippets", "buffer", "tmux" },
         -- cmdline = {},
         providers = {
@@ -80,13 +74,13 @@ return {
             module = "blink-cmp-copilot",
             kind = "Copilot",
             score_offset = 100,
-            async = true
+            async = true,
           },
-					lazydev = {
-						name = "LazyDev",
-						module = "lazydev.integrations.blink",
-						score_offset = 100, -- show at a higher priority than lsp
-					},
+          lazydev = {
+            name = "LazyDev",
+            module = "lazydev.integrations.blink",
+            score_offset = 100, -- show at a higher priority than lsp
+          },
           tmux = {
             module = "blink-cmp-tmux",
             name = "tmux",
@@ -156,9 +150,9 @@ return {
       end
 
       -- setup default sources
-      if type(opts.sources.default) == "string" then
-        opts.sources.default = { opts.sources.default }
-      end
+      -- if type(opts.sources.default) == "string" then
+      --   opts.sources.default = { opts.sources.default }
+      -- end
 
       -- Unset custom prop to pass blink.cmp validation
       opts.sources.compat = nil
