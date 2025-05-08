@@ -15,7 +15,6 @@ return {
       end
     end,
     opts = function()
-      local Snacks = require("snacks")
       local lualine_require = require("lualine_require")
       lualine_require.require = require
 
@@ -40,7 +39,6 @@ return {
           disabled_filetypes = { statusline = { "dashboard", "alpha", "starter" } },
         },
         sections = {
-
           lualine_a = { "mode" },
           lualine_b = { "branch" },
           lualine_c = {
