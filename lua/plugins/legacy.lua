@@ -84,7 +84,7 @@ return {
 	{ "tpope/vim-vinegar" },
 	{ "vim-scripts/Align", lazy = true },
 	{ "vim-scripts/VimClojure", lazy = true },
-	{ "vim-scripts/groovyindent-unix", lazy = true },
+	-- { "vim-scripts/groovyindent-unix", lazy = true },
 	-- { "vim-scripts/matchit.zip", lazy = true },
 	{ "tweekmonster/wstrip.vim", event = { "BufWritePre" } }, -- strip whitespace only on changed lines
 	-- TODO Removable plugins??
