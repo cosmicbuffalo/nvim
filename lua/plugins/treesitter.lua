@@ -286,7 +286,10 @@ return {
   {
     "Wansmer/treesj",
     dependencies = { "nvim-treesitter" },
-    opts = { use_default_keymaps = false },
+    opts = {
+      use_default_keymaps = false,
+      max_join_length = 5000,
+    },
     keys = {
       { "<leader>tt", "<Cmd>TSJToggle<CR>", desc = "Toggle Node Under Cursor" },
       { "<leader>ts", "<Cmd>TSJSplit<CR>", desc = "Split Node Under Cursor" },
