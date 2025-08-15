@@ -1,5 +1,3 @@
-local Utils = require("config.utils")
-
 return {
   {
     "saghen/blink.cmp",
@@ -21,7 +19,6 @@ return {
 
         opts = {},
       },
-      "giuxtaposition/blink-cmp-copilot",
     },
     event = "InsertEnter",
 
@@ -66,72 +63,16 @@ return {
         -- adding any nvim-cmp sources here will enable them
         -- with blink.compat
         compat = {},
-        default = { "copilot", "lazydev", "conventional_commits", "lsp", "path", "snippets", "buffer", "tmux" },
+        default = { "lsp", "path", "snippets", "buffer" },
         -- cmdline = {},
-        providers = {
-          copilot = {
-            name = "copilot",
-            module = "blink-cmp-copilot",
-            kind = "Copilot",
-            score_offset = 100,
-            async = true,
-          },
-          lazydev = {
-            name = "LazyDev",
-            module = "lazydev.integrations.blink",
-            score_offset = 100, -- show at a higher priority than lsp
-          },
-          tmux = {
-            module = "blink-cmp-tmux",
-            name = "tmux",
-            -- default options
-            opts = {
-              all_panes = false,
-              capture_history = false,
-              -- only suggest completions from `tmux` if the `trigger_chars` are
-              -- used
-              triggered_only = false,
-              trigger_chars = { "." },
-            },
-          },
-          conventional_commits = {
-            name = "Conventional Commits",
-            module = "blink-cmp-conventional-commits",
-            enabled = function()
-              return vim.bo.filetype == "gitcommit"
-            end,
-          },
-        },
       },
       keymap = {
         preset = "none",
         -- Colemak mappings
         ["<M-n>"] = { "select_next" },
         ["<M-e>"] = { "select_prev" },
-        ["<M-i>"] = { "select_and_accept", Utils.cmp.map({ "ai_accept" }) },
+        ["<M-i>"] = { "select_and_accept" },
         ["<M-o>"] = { "cancel" },
-        -- BT mappings
-        ["<C-n>"] = { "select_next" },
-        ["<C-p>"] = { "select_prev" },
-        ["<C-b>"] = { "scroll_documentation_up" },
-        ["<C-f>"] = { "scroll_documentation_down" },
-        ["<C-Space>"] = { "accept" },
-        ["<C-e>"] = { "cancel" },
-        ["<S-CR>"] = { "select_and_accept" },
-        ["<C-CR>"] = { "cancel", "fallback" },
-        ["<Tab>"] = {
-          function(cmp)
-            Utils.create_undo()
-            if cmp.snippet_active() then
-              return cmp.accept()
-            else
-              return cmp.select_and_accept()
-            end
-          end,
-          Utils.cmp.map({ "snippet_forward", "ai_accept" }),
-          "fallback",
-        },
-        ["<S-Tab>"] = { "snippet_backward", "fallback" },
       },
     },
     ---@param opts blink.cmp.Config | { sources: { compat: string[] } }

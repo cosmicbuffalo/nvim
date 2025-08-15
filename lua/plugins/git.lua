@@ -44,15 +44,6 @@ return {
       end,
     },
   },
-  -- handy diffview in a tab page
-  {
-    -- 'sindrets/diffview.nvim',
-    "cosmicbuffalo/diffview.nvim",
-    cmd = { "DiffviewOpen", "DiffviewToggle" },
-    keys = {
-      { "<leader>gd", "<cmd>DiffviewToggle<CR>", desc = "Toggle Diff Viewer" },
-    },
-  },
   -- shortcuts for github things
   {
     "ruifm/gitlinker.nvim",
@@ -154,25 +145,6 @@ return {
         ":lua quickfix_to_github_links()<CR>",
         { noremap = true, silent = true, desc = "Copy quickfix GitHub links" }
       )
-    end,
-  },
-
-  {
-    "ldelossa/gh.nvim",
-    enabled = false,
-    dependencies = {
-      {
-        "ldelossa/litee.nvim",
-        config = function()
-          require("litee.lib").setup()
-        end,
-      },
-    },
-    config = function()
-      require("litee.gh").setup({
-        debug_logging = true,
-        icon_set = "codicons",
-      })
     end,
   },
 }
