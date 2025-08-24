@@ -22,17 +22,21 @@ return {
   {
     "vim-test/vim-test",
     dependencies = {
-      "preservim/vimux",
-    },
-    config = function()
-      vim.cmd("let test#strategy = 'vimux'")
-      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-        pattern = "*_spec.rb",
-        callback = function()
-          vim.api.nvim_buf_set_keymap(0, "n", "<leader>t<space>", ":TestFile<CR>", { desc = "Run all tests in file" })
-          vim.api.nvim_buf_set_keymap(0, "n", "<leader>te", ":TestNearest<CR>", { desc = "Run nearest example" })
+      {
+        "benmills/vimux",
+        dependencies = {
+          "jgdavey/vim-turbux",
+          "samguyjones/vim-crosspaste",
+        },
+        init = function()
+          vim.g["test#strategy"] = "vimux"
         end,
-      })
-    end,
+      },
+    },
+    keys = {
+      { "<Leader>t<space>", "<cmd>wa<CR> <cmd>TestFile<CR>", desc = "Run file" },
+      { "<Leader>te", "<cmd>wa<CR> <cmd>TestNearest<CR>", desc = "Run example (focused)" },
+      { "<Leader>ta", "<cmd>wa<CR> <cmd>TestLast<CR>", desc = "Run again" },
+    },
   },
 }

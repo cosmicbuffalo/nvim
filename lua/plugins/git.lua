@@ -31,7 +31,7 @@ return {
         map("n", "<leader>ghS", gs.stage_buffer, "Stage Buffer")
         map("n", "<leader>ghu", gs.undo_stage_hunk, "Undo Stage Hunk")
         map("n", "<leader>ghR", gs.reset_buffer, "Reset Buffer")
-        map("n", "<leader>ghp", gs.preview_hunk, "Preview Hunk")
+        map("n", "<leader>ghp", gs.preview_hunk_inline, "Preview Hunk")
         -- map("n", "<leader>ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
         map("n", "<leader>gB", gs.toggle_current_line_blame, "Toggle Line Blame")
         map("n", "<leader>ghd", gs.diffthis, "Diff This")
@@ -42,16 +42,6 @@ return {
       end,
     },
   },
-  -- handy diffview in a tab page
-  {
-    -- 'sindrets/diffview.nvim',
-    "cosmicbuffalo/diffview.nvim",
-    cmd = { "DiffviewOpen", "DiffviewToggle" },
-    keys = {
-      { "<leader>gd", "<cmd>DiffviewToggle<CR>", desc = "Toggle Diff Viewer" },
-    },
-  },
-  -- shortcuts for github things
   {
     "ruifm/gitlinker.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
@@ -102,7 +92,10 @@ return {
           if pr_number and pr_number ~= "" then
             -- Open the PR in the default web browser
             vim.notify("Opening PR #" .. pr_number)
-            vim.fn.system("gh pr view " .. pr_number .. " --web")
+            local pr_url = vim.fn.system("gh browse " .. pr_number .. " -n")
+            -- vim.notify("PR URL: " .. pr_url)
+            vim.fn.setreg("+", pr_url)
+            -- vim.fn.system("gh pr view " .. pr_number .. " --web")
           else
             print("No PR found for this commit.")
           end
@@ -154,23 +147,13 @@ return {
       )
     end,
   },
-
+  -- handy diffview in a tab page
   {
-    "ldelossa/gh.nvim",
-    enabled = false,
-    dependencies = {
-      {
-        "ldelossa/litee.nvim",
-        config = function()
-          require("litee.lib").setup()
-        end,
-      },
+    -- 'sindrets/diffview.nvim',
+    "cosmicbuffalo/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewToggle" },
+    keys = {
+      { "<leader>gd", "<cmd>DiffviewToggle<CR>", desc = "Toggle Diff Viewer" },
     },
-    config = function()
-      require("litee.gh").setup({
-        debug_logging = true,
-        icon_set = "codicons",
-      })
-    end,
   },
 }

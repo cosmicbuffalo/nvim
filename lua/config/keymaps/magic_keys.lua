@@ -1,5 +1,7 @@
 local set = vim.keymap.set
-local iset = function(...) set("i", ...) end
+local iset = function(...)
+  set("i", ...)
+end
 -- Global timer variable
 _G.last_key_time = 0
 

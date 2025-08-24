@@ -17,6 +17,7 @@ return {
       require("nvim-treesitter.query_predicates")
     end,
     dependencies = {
+      "RRethy/nvim-treesitter-endwise",
       {
         "nvim-treesitter/nvim-treesitter-textobjects",
         config = function()
@@ -53,45 +54,15 @@ return {
         enable = true,
         additional_vim_regex_highlighting = { "markdown" },
       },
-      indent = {
-        enable = true,
-        -- disable = { "ruby" },
-      },
-      autotag = { enable = true },
-      ensure_installed = {
-        "ruby",
-        "fennel",
-        "embedded_template",
-        "bash",
-        "diff",
-        "html",
-        "javascript",
-        "jsdoc",
-        "json",
-        "jsonc",
-        "lua",
-        "luadoc",
-        "luap",
-        "markdown",
-        "markdown_inline",
-        "query",
-        "regex",
-        "toml",
-        "tsx",
-        "typescript",
-        "vim",
-        "vimdoc",
-        "xml",
-        "yaml",
-      },
       incremental_selection = {
         enable = true,
-        keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
-          scope_incremental = false,
-          node_decremental = "<bs>",
-        },
+      },
+      indent = {
+        enable = true,
+        disable = { "ruby" }, -- ruby indenting doesn't seem to be working yet
+      },
+      endwise = {
+        enable = true,
       },
       textobjects = {
         select = {
@@ -118,33 +89,44 @@ return {
           goto_previous_end = { ["[F"] = "@function.outer", ["[C"] = "@class.outer" },
         },
       },
+      ensure_installed = {
+        "bash",
+        "cmake",
+        "diff",
+        "dockerfile",
+        "embedded_template",
+        "git_config",
+        "git_rebase",
+        "gitcommit",
+        "gitignore",
+        "go",
+        "html",
+        "http",
+        "javascript",
+        "jq",
+        "json",
+        "lua",
+        "luadoc",
+        "markdown",
+        "markdown_inline",
+        "properties",
+        "python",
+        "ruby",
+        "rust",
+        "sql",
+        "ssh_config",
+        "terraform",
+        "toml",
+        "typescript",
+        "vim",
+        "vimdoc",
+        "yaml",
+      },
     },
     config = function(_, opts)
-      if type(opts.ensure_installed) == "table" then
-        ---@type table<string, boolean>
-        local added = {}
-        opts.ensure_installed = vim.tbl_filter(function(lang)
-          if added[lang] then
-            return false
-          end
-          added[lang] = true
-          return true
-        end, opts.ensure_installed)
-      end
-      -- local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-      -- parser_config.embedded_template = {
-      --   install_info = {
-      --     url = "https://github.com/tree-sitter/tree-sitter-embedded-template",
-      --     files = { "src/parser.c" },
-      --     requires_generate_from_grammar = true,
-      --   },
-      --   used_by = { "erb" },
-      -- }
       require("nvim-treesitter.configs").setup(opts)
     end,
   },
-
-  -- Show context of the current function
   {
     "nvim-treesitter/nvim-treesitter-context",
     event = "BufReadPost",
@@ -171,14 +153,32 @@ return {
       },
     },
   },
-
-  -- Automatically add closing tags for HTML and JSX
-  -- {
-  --   "windwp/nvim-ts-autotag",
-  --   event = "LazyFile",
-  --   opts = {},
-  -- },
-  -- better text objects
+  -- This plugin is amazing
+  {
+    "Wansmer/treesj",
+    dependencies = { "nvim-treesitter" },
+    opts = { use_default_keymaps = false },
+    keys = {
+      { "<leader>tt", "<Cmd>TSJToggle<CR>", desc = "Toggle Node Under Cursor" },
+      { "<leader>ts", "<Cmd>TSJSplit<CR>", desc = "Split Node Under Cursor" },
+      { "<leader>tj", "<Cmd>TSJJoin<CR>", desc = "Join Node Under Cursor" },
+    },
+  },
+  {
+    "aaronik/treewalker.nvim",
+    opts = {
+      highlight = true,
+      highlight_duration = 200,
+      highlight_group = "Visual",
+      jumplist = true,
+    },
+    keys = {
+      { "<A-}>", "<cmd>Treewalker Down<cr>", desc = "Treewalker Down", mode = { "n", "v" } },
+      { "<A-{>", "<cmd>Treewalker Up<cr>", desc = "Treewalker Up", mode = { "n", "v" } },
+      { "]]", "<cmd>Treewalker Right<cr>", desc = "Treewalker Right", mode = { "n", "v" } },
+      { "[[", "<cmd>Treewalker Left<cr>", desc = "Treewalker Left", mode = { "n", "v" } },
+    },
+  },
   {
     "echasnovski/mini.ai",
     lazy = false,
@@ -279,89 +279,6 @@ return {
         end
       end
       require("which-key").add(ret, { notify = false })
-    end,
-  },
-
-  -- Split or join treesitter nodes
-  {
-    "Wansmer/treesj",
-    dependencies = { "nvim-treesitter" },
-    opts = {
-      use_default_keymaps = false,
-      max_join_length = 5000,
-    },
-    keys = {
-      { "<leader>tt", "<Cmd>TSJToggle<CR>", desc = "Toggle Node Under Cursor" },
-      { "<leader>ts", "<Cmd>TSJSplit<CR>", desc = "Split Node Under Cursor" },
-      { "<leader>tj", "<Cmd>TSJJoin<CR>", desc = "Join Node Under Cursor" },
-    },
-  },
-
-  -- Swap sibling treesitter nodes
-  {
-    "Wansmer/sibling-swap.nvim",
-    dependencies = { "nvim-treesitter" },
-    opts = {
-      use_default_keymaps = true,
-      highlight_node_at_cursor = true,
-    },
-    keys = {
-      {
-        "<leader>tl",
-        function()
-          require("sibling-swap").swap_with_left()
-        end,
-        desc = "Swap Sibling with Left",
-      },
-      {
-        "<leader>tr",
-        function()
-          require("sibling-swap").swap_with_right()
-        end,
-        desc = "Swap Sibling with Right",
-      },
-      {
-        "<leader>tL",
-        function()
-          require("sibling-swap").swap_with_left_with_opp()
-        end,
-        desc = "Swap Sibling with Left and Operator",
-      },
-      {
-        "<leader>tR",
-        function()
-          require("sibling-swap").swap_with_right_with_opp()
-        end,
-        desc = "Swap Sibling with Right and Operator",
-      },
-    },
-  },
-
-  -- use treesitter to smarten up commentstring
-  -- {
-  --   "JoosepAlviste/nvim-ts-context-commentstring",
-  --   lazy = true,
-  --   opts = {
-  --     enable_autocmd = false,
-  --   },
-  -- },
-  -- colorize nested brackets
-  {
-    "HiPhish/rainbow-delimiters.nvim",
-    enabled = false,
-    event = "VeryLazy",
-    config = function()
-      local rainbow_delimiters = require("rainbow-delimiters")
-
-      vim.g.rainbow_delimiters = {
-        strategy = {
-          [""] = rainbow_delimiters.strategy["global"],
-          -- lua = rainbow_delimiters.strategy["local"],
-        },
-        query = {
-          [""] = "rainbow-delimiters",
-        },
-      }
     end,
   },
 }

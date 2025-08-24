@@ -1,5 +1,7 @@
 local set = vim.keymap.set
-local nset = function(...) set("n", ...) end
+local nset = function(...)
+  set("n", ...)
+end
 
 -- switch back and forth between color schemes
 local current_colorscheme = vim.g.colors_name

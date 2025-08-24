@@ -1,4 +1,25 @@
+-- This Utils module is a collection of utility functions and submodules
+-- submodules are organized by their functionality and loaded on demand
 local M = {}
+
+setmetatable(M, {
+  __index = function(t, k)
+    local lazy_utils = require("lazy.core.util")
+    if lazy_utils[k] then
+      return lazy_utils[k]
+    end
+
+    t[k] = require("config.utils." .. k)
+    return t[k]
+  end,
+})
+
+M.CREATE_UNDO = vim.api.nvim_replace_termcodes("<c-G>u", true, true, true)
+function M.create_undo()
+  if vim.api.nvim_get_mode().mode == "i" then
+    vim.api.nvim_feedkeys(M.CREATE_UNDO, "n", false)
+  end
+end
 
 function M.toggle_option(option, values)
   if values then
@@ -20,6 +41,31 @@ function M.toggle_option(option, values)
   end
 end
 
+function M.set_tracked_window()
+  local winid = vim.api.nvim_get_current_win()
+  local file = io.open("/tmp/nvim_tracked_window", "w")
+  if file then
+    file:write(tostring(winid))
+    file:close()
+  end
+end
+
+function M.open_in_tracked_window(filename)
+  local file = io.open("/tmp/nvim_tracked_window", "r")
+  if not file then
+    vim.cmd("edit " .. vim.fn.fnameescape(filename))
+    return
+  end
+
+  local winid = tonumber(file:read("*l"))
+  file:close()
+
+  if winid and vim.api.nvim_win_is_valid(winid) then
+    vim.api.nvim_set_current_win(winid)
+  end
+  vim.cmd("edit " .. vim.fn.fnameescape(filename))
+end
+
 function M.toggle_diagnostics()
   local enabled = nil
   if vim.diagnostic.is_enabled then
@@ -33,7 +79,7 @@ function M.toggle_diagnostics()
     vim.diagnostic.enable()
     vim.notify("Enabled diagnostics", { title = "Diagnostics", level = vim.log.levels.INFO })
   else
-    vim.diagnostic.disable()
+    vim.diagnostic.enable(false)
     vim.notify("Disabled diagnostics", { title = "Diagnostics", level = vim.log.levels.WARN })
   end
 end
@@ -53,7 +99,6 @@ function M.prev_diagnostic(severity)
 end
 
 function M.relative_path()
-
   local current_dir = vim.fn.expand("%:p:h")
   vim.fn.chdir(current_dir)
 

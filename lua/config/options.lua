@@ -1,7 +1,7 @@
 local opt = vim.opt
 local vg = vim.g
 
-vim.diagnostic.disable() -- disable diagnostics by default
+vim.diagnostic.enable(false) -- disable diagnostics by default
 opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
 
 opt.shell = "/bin/zsh"
@@ -11,7 +11,9 @@ opt.termguicolors = true -- True color support
 vg.autoformat = false
 opt.formatexpr = "v:lua.require'conform'.formatexpr()"
 vg.mouse = "a"
+opt.mouse = "a"
 vg.mousemoveevent = true
+opt.mousemoveevent = true
 vg.navic_silence = true
 -- vg.minipairs_disable = true
 opt.clipboard = "unnamedplus"
@@ -19,7 +21,6 @@ opt.tabstop = 2
 opt.softtabstop = 2
 opt.autoindent = true
 opt.timeoutlen = 300 -- Lower than default (1000) to quickly trigger which-key
--- opt.smartindent = false
 -- opt.swapfile = false
 opt.backup = false
 opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
@@ -41,20 +42,18 @@ opt.expandtab = true -- Use spaces instead of tabs
 opt.virtualedit = "block" -- Allow cursor to move where there is no text in visual block mode
 opt.wildmode = "longest:full,full" -- Command-line completion mode
 opt.winminwidth = 5 -- Minimum window width
+if os.getenv("SSH_CONNECTION") or os.getenv("SSH_CLIENT") then
+  vg.clipboard = "osc52"
+else
+  vg.clipboard = nil
+  opt.clipboard = "unnamedplus"
+end
 vim.o.foldcolumn = "1"
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 opt.smoothscroll = true
 vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
--- opt.fillchars = {
---   foldopen = "",
---   foldclose = "",
---   fold = " ",
---   foldsep = " ",
---   diff = "╱",
---   eob = " ",
--- }
 opt.grepformat = "%f:%l:%c:%m"
 opt.grepprg = "rg --vimgrep"
 opt.ignorecase = true -- Ignore case
@@ -75,31 +74,8 @@ opt.splitbelow = true -- Put new windows below current
 opt.splitkeep = "screen"
 opt.splitright = true -- Put new windows right of current
 
--- for some reason this isn't working anymore
-vim.o.guicursor = "n-v-c-sm:block-nCursor-blinkwait50-blinkon50-blinkoff50,i-ci-ve:ver25-Cursor-blinkon100-blinkoff100,r-cr-o:hor20"
-
--- Don't want relative no on inactive Windows
-local relativeNo = vim.api.nvim_create_augroup("RelativeNo", { clear = true })
-
-vim.api.nvim_create_autocmd({ "BufEnter", "FocusGained", "InsertLeave" }, {
-  pattern = "*",
-  group = relativeNo,
-  callback = function()
-    if not vg.zen_mode_active then
-      vim.cmd([[set relativenumber]])
-    end
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost", "InsertEnter" }, {
-  pattern = "*",
-  group = relativeNo,
-  callback = function()
-    if not vg.zen_mode_active then
-      vim.cmd([[set norelativenumber]])
-    end
-  end,
-})
+vim.o.guicursor =
+  "n-v-c-sm:block-nCursor-blinkwait50-blinkon100-blinkoff100,i-ci-ve:ver25-Cursor-blinkon100-blinkoff100,r-cr-o:hor20"
 
 -- This is global settings for diagnostics
 vim.diagnostic.config({
@@ -131,3 +107,7 @@ vg.tmux_navigator_disable_when_zoomed = 1
 
 -- Write all buffers before navigating from vim to tmux pane
 vg.tmux_navigator_save_on_switch = 2
+
+vim.g.no_turbux_mappings = 1
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = "number"

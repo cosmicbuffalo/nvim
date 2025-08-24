@@ -1,178 +1,306 @@
+local Utils = require("config.utils")
 return {
-  -- statusline
+
   {
     "nvim-lualine/lualine.nvim",
-    event = "VimEnter",
-    init = function()
-      vim.g.lualine_laststatus = vim.o.laststatus
-      if vim.fn.argc(-1) > 0 then
-        -- set an empty statusline till lualine loads
-        vim.o.statusline = " "
-      else
-        -- hide the statusline on the starter page
-        vim.o.laststatus = 0
-      end
-    end,
-    opts = function()
-      -- PERF: we don't need this lualine require madness 🤷
-      local lualine_require = require("lualine_require")
-      lualine_require.require = require
-
-      vim.o.laststatus = vim.g.lualine_laststatus
-
-      local function wordcount()
-        return tostring(vim.fn.wordcount().words) .. " words"
-      end
-
-      local function readingtime()
-        return tostring(math.ceil(vim.fn.wordcount().words / 200.0)) .. " min"
-      end
-
-      local function is_markdown()
-        return vim.bo.filetype == "markdown" or vim.bo.filetype == "asciidoc"
-      end
-
-      -- local utils = require("heirline.utils")
-      -- local fg = function(hl_name)
-      --   return utils.get_highlight(hl_name).fg
-      -- end
-      -- local bg = function(hl_name)
-      --   return utils.get_highlight(hl_name).bg
-      -- end
-
-      return {
-        options = {
-          theme = "auto",
-          -- globalstatus = false,
-          disabled_filetypes = { statusline = { "dashboard", "alpha", "starter" } },
+    dependencies = {
+      {
+        "nvim-tree/nvim-web-devicons",
+        opts = {
+          override_by_filename = {
+            ["rakefile"] = {
+              icon = "",
+              color = "#ff4f3f",
+              cterm_color = "52",
+              name = "Rakefile",
+            },
+            ["Gemfile"] = {
+              icon = "",
+              color = "#ff4f3f",
+              cterm_color = "52",
+              name = "Rakefile",
+            },
+          },
+          override_by_extension = {
+            ["config.ru"] = {
+              icon = "",
+              color = "#ff4f3f",
+              cterm_color = "52",
+              name = "ConfigRu",
+            },
+            ["rb"] = {
+              icon = "",
+              color = "#ff4f3f",
+              cterm_color = "52",
+              name = "Rb",
+            },
+          },
         },
-        sections = {
+      },
+      "AndreM222/copilot-lualine",
+    },
+    opts = function()
+      -- NOTE: This isn't personalizable without duplicating the entire function
+      local utils = require("lualine.utils.utils")
+      local highlight = require("lualine.highlight")
+      local conf = require("lualine").get_config()
+      local diagnostics_message = require("lualine.component"):extend()
 
-          lualine_a = { "mode" },
-          lualine_b = { "branch" },
+      diagnostics_message.default = {
+        colors = {
+          error = utils.extract_color_from_hllist({ "fg", "sp" }, { "DiagnosticError" }, "#e32636"),
+          warning = utils.extract_color_from_hllist({ "fg", "sp" }, { "DiagnosticWarn" }, "#ffa500"),
+          info = utils.extract_color_from_hllist({ "fg", "sp" }, { "DiagnosticInfo" }, "#ffffff"),
+          hint = utils.extract_color_from_hllist({ "fg", "sp" }, { "DiagnosticHint" }, "#273faf"),
+        },
+      }
+      function diagnostics_message:init(options)
+        diagnostics_message.super:init(options)
+        self.options.colors = vim.tbl_extend("force", diagnostics_message.default.colors, self.options.colors or {})
+        self.highlights = { error = "", warn = "", info = "", hint = "" }
+        self.highlights.error = highlight.create_component_highlight_group(
+          { fg = self.options.colors.error },
+          "diagnostics_message_error",
+          self.options
+        )
+        self.highlights.warn = highlight.create_component_highlight_group(
+          { fg = self.options.colors.warn },
+          "diagnostics_message_warn",
+          self.options
+        )
+        self.highlights.info = highlight.create_component_highlight_group(
+          { fg = self.options.colors.info },
+          "diagnostics_message_info",
+          self.options
+        )
+        self.highlights.hint = highlight.create_component_highlight_group(
+          { fg = self.options.colors.hint },
+          "diagnostics_message_hint",
+          self.options
+        )
+      end
+
+      function diagnostics_message:update_status(_is_focused)
+        local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
+        local diagnostics = vim.diagnostic.get(0, { lnum = r - 1 })
+        if #diagnostics > 0 then
+          table.sort(diagnostics, function(a, b)
+            if a.col == b.col then
+              return a.severity < b.severity
+            else
+              return a.col < b.col
+            end
+          end)
+
+          local icons = { "󰅚 ", "󰀪 ", "󰋽 ", "󰌶 " }
+          local hl = { self.highlights.error, self.highlights.warn, self.highlights.info, self.highlights.hint }
+
+          local messages = {}
+          for _, diag in ipairs(diagnostics) do
+            -- Take only the first line of multi-line diagnostic messages
+            local first_line = diag.message:match("^[^\r\n]*")
+            local msg = icons[diag.severity] .. (diag.col + 1) .. ": " .. first_line
+            table.insert(messages, msg)
+          end
+
+          -- Use the most severe diagnostic's highlight for the entire string
+          local most_severe = diagnostics[1]
+          return highlight.component_format_highlight(hl[most_severe.severity]) .. table.concat(messages, "  ")
+        else
+          return ""
+        end
+      end
+
+      local new_conf = vim.tbl_deep_extend("force", conf, {
+        theme = "inkline",
+        sections = {
           lualine_c = {
-            -- {
-            --   require('auto-session.lib').current_session_name
-            -- },
-            { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-            -- { "filename", path = 1, symbols = { modified = "  ", readonly = "", unnamed = "" } },
-            { "filename", path = 4 },
-            -- {
-            --   "aerial",
-            --   sep = " ", -- separator between symbols
-            --   sep_icon = "", -- separator between icon and symbol
-            --
-            --   -- The number of symbols to render top-down. In order to render only 'N' last
-            --   -- symbols, negative numbers may be supplied. For instance, 'depth = -1' can
-            --   -- be used in order to render only current symbol.
-            --   depth = 5,
-            --
-            --   -- When 'dense' mode is on, icons are not rendered near their symbols. Only
-            --   -- a single icon that represents the kind of current symbol is rendered at
-            --   -- the beginning of status line.
-            --   dense = false,
-            --
-            --   -- The separator to be used to separate symbols in dense mode.
-            --   dense_sep = ".",
-            --
-            --   -- Color the symbol icons.
-            --   colored = true,
-            -- }
+            {
+              "filetype",
+              icon_only = true,
+              separator = { right = "" },
+              padding = { left = 1, right = 0 },
+            },
+            {
+              "filename",
+              path = 1,
+              separator = { left = "" },
+              padding = { left = 0 },
+            },
+            {
+              diagnostics_message,
+              colors = {
+                error = "#e32636",
+                warn = "#ffa500",
+                -- info = "#ffffff",
+                -- hint = "#273faf",
+              },
+              fmt = function(str)
+                local max_width = vim.o.columns - 80
+                if #str > max_width then
+                  return str:sub(1, max_width - 3) .. "..."
+                end
+                return str
+              end,
+            },
           },
           lualine_x = {
             {
               function()
-                return require("noice").api.status.command.get()
+                local ok, noice = pcall(require, "noice")
+                if ok then
+                  return noice.api.status.command.get()
+                end
+                return ""
               end,
               cond = function()
-                return package.loaded["noice"] and require("noice").api.status.command.has()
+                local ok, noice = pcall(require, "noice")
+                return ok and noice.api.status.command.has()
               end,
-              -- color = fg("Statement"),
-            },
-            -- stylua: ignore
-            {
-              function() return require("noice").api.status.mode.get() end,
-              cond = function() return package.loaded["noice"] and require("noice").api.status.mode.has() end,
-              -- color = fg("Constant"),
-            },
-            -- stylua: ignore
-            {
-              function() return "  " .. require("dap").status() end,
-              cond = function() return package.loaded["dap"] and require("dap").status() ~= "" end,
-              -- color = fg("Debug"),
+              color = { fg = "#ff9e64" },
             },
             {
-              require("lazy.status").updates,
-              cond = require("lazy.status").has_updates,
-              -- color = fg("Special"),
-            },
-            -- {
-            --   "diagnostics",
-            --   symbols = {
-            --     error = icons.diagnostics.Error,
-            --     warn = icons.diagnostics.Warn,
-            --     info = icons.diagnostics.Info,
-            --     hint = icons.diagnostics.Hint,
-            --   },
-            --   -- separator = ""
-            -- },
-            {
-              "diff",
-              -- symbols = {
-              --   added = icons.git.added,
-              --   modified = icons.git.modified,
-              --   removed = icons.git.removed,
-              -- },
-              source = function()
-                local gitsigns = vim.b.gitsigns_status_dict
-                if gitsigns then
-                  return {
-                    added = gitsigns.added,
-                    modified = gitsigns.changed,
-                    removed = gitsigns.removed,
-                  }
+              function()
+                local reg = vim.fn.reg_recording()
+                if reg == "" then
+                  return ""
+                else
+                  return "recording @" .. reg
                 end
               end,
+              color = { fg = "yellow" },
             },
-          },
-          lualine_y = {
-            { "progress", separator = " ", padding = { left = 1, right = 1 } },
-            { wordcount, cond = is_markdown },
-            { readingtime, cond = is_markdown },
-          },
-          lualine_z = {
-            -- function()
-            --   return " " .. os.date("%R")
-            -- end,
-            { "location", padding = { left = 1, right = 1 } },
+            {
+              "searchcount",
+              color = { fg = "cyan" },
+            },
+            {
+              "copilot",
+              padding = { left = 1, right = 0 },
+            },
+            -- "lsp_status"
           },
         },
-        extensions = { "neo-tree", "lazy" },
-      }
+      })
+
+      return new_conf
     end,
   },
-  -- winbars
   {
     "rebelot/heirline.nvim",
-    event = "BufReadPre",
+    lazy = false,
     dependencies = {
       "nvim-lualine/lualine.nvim",
+      "nvim-tree/nvim-web-devicons",
       {
         "Bekaboo/dropbar.nvim",
-        dependencies = { "nvim-telescope/telescope-fzf-native.nvim" },
+        lazy = false,
         opts = {
-          general = {
-            enable = false, -- turn off the automatic attachment behavior since it'll be handled by the component in heirline
+          menu = {
+            -- turn this off to disable dynamic preview on menu movement
+            -- dynamic previews can also be toggled per source (see below)
+            -- preview = false,
+          },
+          bar = {
+            -- turn off the automatic attachment behavior since it'll be
+            -- handled by the component in heirline
+            enable = false,
+            sources = function(buf, _)
+              local utils = require("dropbar.utils")
+              local sources = require("dropbar.sources")
+              if vim.bo[buf].ft == "oil" then
+                return {
+                  sources.path,
+                }
+              end
+              if vim.bo[buf].ft == "markdown" then
+                return {
+                  sources.path,
+                  sources.markdown,
+                }
+              end
+              if vim.bo[buf].buftype == "terminal" then
+                return {
+                  sources.terminal,
+                }
+              end
+              return {
+                sources.path,
+                utils.source.fallback({
+                  sources.lsp,
+                  -- sources.treesitter,
+                }),
+              }
+            end,
+          },
+          sources = {
+            path = {
+              -- Preview is turned off by default for the path source
+              preview = false,
+              -- This customizes the path source for oil buffers
+              -- oil buffers will show the path relative to the
+              -- git root, if available
+              relative_to = function(buf, win)
+                local bufname = vim.api.nvim_buf_get_name(buf)
+                if vim.startswith(bufname, "oil://") then
+                  local full_path = bufname:gsub("^%S+://", "", 1)
+                  local git_root = vim.fs.find(".git", { upward = true, path = full_path, type = "directory" })
+                  if git_root and #git_root > 0 then
+                    local git_dir = vim.fs.dirname(git_root[1])
+                    return vim.fs.dirname(git_dir)
+                  end
+                end
+
+                local ok, cwd = pcall(vim.fn.getcwd, win)
+                return ok and cwd or vim.fn.getcwd()
+              end,
+            },
+            lsp = {
+              valid_symbols = {
+                -- Customize this list to control what can show
+                -- up as breadcrumbs in the dropbar winbar
+                -- for lsp source
+                "Module",
+                "Namespace",
+                "Class",
+                "Method",
+                "Function",
+                "Constructor",
+                "Array",
+                "Object",
+              },
+            },
+            treesitter = {
+              valid_types = {
+                -- TODO: This filtering doesn't actually work
+                -- Customize this list to control what can show
+                -- up as breadcrumbs in the dropbar winbar for
+                -- treesitter source
+                "class",
+                "constructor",
+                "do_statement",
+                "function",
+                "if_statement",
+                "method",
+                "namespace",
+                "table",
+                "type",
+                "object",
+              },
+            },
           },
           icons = {
+            -- Icons for dropbar can be customized here
             ui = {
               bar = {
+                -- separator = " > ",
                 separator = "  ",
                 extends = "…",
               },
               menu = {
-                separator = " ",
+                -- indicator = "> ",
                 indicator = " ",
+                separator = " ",
               },
             },
           },
@@ -183,327 +311,61 @@ return {
             function()
               require("dropbar.api").pick()
             end,
-            desc = "Dropbar Picker",
+            desc = "Drop[b]ar - [O]pen Picker",
           },
         },
       },
     },
-    config = function()
-      local conditions = require("heirline.conditions")
-      local utils = require("heirline.utils")
-
-      local function get_dropbar_winbar_content()
-        return "%{%v:lua.dropbar.get_dropbar_str()%}"
-      end
-
-      local FileNameBlock = {
-        init = function(self)
-          self.filename = vim.api.nvim_buf_get_name(0)
-        end,
-      }
-
-      local FileIcon = {
-        init = function(self)
-          local filename = self.filename
-          local extension = vim.fn.fnamemodify(filename, ":e")
-          self.icon, self.icon_color =
-            require("nvim-web-devicons").get_icon_color(filename, extension, { default = true })
-        end,
-        provider = function(self)
-          return self.icon and (self.icon .. " ")
-        end,
-        hl = function(self)
-          return { fg = self.icon_color }
-        end,
-      }
-
-      local FileName = {
-        provider = function(self)
-          local filename = vim.fn.fnamemodify(self.filename, ":.")
-          if filename == "" then
-            return "[No Name]"
-          end
-
-          if not conditions.width_percent_below(#filename, 0.25) then
-            filename = vim.fn.pathshorten(filename)
-          end
-
-          return filename
-        end,
-      }
-
-      local function h(name)
-        return utils.get_highlight(name)
-      end
-
-      local FileFlags = {
-        {
-          condition = function()
-            return vim.bo.modified
-          end,
-          provider = " [+]",
-          hl = { fg = h("CursorLineNr").fg, bold = true },
-        },
-        -- {
-        --   condtion = function()
-        --     return (not vim.bo.modifiable) or vim.bo.readonly
-        --   end,
-        --   provider = " ",
-        --   hl = { fg = h("CursorLineNr").fg },
-        -- },
-      }
-
-      local FileNameModifier = {
-        hl = function()
-          if vim.bo.modified then
-            return { fg = h("CursorLineNr").fg, bold = true, force = true }
-          end
-
-          return { fg = h("Comment").fg }
-        end,
-      }
-
-      local Align = { provider = "%=" }
-      local Space = { provider = " " }
-
-      FileNameBlock =
-        utils.insert(FileNameBlock, FileIcon, utils.insert(FileNameModifier, FileName), FileFlags, { provider = "%<" })
-
-      local InactiveWinbar = {
-        condition = function()
-          return conditions.is_not_active()
-        end,
-        {
-          -- Align,
-          Space,
-          FileNameBlock,
-          Align,
-        },
-      }
-      -- local component_separators = { left = "", right = "" }
-      local section_separators = { left = "", right = "" }
-      local mode_names = {
-        n = "NORMAL",
-        no = "O-PENDING",
-        nov = "O-PENDING",
-        noV = "O-PENDING",
-        ["no\22"] = "O-PENDING",
-        niI = "NORMAL",
-        niR = "NORMAL",
-        niV = "NORMAL",
-        nt = "NORMAL",
-        v = "VISUAL",
-        vs = "VISUAL",
-        V = "V-LINE",
-        Vs = "V-LINE",
-        ["\22"] = "V-BLOCK",
-        ["\22s"] = "V-BLOCK",
-        s = "SELECT",
-        S = "S-LINE",
-        ["\19"] = "S-BLOCK",
-        i = "INSERT",
-        ic = "INSERT",
-        ix = "INSERT",
-        R = "REPLACE",
-        Rc = "REPLACE",
-        Rx = "REPLACE",
-        Rv = "V-REPLACE",
-        Rvc = "V-REPLACE",
-        Rvx = "V-REPLACE",
-        c = "COMMAND",
-        cr = "COMMAND",
-        cv = "Ex",
-        cvr = "Ex",
-        r = "PROMPT",
-        rm = "PROMPT",
-        ["r?"] = "CONFIRM",
-        ["!"] = "!",
-        t = "TERMINAL",
-      }
-
-      local function setup_colors()
-        return {
-          bright_bg = utils.get_highlight("Folded").bg,
-          bright_fg = utils.get_highlight("Folded").fg,
-          red = utils.get_highlight("DiagnosticError").fg,
-          dark_red = utils.get_highlight("DiffDelete").bg,
-          green = utils.get_highlight("String").fg,
-          blue = utils.get_highlight("Function").fg,
-          gray = utils.get_highlight("NonText").fg,
-          orange = utils.get_highlight("Constant").fg,
-          yellow = utils.get_highlight("Todo").bg,
-          purple = utils.get_highlight("Statement").fg,
-          cyan = utils.get_highlight("Special").fg,
-          diag_warn = utils.get_highlight("DiagnosticWarn").fg,
-          diag_error = utils.get_highlight("DiagnosticError").fg,
-          diag_hint = utils.get_highlight("DiagnosticHint").fg,
-          diag_info = utils.get_highlight("DiagnosticInfo").fg,
-          git_del = utils.get_highlight("diffDeleted").fg,
-          git_add = utils.get_highlight("diffAdded").fg,
-          git_change = utils.get_highlight("diffChanged").fg,
-        }
+    opts = {
+      winbar_disabled_buftypes = { "nofile", "prompt", "help", "quickfix", "terminal" },
+      winbar_disabled_filetypes = {
+        "^git.*",
+        "fugitive",
+        "Trouble",
+        "dashboard",
+        "neo-tree",
+        "which-key",
+        "lazygit",
+      },
+      -- toggle this to remove the mode wapper on active winbar
+      enable_mode_wrapper = true,
+      -- customize mode color assignments here
+      -- (settings for inkline or tokyonight are automatically applied)
+      mode_colors = Utils.colors.get_mode_colors,
+      -- customize heirline color mappings to colorscheme highlights here
+      -- (settings for inkline or tokyonight are automatically applied)
+      color_highlight_mappings = Utils.colors.get_highlight_mappings,
+      inactive_color = "#1e2124",
+    },
+    config = function(_, opts)
+      local heirline_config = require("config.heirline")
+      local setup_colors = function()
+        return Utils.colors.setup_heirline_colors(opts)
       end
       require("heirline").load_colors(setup_colors)
 
       vim.api.nvim_create_augroup("Heirline", { clear = true })
       vim.api.nvim_create_autocmd("ColorScheme", {
         callback = function()
+          local utils = require("heirline.utils")
           utils.on_colorscheme(setup_colors)
         end,
         group = "Heirline",
       })
 
-      local mode_colors = {
-        n = "blue",
-        i = "green",
-        v = "purple",
-        V = "purple",
-        ["\22"] = "purple",
-        c = "yellow",
-        s = "orange",
-        S = "orange",
-        ["\19"] = "orange",
-        R = "red",
-        r = "red",
-        ["!"] = "gray",
-        t = "gray",
-      }
-
-      local ModeWrapStart = {
-        init = function(self)
-          self.mode = vim.fn.mode(1)
-          self.short_mode = self.mode:sub(1, 1)
-        end,
-        static = {
-          mode_names = mode_names,
-          mode_colors = mode_colors,
-        },
-        {
-          provider = " ",
-          hl = function(self)
-            if conditions.is_not_active() then
-              return { bg = "#2d2d30" }
-            end
-            return { bg = self.mode_colors[self.short_mode] }
-          end,
-        },
-        {
-          provider = section_separators.left,
-          hl = function(self)
-            if conditions.is_not_active() then
-              return { fg = "#2d2d30" }
-            end
-            return { fg = self.mode_colors[self.short_mode] }
-          end,
-        },
-      }
-
-      local ModeWrapEnd = {
-        init = function(self)
-          self.mode = vim.fn.mode(1)
-          self.short_mode = self.mode:sub(1, 1)
-        end,
-        static = {
-          mode_names = mode_names,
-          mode_colors = mode_colors,
-        },
-        {
-          provider = section_separators.right,
-          hl = function(self)
-            if conditions.is_not_active() then
-              return { fg = "#2d2d30" }
-            end
-            return { fg = self.mode_colors[self.short_mode] }
-          end,
-        },
-        {
-          provider = " ",
-          hl = function(self)
-            if conditions.is_not_active() then
-              return { bg = "#2d2d30" }
-            end
-            return { bg = self.mode_colors[self.short_mode] }
-          end,
-        },
-        -- {
-        --   provider = function(self)
-        --     return self.mode_names[self.mode]
-        --   end,
-        --   hl = function(self)
-        --     return {
-        --       fg = colors.black,
-        --       bg = self.mode_colors[self.short_mode],
-        --       bold = true
-        --     }
-        --   end
-        -- },
-        -- {
-        --   provider = " ",
-        --   hl = function(self)
-        --     return { bg = self.mode_colors[self.short_mode] }
-        --   end
-        -- },
-      }
-
-      local ActiveWinbar = {
-        condition = function()
-          return conditions.is_active()
-        end,
-        -- hl = {
-        --
-        --   bg = colors.bright_bg,
-        --   force = true,
-        -- },
-        {
-          {
-            provider = function()
-              return get_dropbar_winbar_content()
-            end,
-          },
-
-          {
-            provider = "%=",
-          },
-          FileFlags,
-          Space,
-          -- Mode,
-        },
-        -- update = {
-        --   { "FocusGained", "FocusLost", "WinEnter", "WinLeave", "WinClosed", "WinNew", "WinScrolled", "WinResized" },
-        -- },
-        -- flexible = true
-      }
-
-      local DefaultWinbar = {
-        ModeWrapStart,
-        ActiveWinbar,
-        InactiveWinbar,
-        ModeWrapEnd,
-      }
-
-      local SpecialWinbar = {
-        condition = function()
-          return conditions.buffer_matches({
-            buftype = { "nofile", "prompt", "help", "quickfix", "trouble", "neo-tree", "oil", "acwrite" },
-          })
-        end,
-      }
-
       require("heirline").setup({
-        winbar = {
-          fallthrough = false,
-          SpecialWinbar, -- TODO: add special bars for oil, neo-tree, trouble
-          DefaultWinbar,
-        },
-        opts = {
-          disable_winbar_cb = function(args)
-            return conditions.buffer_matches({
-              buftype = { "nofile", "prompt", "help", "quickfix", "terminal" },
-              filetype = { "^git.*", "fugitive", "Trouble", "dashboard", "neo-tree", "which-key", "lazygit" },
-            })
-          end,
-        },
+        winbar = heirline_config.build_winbar(opts),
+        opts = heirline_config.build_opts(opts),
       })
     end,
+    keys = {
+      {
+        "<leader>uW",
+        function()
+          require("config.heirline").toggle_winbar()
+        end,
+        desc = "Toggle [U]I [W]inbar",
+      },
+    },
   },
 }

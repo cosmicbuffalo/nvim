@@ -13,6 +13,16 @@ local tset = function(...)
 end
 local utils = require("config.utils")
 
+-- Default yank to system clipboard
+set({ "n", "v" }, "y", '"+y', { noremap = true, silent = true, desc = "Yank to system clipboard" })
+set("n", "yy", '"+yy', { noremap = true, silent = true, desc = "Yank line to system clipboard" })
+set({ "n", "v" }, "Y", '"+y$', { noremap = true, silent = true, desc = "Yank to system clipboard (to end of line)" })
+
+-- Paste over a selection without overwriting clipboard
+set("x", "p", function()
+  return 'pgv"' .. vim.v.register .. "y"
+end, { expr = true, noremap = true, desc = "Paste (without overwrite register)" })
+
 -- save with alt-s
 set({ "i", "x", "n", "s" }, "<A-s>", "<cmd>w<cr><esc>", { desc = "Save File", silent = true })
 -- ignore ctrl-s (tmux prefix)
@@ -48,7 +58,6 @@ nset("<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 -- nset("[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 -- nset("]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 nset("<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-nset("<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 -- windows
 nset("<leader>ww", "<C-W>p", { desc = "Other Window", remap = true })
 nset("<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
@@ -60,7 +69,6 @@ nset("<leader><tab>o", "<cmd>tabonly<cr>", { desc = "Close Other Tabs" })
 nset("<leader><tab>f", "<cmd>tabfirst<cr>", { desc = "First Tab" })
 nset("<leader><tab>n", "<cmd>tabnew<cr>", { desc = "New Tab" })
 nset("<leader><tab>]", "<cmd>tabnext<cr>", { desc = "Next Tab" })
--- nset("<leader><tab><tab>", "g<tab>", { desc = "Next Tab" })
 require("which-key").add({ "g<tab>", desc = "Switch to Other Tab" })
 nset("<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
 nset("<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
@@ -76,12 +84,6 @@ nset("U", "<C-r>", { desc = "Redo" })
 -- viewport moves
 nset("zh", "zH", { desc = "Half screen to the left" })
 nset("zl", "zL", { desc = "Half screen to the right" })
-
--- Resize window using <ctrl> arrow keys
-nset("<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })
-nset("<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Window Height" })
-nset("<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Window Width" })
-nset("<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Width" })
 
 -- cursor position hacks
 nset("J", "mzJ`z", { desc = "Join Lines" })
@@ -110,6 +112,15 @@ function _G.wrapped_line_movement(mapping)
 end
 iset("<Down>", '<cmd> lua wrapped_line_movement("gj")<cr>', { desc = "Down", noremap = true, silent = true })
 iset("<Up>", '<cmd> lua wrapped_line_movement("gk")<cr>', { desc = "Up", noremap = true, silent = true })
+
+-- make } and { skip over folds instead of opening them
+nset("{", function()
+  return vim.fn.foldclosed(vim.fn.search("^$", "Wnb")) == -1 and "{" or "{k"
+end, { expr = true, noremap = true, desc = "Previous blank line (skip fold)" })
+nset("}", function()
+  return vim.fn.foldclosed(vim.fn.search("^$", "Wn")) == -1 and "}" or "}j"
+end, { expr = true, noremap = true, desc = "Next blank line (skip fold)" })
+
 -- Move Lines
 nset("<A-j>", "<cmd>m .+1<cr>==", { desc = "Move Down" })
 nset("<A-k>", "<cmd>m .-2<cr>==", { desc = "Move Up" })
@@ -191,6 +202,16 @@ nset("<leader>fY", copy_path, { desc = "Copy Path" })
 -- show file in finder
 nset("<leader>fo", "<cmd>silent !open -R %<CR>", { desc = "Show in Finder", silent = true, noremap = true })
 
+nset("<leader>dv", function()
+  local current_config = vim.diagnostic.config()
+  local new_virtual_lines = not current_config.virtual_lines
+  vim.diagnostic.config({ virtual_lines = new_virtual_lines })
+  if new_virtual_lines then
+    vim.notify("Diagnostic virtual lines enabled", vim.log.levels.INFO, { title = "Diagnostics" })
+  else
+    vim.notify("Diagnostic virtual lines disabled", vim.log.levels.WARN, { title = "Diagnostics" })
+  end
+end, { noremap = true, desc = "[d]iagnotic [v]irtual lines toggle" })
 -- Keymap to toggle case
 local function toggle_case()
   local word = vim.fn.expand("<cword>")

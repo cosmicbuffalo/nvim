@@ -64,8 +64,16 @@ return {
 
             -- opening files with oil
             ["<cr>"] = { "actions.select", opts = { close = true }, desc = "Open" },
-            ["<leader>-"] = { "actions.select", opts = { horizontal = true }, desc = "Open in horizontal split" },
-            ["<leader>|"] = { "actions.select", opts = { vertical = true }, desc = "Open in vertical split" },
+            ["<leader>-"] = {
+              "actions.select",
+              opts = { horizontal = true },
+              desc = "Open in horizontal split",
+            },
+            ["<leader>|"] = {
+              "actions.select",
+              opts = { vertical = true },
+              desc = "Open in vertical split",
+            },
 
             -- oily things
             ["<leader>p"] = { "actions.preview", desc = "Open/Close Preview" },
@@ -78,23 +86,18 @@ return {
             show_hidden = true,
             natural_order = true,
             is_always_hidden = function(name, _)
-              return name == ".." or name == ".git"
+              return name == ".."
             end,
           },
           win_options = {
             signcolumn = "yes:2",
           },
         })
-
-        -- vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
-        -- vim.keymap.set("n", "<leader>o", "<cmd>Oil<cr>", { desc = "Open parent directory" })
       end,
       keys = {
         { "-", "<cmd>Oil<cr>", desc = "Open parent directory" },
-        { "<leader>o", "<cmd>Oil<cr>", desc = "Open parent directory" },
       },
     },
-
     config = true,
   },
 }

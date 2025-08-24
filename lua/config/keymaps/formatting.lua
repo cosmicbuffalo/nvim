@@ -1,5 +1,7 @@
 local set = vim.keymap.set
-local vset = function(...) set("v", ...) end
+local vset = function(...)
+  set("v", ...)
+end
 -- format selections (more reliable rubocop)
 function run_rubocop_on_selection()
   -- Capture the current visual selection
