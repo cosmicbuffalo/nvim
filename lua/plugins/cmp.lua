@@ -23,7 +23,6 @@ return {
       "moyiz/blink-emoji.nvim",
       "disrupted/blink-cmp-conventional-commits",
       "rafamadriz/friendly-snippets",
-      "giuxtaposition/blink-cmp-copilot",
       {
         "saghen/blink.compat",
         optional = true, -- make optional so it's only enabled if any extras need it
@@ -73,14 +72,8 @@ return {
         -- adding any nvim-cmp sources here will enable them
         -- with blink.compat
         compat = {},
-        default = { "copilot", "lazydev", "conventional_commits", "lsp", "path", "snippets", "buffer", "emoji" },
+        default = {  "lazydev", "conventional_commits", "lsp", "path", "snippets", "buffer", "emoji" },
         providers = {
-          copilot = {
-            name = "copilot",
-            module = "blink-cmp-copilot",
-            score_offset = 100,
-            async = true,
-          },
           lazydev = {
             name = "LazyDev",
             module = "lazydev.integrations.blink",
