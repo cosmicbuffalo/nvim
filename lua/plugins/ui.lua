@@ -60,48 +60,6 @@ return {
       end,
     },
   },
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
-    event = { "BufReadPost", "BufNewFile", "BufWritePre" },
-    cmd = { "IBLEnable", "IBLDisable", "IBLToggle", "IBLEnableScope", "IBLDisableScope", "IBLToggleScope" },
-    keys = {
-      {
-        "<leader>uI",
-        function()
-          require("ibl").setup_buffer(0, { enabled = not require("ibl.config").get_config(0).enabled })
-        end,
-        desc = "Toggle Indention Guides",
-      },
-    },
-    opts = function()
-      return {
-        indent = {
-          char = "│",
-          tab_char = "│",
-        },
-        scope = { show_start = false, show_end = false },
-        exclude = {
-          filetypes = {
-            "Trouble",
-            "alpha",
-            "dashboard",
-            "help",
-            "lazy",
-            "mason",
-            "neo-tree",
-            "notify",
-            "snacks_dashboard",
-            "snacks_notif",
-            "snacks_terminal",
-            "snacks_win",
-            "toggleterm",
-            "trouble",
-          },
-        },
-      }
-    end,
-  },
   -- NOTE: this doesn't work well with snacks dashboard
   {
     "echasnovski/mini.indentscope",

@@ -82,10 +82,6 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       {
-        "nvim-telescope/telescope-fzf-native.nvim",
-        build = "make",
-      },
-      {
         "echasnovski/mini.bufremove",
         keys = {
           {
@@ -237,10 +233,6 @@ return {
         },
       },
       extensions = {
-        fzf = {
-          fuzzy = true,
-          case_mode = "smart_case",
-        },
         file_browser = {
           follow_symlinks = true,
           no_ignore = true,
@@ -260,14 +252,6 @@ return {
     dependencies = { "nvim-telescope/telescope.nvim" },
     config = function(_, _opts)
       require("telescope").load_extension("file_browser")
-    end,
-  },
-  {
-    "nvim-telescope/telescope-fzf-native.nvim",
-    dependencies = { "nvim-telescope/telescope.nvim" },
-    build = "make",
-    config = function(_, _opts)
-      require("telescope").load_extension("fzf")
     end,
   },
 }

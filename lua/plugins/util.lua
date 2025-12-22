@@ -30,14 +30,6 @@ return {
       { "<leader>su", ":Telescope undo<cr>", desc = "Undo Tree (Telescope)" },
     },
   },
-  -- measure startuptime
-  {
-    "dstein64/vim-startuptime",
-    cmd = "StartupTime",
-    config = function()
-      vim.g.startuptime_tries = 10
-    end,
-  },
   -- library used by other plugins
   { "nvim-lua/plenary.nvim", lazy = true },
   -- open url under cursor in the browser
@@ -58,8 +50,6 @@ return {
     end,
     submodules = false, -- not needed, submodules are required only for tests
   },
-  -- unix shell commands from vim
-  { "tpope/vim-eunuch", cmd = { "Move", "Rename", "Remove", "Delete", "Mkdir" } },
   -- increment/decrement date strings
   { "tpope/vim-speeddating" },
   -- preview lines in buffer as you type :lineno
@@ -68,30 +58,6 @@ return {
     config = function()
       require("numb").setup()
     end,
-  },
-  -- newer search/replace as a buffer
-  {
-    "MagicDuck/grug-far.nvim",
-    -- enabled = false,
-    opts = { headerMaxWidth = 80 },
-    cmd = "GrugFar",
-    keys = {
-      {
-        "<leader>sR",
-        function()
-          local grug = require("grug-far")
-          local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
-          grug.open({
-            transient = true,
-            prefills = {
-              filesFilter = ext and ext ~= "" and "*." .. ext or nil,
-            },
-          })
-        end,
-        mode = { "n", "v" },
-        desc = "Search and Replace (GrugFar)",
-      },
-    },
   },
   -- toggle terminals with <c-_> or <c-/>
   {
@@ -114,5 +80,6 @@ return {
     end,
   },
   -- track coding time
-  { "wakatime/vim-wakatime", lazy = false },
+  -- { "wakatime/vim-wakatime", lazy = false },
+  "cosmicbuffalo/root_swapper.nvim"
 }

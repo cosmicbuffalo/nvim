@@ -20,15 +20,42 @@ return {
       {
         "mason-org/mason.nvim",
         cmd = "Mason",
-        tag = "v2.0.0",
+        build = ":MasonUpdate",
+        opts_extend = { "ensure_installed" },
         lazy = false,
         keys = {
           { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" },
         },
-        opts = {},
+        opts = {
+          ensure_installed = {
+            "stylua",
+          },
+        },
+        config = function(_, opts)
+          require("mason").setup()
+          local mr = require("mason-registry")
+
+          mr:on("package:install:success", function()
+            vim.defer_fn(function()
+              require("lazy.core.handler.event").trigger({
+                event = "FileType",
+                buf = vim.api.nvim_get_current_buf(),
+              })
+            end, 100)
+          end)
+
+          mr.refresh(function()
+            for _, tool in ipairs(opts.ensure_installed) do
+              local tool_name = type(tool) == "table" and tool[1] or tool
+              local p = mr.get_package(tool_name)
+              if not p:is_installed() and not p:is_installing() then
+                p:install()
+              end
+            end
+          end)
+        end,
       },
-      { "mason-org/mason-lspconfig.nvim", tag = "v2.0.0" },
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
+      { "mason-org/mason-lspconfig.nvim" },
       "saghen/blink.cmp",
     },
     opts = {
@@ -80,6 +107,9 @@ return {
             Lua = {},
           },
         },
+        stylua = {
+          enabled = false,
+        },
       },
       setup = {}, -- add custom setup functions for servers here
     },
@@ -118,15 +148,8 @@ return {
       vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 
       local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        { "stylua", version = "v0.20.0" },
-      })
-      require("mason-lspconfig").setup()
-      -- This handles automatic installation and updates of configured lsp
-      -- severs
-      require("mason-tool-installer").setup({
+      require("mason-lspconfig").setup({
         ensure_installed = ensure_installed,
-        auto_update = true,
       })
 
       -- override any default config for servers with user options
