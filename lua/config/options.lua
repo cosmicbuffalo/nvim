@@ -111,3 +111,5 @@ vg.tmux_navigator_save_on_switch = 2
 vim.g.no_turbux_mappings = 1
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
+
+
